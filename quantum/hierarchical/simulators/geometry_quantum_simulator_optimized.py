@@ -4,7 +4,7 @@ Optimized Geometry-Based Quantum Simulator
 Enhanced version that can handle more qubits using:
 1. Sparse state storage (only non-zero amplitudes)
 2. Lazy state creation (create states only when needed)
-3. Optional MPS mode for very large systems
+3. Geometric compression for very large systems
 """
 
 import numpy as np

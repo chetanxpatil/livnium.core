@@ -8,12 +8,13 @@ Tests the hierarchical geometry system's ability to handle 5000 qubit-analogues 
 This test verifies:
 1. Qubit-analogue creation (5000 units)
 2. Operations on 5000 qubit-analogues
-3. Memory efficiency
-4. Performance metrics
+3. Hierarchical simulator performance
+4. Memory efficiency
+5. Performance metrics
 
 The system uses:
 - Geometric compression (hierarchical state grouping)
-- Tensor networks (MPS - Matrix Product States)
+- Geometric state representation
 - Lightweight qubit-analogue objects (classical data structures)
 - Hierarchical state management (geometry > geometry > geometry)
 """
@@ -30,7 +31,6 @@ sys.path.insert(0, str(project_root))
 
 from quantum.hierarchical.core.quantum_processor import QuantumProcessor
 from quantum.hierarchical.simulators.hierarchical_simulator import HierarchicalQuantumSimulator
-from quantum.hierarchical.simulators.mps_hierarchical_simulator import MPSHierarchicalGeometrySimulator
 
 
 def test_5000_qubit_creation():
@@ -176,70 +176,9 @@ def test_5000_qubit_operations():
         }
 
 
-def test_5000_qubit_mps_simulator():
-    """Test MPS simulator with 5000 qubits."""
-    print("\n" + "=" * 70)
-    print("TEST 3: 5000-Qubit MPS Simulator")
-    print("=" * 70)
-    
-    tracemalloc.start()
-    start_time = time.time()
-    
-    try:
-        print(f"\nCreating MPS simulator with 5000 qubits...")
-        sim = MPSHierarchicalGeometrySimulator(5000, bond_dimension=8)
-        
-        # Get capacity info
-        info = sim.get_capacity_info()
-        print(f"\n  Capacity Info:")
-        print(f"  - Qubits: {info['num_qubits']:,}")
-        print(f"  - Memory: {info['memory_mb']:.2f} MB")
-        print(f"  - Scaling: {info['scaling']}")
-        
-        # Apply some gates
-        print(f"\nApplying gates...")
-        print(f"  - Hadamard on qubits 0-9...")
-        for i in range(10):
-            sim.hadamard(i)
-        
-        print(f"  - CNOT on pairs (0-1, 2-3, 4-5, 6-7, 8-9)...")
-        for i in range(0, 10, 2):
-            sim.cnot(i, i+1)
-        
-        print(f"  - Hadamard on scattered qubits (100, 1000, 2000, 3000, 4000)...")
-        for idx in [100, 1000, 2000, 3000, 4000]:
-            sim.hadamard(idx)
-        
-        current, peak = tracemalloc.get_traced_memory()
-        tracemalloc.stop()
-        elapsed = time.time() - start_time
-        
-        print(f"\n✅ SUCCESS!")
-        print(f"  Time: {elapsed:.3f}s")
-        print(f"  Memory (peak): {peak/1024/1024:.2f} MB")
-        print(f"  Theoretical memory (full state): 2^5000 states = impossible!")
-        print(f"  Actual memory: {peak/1024/1024:.2f} MB (MPS compression)")
-        
-        return {
-            'success': True,
-            'num_qubits': 5000,
-            'time': elapsed,
-            'memory_mb': peak / 1024 / 1024,
-            'theoretical_memory': '2^5000 (impossible)',
-            'mps_memory_mb': info['memory_mb']
-        }
-        
-    except Exception as e:
-        tracemalloc.stop()
-        elapsed = time.time() - start_time
-        print(f"\n❌ FAILED: {e}")
-        import traceback
-        traceback.print_exc()
-        return {
-            'success': False,
-            'error': str(e),
-            'time': elapsed
-        }
+# NOTE: MPS Simulator test removed - MPS belongs in livnium_core, not hierarchical
+# The hierarchical system uses geometry-in-geometry architecture, not tensor networks
+# For real MPS/DMRG tensor network physics, see quantum/livnium_core/
 
 
 def test_5000_qubit_hierarchical_simulator():
@@ -325,7 +264,6 @@ def print_summary(results):
         test_name = [
             "Qubit Creation",
             "Operations",
-            "MPS Simulator",
             "Hierarchical Simulator"
         ][i-1]
         
@@ -377,13 +315,12 @@ def main():
     result2 = test_5000_qubit_operations()
     results.append(result2)
     
-    # Test 3: MPS Simulator
-    result3 = test_5000_qubit_mps_simulator()
-    results.append(result3)
+    # Test 3: MPS Simulator - REMOVED
+    # MPS belongs in livnium_core (real tensor networks), not hierarchical (geometry-in-geometry)
     
-    # Test 4: Hierarchical Simulator
-    result4 = test_5000_qubit_hierarchical_simulator()
-    results.append(result4)
+    # Test 3: Hierarchical Simulator (renumbered from Test 4)
+    result3 = test_5000_qubit_hierarchical_simulator()
+    results.append(result3)
     
     # Print summary
     print_summary(results)

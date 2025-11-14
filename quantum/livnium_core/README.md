@@ -8,6 +8,18 @@ Livnium Core is a **real physics solver** using DMRG (Density Matrix Renormaliza
 
 This is a **legitimate tensor network implementation** used in quantum many-body physics. Unlike the quantum-inspired systems in `islands/` and `hierarchical/`, this module performs actual physics simulation using tensor network methods.
 
+## Important Distinction
+
+**This is the ONLY place in LIVNIUM that uses real MPS/DMRG tensor networks.**
+
+- ✅ **Real** MPS (Matrix Product States) tensor networks
+- ✅ **Real** DMRG (Density Matrix Renormalization Group) methods
+- ✅ **Real** physics simulation (not quantum-inspired)
+- ❌ **NOT** in `hierarchical/` - that uses geometry-in-geometry
+- ❌ **NOT** in `islands/` - that uses quantum-inspired information processing
+
+**MPS tensor networks belong here, not in the hierarchical geometry system.**
+
 ## Key Features
 
 - DMRG/MPS tensor network implementation

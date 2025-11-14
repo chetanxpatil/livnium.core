@@ -18,6 +18,17 @@ The Hierarchical Geometry Machine uses a 3-level "geometry-in-geometry" architec
 - Linear memory scaling (~400 bytes per qubit analogue)
 - 5000+ qubit-analogue capacity
 - Geometric state representation
+- **Pure geometry-in-geometry** (not tensor networks)
+
+## Important Distinction
+
+**This system uses geometry-in-geometry architecture, NOT tensor networks.**
+
+- ❌ **NOT** MPS (Matrix Product States) - that's in `livnium_core/`
+- ❌ **NOT** tensor networks - that's in `livnium_core/`
+- ✅ **IS** geometric coordinate transformations
+- ✅ **IS** hierarchical state management
+- ✅ **IS** quantum-inspired classical computation
 
 ## Structure
 
