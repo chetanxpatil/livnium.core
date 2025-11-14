@@ -34,6 +34,9 @@ ENV/
 *~
 .DS_Store
 
+# Large archives (keep locally but don't track)
+*.tar.gz
+
 # Jupyter
 .ipynb_checkpoints/
 *.ipynb
