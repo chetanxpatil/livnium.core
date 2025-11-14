@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-11-13T20:33:05.127933",
+  "best_score": 0.3515286097685802,
+  "quantum_config": {
+    "rotation_scale": 1.0697976959250415,
+    "interference_strength": 1.0,
+    "feature_importance_boost": 0.5536299964753696,
+    "uncertainty_threshold": 0.5
+  },
+  "system_config": {
+    "phi_variance_target": 0.05536299964753697,
+    "temperature_min": 0.6724217462636657,
+    "metahead_confidence_threshold": 0.5
+  },
+  "metrics": {
+    "accuracy": 0.39,
+    "uncertainty": 0.48581619257959585,
+    "importance_variance": 0.007345924142249681,
+    "score": 0.3515286097685802
+  }
+}
