@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
 """
-5000-Qubit Capacity Test
+5000-Qubit-Analogue Capacity Test
 
-Tests the hierarchical geometry system's ability to handle 5000 qubits.
+⚠️ IMPORTANT: This is a quantum-inspired classical hierarchical simulator, NOT a physical quantum computer.
+
+Tests the hierarchical geometry system's ability to handle 5000 qubit-analogues (quantum-inspired classical units).
 This test verifies:
-1. Qubit creation (5000 qubits)
-2. Operations on 5000 qubits
+1. Qubit-analogue creation (5000 units)
+2. Operations on 5000 qubit-analogues
 3. Memory efficiency
 4. Performance metrics
+
+The system uses:
+- Geometric compression (hierarchical state grouping)
+- Tensor networks (MPS - Matrix Product States)
+- Lightweight qubit-analogue objects (classical data structures)
+- Hierarchical state management (geometry > geometry > geometry)
 """
 
 import numpy as np
