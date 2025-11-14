@@ -59,3 +59,4 @@ Thumbs.db
 
 # Archive (keep it but don't track changes)
 # archive/
+*.tar.gz
