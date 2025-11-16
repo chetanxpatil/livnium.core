@@ -1,5 +1,17 @@
 # Archive - Old Project Structure
 
+This folder contains **archived code** from previous iterations of the project.
+
+## Recent Archive (January 2025)
+
+### `pre_core_systems/` - Pre-Core Quantum Systems
+- **Location**: `archive/pre_core_systems/quantum/`
+- **Contents**: Hierarchical, Islands, and Livnium Core 1D systems
+- **Status**: Archived before integration into unified `core/` system
+- **See**: `archive/pre_core_systems/README.md` for details
+
+## Legacy Archive (November 2024)
+
 This folder contains the **old project structure** that has been migrated to the new `quantum/` directory.
 
 ## Contents
