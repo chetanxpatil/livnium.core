@@ -281,7 +281,7 @@ This project is licensed under the **Livnium License v1.1 (Fortress Grade)** - a
 
 For full license terms, see [LICENSE](LICENSE) or [LICENSE.md](LICENSE.md).
 
-**For commercial licensing inquiries**, please contact: chetanxpatil@users.noreply.github.com
+**For commercial licensing inquiries**, please contact: chetan12patil@gmail.com
 
 ---
 
