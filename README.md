@@ -5,6 +5,20 @@
 
 ---
 
+## ⚠️ IMPORTANT: Personal/Research Use Only
+
+**This software is provided for PERSONAL, NON-COMMERCIAL, RESEARCH, and EDUCATIONAL PURPOSES ONLY.**
+
+- ✅ **Permitted**: Personal study, research, education, non-commercial use
+- ❌ **Prohibited**: Commercial use, redistribution, derivative works, AI training, public hosting
+- 🔒 **Commercial Rights**: Reserved exclusively by the Owner
+
+**For commercial licensing inquiries**, please contact: chetanxpatil@users.noreply.github.com
+
+See [LICENSE](LICENSE) for full terms and conditions.
+
+---
+
 ## 🌟 What is LIVNIUM?
 
 LIVNIUM is a **pure native computing system** that processes language and information through geometric quantum-inspired structures—**without transformers, embeddings, or neural networks**. It represents a fundamental departure from conventional deep learning approaches.
