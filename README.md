@@ -152,8 +152,8 @@ This represents a **fundamental alternative** to transformer-based AI:
 ### Installation
 
 ```bash
-git clone <repository-url>
-cd clean-nova-livnium
+git clone https://github.com/chetanxpatil/livnium.core.git
+cd livnium.core
 python3 -m venv .venv
 source .venv/bin/activate
 pip install numpy
