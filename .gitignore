@@ -68,3 +68,7 @@ Thumbs.db
 experiments/nli/data/
 **/data/
 *.jsonl
+
+# Brain/cache directories (model caches)
+brain/
+best_params.json
