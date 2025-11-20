@@ -299,7 +299,7 @@ This is a research project. Contributions are welcome for:
 ## 📧 Contact
 
 **Chetan Patil**  
-Email: chetanxpatil@users.noreply.github.com
+Email: chetan12patil@gmail.com
 
 For research collaborations, commercial licensing, or technical inquiries.
 
