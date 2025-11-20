@@ -1,7 +1,7 @@
 # Livnium License v1.1 (Fortress Grade)
 ## Proprietary Research License
 
-**Copyright (c) 2025 Chetan Patil. All rights reserved.**
+**Copyright © 2025 Chetan Patil. All rights reserved.**
 
 ---
 
