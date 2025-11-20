@@ -193,7 +193,7 @@ python3 experiments/ramsey/run_ramsey_experiment.py
 ## 🏗️ Project Structure
 
 ```
-clean-nova-livnium/
+livnium.core/
 ├── core/                          # Core Livnium systems
 │   ├── classical/                 # Classical geometry engine
 │   ├── quantum/                   # Quantum layer
