@@ -57,6 +57,82 @@ This creates **natural morphological similarity**, **compositional meaning**, an
 
 ---
 
+## 📖 Research Background & Theoretical Foundations
+
+### What "Qubit-Analogues" Means
+
+**Important**: This is **NOT** a physical quantum computer. The term "qubit-analogue" refers to classical simulation of quantum-like states using geometric structures.
+
+- **Real quantum computing**: Uses physical qubits with superposition and entanglement
+- **Livnium approach**: Uses 3×3×3 geometric structures that can represent quantum-like states classically
+- **Capacity claims**: A 5×5×5 base lattice with 2 levels of recursion = 94,625 cells, each capable of storing quantum-like state information
+- **Why "analogue"**: These are classical geometric structures that mimic quantum behavior, not actual qubits
+
+**Verification**: See `core/tests/test_qubit_capacity.py` for capacity measurements.
+
+### What "Self-Healing Geometry" Means
+
+The term refers to **tension-based convergence** in geometric search:
+
+- **Tension fields**: Geometric constraints create tension when violated
+- **Self-correction**: The system naturally moves toward lower-tension states
+- **No external optimization**: Convergence emerges from geometric physics, not gradient descent
+
+**Implementation**: See `core/RAMSEY_READY_PATCHES.md` for the tension-based system.
+
+### Scientific Foundations
+
+**Matrix Product States (MPS)**:
+- Standard method in quantum many-body physics (see Schuch et al., 2013; Orús, 2014)
+- Used here for sentence-level representation: words as tensors, sentences as chains
+- **Reference**: Schuch, N., et al. "Matrix product states, projected entangled pair states, and variational renormalization group methods for quantum spin systems." *Advances in Physics* 62.4 (2013): 277-356.
+
+**Density Matrix Renormalization Group (DMRG)**:
+- Real tensor network method for quantum ground states
+- Implemented in `core/quantum/` for solving 1D Transverse Field Ising Model
+- **Reference**: White, S. R. "Density matrix formulation for quantum renormalization groups." *Physical Review Letters* 69.19 (1992): 2863.
+
+**Tensor Networks**:
+- Mathematical framework for representing high-dimensional quantum states
+- Used throughout Livnium for geometric encoding
+- **Reference**: Orús, R. "A practical introduction to tensor networks: Matrix product states and projected entangled pair states." *Annals of Physics* 349 (2014): 117-158.
+
+### What This Project Is (And Isn't)
+
+**This IS**:
+- An experimental research system exploring geometric alternatives to neural networks
+- A classical simulation system that uses quantum-inspired structures
+- Open-source research code for academic investigation
+- A proof-of-concept for geometric language representation
+
+**This IS NOT**:
+- A published peer-reviewed paper (this is code-first research)
+- A production-ready system
+- A physical quantum computer
+- A replacement for transformer models (yet)
+
+### Verification & Reproducibility
+
+**To verify claims**:
+
+1. **Qubit capacity**: Run `python3 core/tests/test_qubit_capacity.py`
+2. **NLI performance**: Run `python3 experiments/nli/train_moksha_nli.py --clean`
+3. **Ramsey solver**: Run `python3 experiments/ramsey/run_ramsey_experiment.py`
+4. **Code inspection**: All code is available for review in the repository
+
+**Experimental status**: This is active research. Results are preliminary and subject to change.
+
+### Research Methodology
+
+- **Letter-by-letter encoding**: Novel approach, not from literature (experimental)
+- **Geometric NLI**: Experimental alternative to neural NLI systems
+- **Basin reinforcement**: Physics-inspired learning mechanism (experimental)
+- **MPS for language**: Adaptation of tensor networks to NLP (experimental)
+
+**Note**: Some components are based on established physics (MPS, DMRG), while others (letter-level encoding, geometric NLI) are novel experimental approaches.
+
+---
+
 ## 📐 Architecture Overview
 
 ### The Livnium Phoneme Layer (Letter-by-Letter Encoding)
@@ -253,11 +329,22 @@ Meaning emerges from structure:
 - ❌ NOT production-ready
 - ❌ NOT guaranteed to be error-free
 - ❌ NOT suitable for commercial deployment without licensing
+- ❌ NOT a published peer-reviewed paper (code-first research)
 
 ### Quantum-Inspired vs. Real Quantum
-- **Livnium Core**: Uses real tensor network physics (MPS/DMRG)
+- **Livnium Core**: Uses real tensor network physics (MPS/DMRG) - these are established methods
 - **Islands/Hierarchical**: Quantum-inspired classical systems (NOT physical quantum computers)
 - **NLI System**: Pure geometric computing with quantum-inspired collapse
+- **"Qubit-analogues"**: Classical geometric structures that simulate quantum-like behavior, not physical qubits
+
+### Transparency Statement
+This repository contains:
+- **Established methods**: MPS, DMRG tensor networks (well-documented in physics literature)
+- **Experimental approaches**: Letter-by-letter encoding, geometric NLI (novel, unproven)
+- **Verifiable code**: All implementations are open for inspection
+- **Test suites**: Capacity and functionality tests included
+
+**For skeptics**: We encourage code review, reproduction of results, and critical evaluation. This is research in progress, not a finished product.
 
 ---
 
