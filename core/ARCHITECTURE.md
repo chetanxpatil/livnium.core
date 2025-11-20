@@ -192,9 +192,9 @@ core/
 ├── __init__.py
 ├── config.py
 ├── README.md
+├── ARCHITECTURE.md          # This file
+├── CORE_STRUCTURE.md        # Layer-by-layer structure guide
 ├── QUANTUM_LAYER.md
-├── STRUCTURE.md
-├── ARCHITECTURE.md
 ├── LAYER_0.md
 ├── MOKSHA.md
 │

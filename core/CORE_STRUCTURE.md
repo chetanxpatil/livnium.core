@@ -286,7 +286,7 @@ The Livnium Core System is organized into **8 layers** (0-7), each building on t
 **Core Documentation**:
 - `README.md` - Main overview
 - `ARCHITECTURE.md` - 8-layer architecture details
-- `STRUCTURE.md` - Folder structure
+- `CORE_STRUCTURE.md` - Layer-by-layer structure guide (this file)
 - `QUANTUM_LAYER.md` - Quantum layer details
 - `LAYER_0.md` - Recursive geometry engine details
 - `MOKSHA.md` - Moksha engine details

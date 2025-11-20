@@ -11,8 +11,11 @@ core/
 ├── __init__.py              # Main package exports
 ├── config.py                # Configuration with feature switches
 ├── README.md                # This file
+├── ARCHITECTURE.md          # Complete 8-layer architecture
+├── CORE_STRUCTURE.md        # Layer-by-layer structure guide
 ├── QUANTUM_LAYER.md         # Quantum layer documentation
-├── STRUCTURE.md             # Folder structure documentation
+├── LAYER_0.md               # Recursive geometry engine
+├── MOKSHA.md                # Fixed-point convergence
 │
 ├── classical/               # Classical geometric system
 │   ├── __init__.py
@@ -162,8 +165,11 @@ python3 core/tests/test_quantum.py
 ## Documentation
 
 - **README.md** - This file (overview)
+- **ARCHITECTURE.md** - Complete 8-layer architecture documentation
+- **CORE_STRUCTURE.md** - Layer-by-layer structure guide
 - **QUANTUM_LAYER.md** - Quantum layer details
-- **STRUCTURE.md** - Folder structure and organization
+- **LAYER_0.md** - Recursive geometry engine (Layer 0)
+- **MOKSHA.md** - Fixed-point convergence engine
 
 ## Comparison with Other Systems
 
