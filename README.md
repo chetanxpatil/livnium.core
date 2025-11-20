@@ -13,7 +13,7 @@
 - ❌ **Prohibited**: Commercial use, redistribution, derivative works, AI training, public hosting
 - 🔒 **Commercial Rights**: Reserved exclusively by the Owner
 
-**For commercial licensing inquiries**, please contact: chetanxpatil@users.noreply.github.com
+**For commercial licensing inquiries**, please contact: chetan12patil@gmail.com
 
 See [LICENSE](LICENSE) for full terms and conditions.
 
