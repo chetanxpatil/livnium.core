@@ -1,7 +1,7 @@
 """
 Test Entanglement Capacity in Recursive Geometry
 
-Tests how many qubits can be entangled simultaneously using:
+Tests how many omcubes can be entangled simultaneously using:
 - Pairwise entanglement (Bell pairs)
 - Chain entanglement (linear chains)
 - Cluster entanglement (fully connected clusters)
@@ -23,24 +23,24 @@ from core.quantum import QuantumLattice, QuantumCell
 from core.quantum.entanglement_manager import EntanglementManager, EntangledPair
 
 
-def count_entangled_qubits_recursive(level, entanglement_managers: Dict[int, EntanglementManager]) -> int:
-    """Recursively count all entangled qubits."""
+def count_entangled_omcubes_recursive(level, entanglement_managers: Dict[int, EntanglementManager]) -> int:
+    """Recursively count all entangled omcubes."""
     level_id = level.level_id
     
-    # Count entangled qubits at this level
+    # Count entangled omcubes at this level
     if level_id in entanglement_managers:
         manager = entanglement_managers[level_id]
         stats = manager.get_entanglement_statistics()
-        # Each pair involves 2 qubits, but we count unique qubits
-        entangled_qubits = stats['entangled_cells']
+        # Each pair involves 2 omcubes, but we count unique omcubes
+        entangled_omcubes = stats['entangled_cells']
     else:
-        entangled_qubits = 0
+        entangled_omcubes = 0
     
     # Count children recursively
     for child_level in level.children.values():
-        entangled_qubits += count_entangled_qubits_recursive(child_level, entanglement_managers)
+        entangled_omcubes += count_entangled_omcubes_recursive(child_level, entanglement_managers)
     
-    return entangled_qubits
+    return entangled_omcubes
 
 
 def initialize_quantum_for_all_levels(level, 
@@ -187,12 +187,12 @@ def test_pairwise_entanglement(base_lattice_size: int = 5,
               f"max {stats['max_connections']} connections/cell, "
               f"{stats['num_geometries']} geometries")
     
-    # Count total entangled qubits across all recursive levels
+    # Count total entangled omcubes across all recursive levels
     # Each geometry at a level has its own set of entangled cells
     # We need to count: (cells per geometry) × (number of geometries) for each level
     total_entangled = 0
     for level_id, stats in level_stats.items():
-        # Each geometry at this level has stats['entangled_cells'] qubits
+        # Each geometry at this level has stats['entangled_cells'] omcubes
         # And there are stats['num_geometries'] geometries at this level
         # Total = cells per geometry × number of geometries
         cells_per_geometry = stats['entangled_cells']
@@ -201,8 +201,8 @@ def test_pairwise_entanglement(base_lattice_size: int = 5,
     
     print()
     print(f"Total Bell pairs: {total_pairs:,}")
-    print(f"Total entangled qubits (across all recursive levels): {total_entangled:,}")
-    print(f"Average pairs per qubit: {total_pairs / total_entangled:.4f}" if total_entangled > 0 else "")
+    print(f"Total entangled omcubes (across all recursive levels): {total_entangled:,}")
+    print(f"Average pairs per omcube: {total_pairs / total_entangled:.4f}" if total_entangled > 0 else "")
     print()
     print(f"📊 Breakdown:")
     for level_id in sorted(level_stats.keys()):
@@ -210,11 +210,11 @@ def test_pairwise_entanglement(base_lattice_size: int = 5,
         cells_per_geo = stats['entangled_cells']
         num_geos = stats['num_geometries']
         level_total = cells_per_geo * num_geos
-        print(f"  Level {level_id}: {cells_per_geo} cells/geometry × {num_geos:,} geometries = {level_total:,} entangled qubits")
+        print(f"  Level {level_id}: {cells_per_geo} cells/geometry × {num_geos:,} geometries = {level_total:,} entangled omcubes")
     
     return {
         'total_pairs': total_pairs,
-        'total_entangled_qubits': total_entangled,
+        'total_entangled_omcubes': total_entangled,
         'level_stats': level_stats
     }
 
@@ -341,17 +341,17 @@ def test_chain_entanglement(base_lattice_size: int = 5,
               f"max length {stats['max_chain_length']}, "
               f"{stats['entangled_cells']:,} entangled cells")
     
-    total_entangled = count_entangled_qubits_recursive(level_0, entanglement_managers)
+    total_entangled = count_entangled_omcubes_recursive(level_0, entanglement_managers)
     
     print()
     print(f"Total chains: {total_chains:,}")
     print(f"Max chain length: {max_chain_length}")
-    print(f"Total entangled qubits: {total_entangled:,}")
+    print(f"Total entangled omcubes: {total_entangled:,}")
     
     return {
         'total_chains': total_chains,
         'max_chain_length': max_chain_length,
-        'total_entangled_qubits': total_entangled,
+        'total_entangled_omcubes': total_entangled,
         'level_stats': level_stats
     }
 
@@ -362,10 +362,10 @@ def test_cluster_entanglement(base_lattice_size: int = 5,
     """
     Test cluster entanglement (fully connected clusters).
     
-    Creates clusters of fully connected qubits.
+    Creates clusters of fully connected omcubes.
     """
     print("\n" + "=" * 70)
-    print(f"Test 3: Cluster Entanglement ({cluster_size}-qubit clusters)")
+    print(f"Test 3: Cluster Entanglement ({cluster_size}-omcube clusters)")
     print("=" * 70)
     
     config = LivniumCoreConfig(
@@ -410,7 +410,7 @@ def test_cluster_entanglement(base_lattice_size: int = 5,
             geometry = level.geometry
             cells = list(geometry.lattice.keys())
             
-            # Create clusters: groups of fully connected qubits
+            # Create clusters: groups of fully connected omcubes
             clusters_created = 0
             used_cells = set()
             
@@ -544,7 +544,7 @@ def run_all_tests():
     print("=" * 70)
     print("ENTANGLEMENT CAPACITY TEST SUITE")
     print("=" * 70)
-    print("Testing how many qubits can be entangled using recursive geometry")
+    print("Testing how many omcubes can be entangled using recursive geometry")
     print()
     
     base_lattice_size = 5
@@ -566,14 +566,14 @@ def run_all_tests():
     print("\n" + "=" * 70)
     print("SUMMARY: Full Recursive Entanglement Capacity")
     print("=" * 70)
-    print(f"Pairwise entanglement: {result1['total_entangled_qubits']:,} qubits")
-    print(f"Chain entanglement: {result2['total_entangled_qubits']:,} qubits")
-    print(f"Cluster entanglement: {result3['total_entangled_qubits']:,} qubits")
-    max_entangled = max(result1['total_entangled_qubits'], result2['total_entangled_qubits'], result3['total_entangled_qubits'])
-    print(f"Max entangled (any method): {max_entangled:,} qubits")
+    print(f"Pairwise entanglement: {result1['total_entangled_omcubes']:,} omcubes")
+    print(f"Chain entanglement: {result2['total_entangled_omcubes']:,} omcubes")
+    print(f"Cluster entanglement: {result3['total_entangled_omcubes']:,} omcubes")
+    max_entangled = max(result1['total_entangled_omcubes'], result2['total_entangled_omcubes'], result3['total_entangled_omcubes'])
+    print(f"Max entangled (any method): {max_entangled:,} omcubes")
     print()
     print("🎯 KEY FINDING: With recursive geometry, we can entangle")
-    print(f"   {max_entangled:,} qubits simultaneously (not just 125!)")
+    print(f"   {max_entangled:,} omcubes simultaneously (not just 125!)")
     print("   This is the full capacity across all recursive levels.")
     print("=" * 70)
 

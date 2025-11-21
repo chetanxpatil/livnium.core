@@ -1,9 +1,9 @@
 """
-Test Recursive Geometry Qubit Capacity
+Test Recursive Geometry Omcube Capacity
 
-Tests how many logical qubits can be represented using recursive geometry.
+Tests how many omcubes can be represented using recursive geometry.
 The recursive engine compresses entanglement into lower-scale geometry,
-allowing simulation of many qubits with limited resources.
+allowing simulation of many omcubes with limited resources.
 """
 
 import sys
@@ -20,8 +20,8 @@ from core.recursive import RecursiveGeometryEngine
 from core.quantum import QuantumLattice, QuantumCell
 
 
-def count_qubits_at_level(level, quantum_lattices: Dict[int, QuantumLattice]) -> int:
-    """Count qubits at a specific recursive level."""
+def count_omcubes_at_level(level, quantum_lattices: Dict[int, QuantumLattice]) -> int:
+    """Count omcubes at a specific recursive level."""
     if level not in quantum_lattices:
         return 0
     
@@ -29,9 +29,9 @@ def count_qubits_at_level(level, quantum_lattices: Dict[int, QuantumLattice]) ->
     return len(quantum_lattice.quantum_cells)
 
 
-def count_total_qubits_recursive(recursive_engine: RecursiveGeometryEngine,
+def count_total_omcubes_recursive(recursive_engine: RecursiveGeometryEngine,
                                   quantum_lattices: Dict[int, QuantumLattice]) -> int:
-    """Count total qubits across all recursive levels."""
+    """Count total omcubes across all recursive levels."""
     total = 0
     
     for level_id, level in recursive_engine.levels.items():
@@ -41,39 +41,39 @@ def count_total_qubits_recursive(recursive_engine: RecursiveGeometryEngine,
     return total
 
 
-def count_qubits_recursive(level) -> int:
-    """Recursively count all qubits in a level and its children."""
+def count_omcubes_recursive(level) -> int:
+    """Recursively count all omcubes in a level and its children."""
     from core.recursive.recursive_geometry_engine import GeometryLevel
     
     total = len(level.geometry.lattice)  # Cells at this level
     
     # Count children recursively
     for child_level in level.children.values():
-        total += count_qubits_recursive(child_level)
+        total += count_omcubes_recursive(child_level)
     
     return total
 
 
-def test_recursive_qubit_capacity(base_lattice_size: int = 5,
+def test_recursive_omcube_capacity(base_lattice_size: int = 5,
                                    max_depth: int = 3,
-                                   target_qubits: int = 3000) -> Dict:
+                                   target_omcubes: int = 3000) -> Dict:
     """
-    Test how many logical qubits can be represented recursively.
+    Test how many omcubes can be represented recursively.
     
     Args:
         base_lattice_size: Size of base lattice (must be odd, ≥3)
         max_depth: Maximum recursion depth
-        target_qubits: Target number of qubits to test
+        target_omcubes: Target number of omcubes to test
     
     Returns:
         Dictionary with capacity metrics
     """
     print("=" * 70)
-    print("Recursive Geometry Qubit Capacity Test")
+    print("Recursive Geometry Omcube Capacity Test")
     print("=" * 70)
     print(f"Base lattice: {base_lattice_size}×{base_lattice_size}×{base_lattice_size}")
     print(f"Max depth: {max_depth}")
-    print(f"Target qubits: {target_qubits:,}")
+    print(f"Target omcubes: {target_omcubes:,}")
     print()
     
     # Initialize base system
@@ -95,15 +95,15 @@ def test_recursive_qubit_capacity(base_lattice_size: int = 5,
         max_depth=max_depth
     )
     
-    # Count qubits at each level
+    # Count omcubes at each level
     level_0 = recursive_engine.levels[0]
-    base_qubits = len(level_0.geometry.lattice)
-    print(f"Level 0: {base_qubits:,} cells → {base_qubits:,} qubits")
+    base_omcubes = len(level_0.geometry.lattice)
+    print(f"Level 0: {base_omcubes:,} cells → {base_omcubes:,} omcubes")
     
-    level_breakdown = {0: base_qubits}
-    total_qubits = base_qubits
+    level_breakdown = {0: base_omcubes}
+    total_omcubes = base_omcubes
     
-    # Count qubits at each recursive level
+    # Count omcubes at each recursive level
     for level_id in range(1, max_depth + 1):
         level_qubits = 0
         num_subgeometries = 0
@@ -123,28 +123,28 @@ def test_recursive_qubit_capacity(base_lattice_size: int = 5,
                         total += count_deeper(grandchild, target_level)
                     return total
                 
-                level_qubits += count_deeper(child_level, level_id)
+                level_omcubes += count_deeper(child_level, level_id)
         
-        if level_qubits > 0:
-            level_breakdown[level_id] = level_qubits
-            total_qubits += level_qubits
-            print(f"Level {level_id}: {level_qubits:,} qubits (from sub-geometries)")
+        if level_omcubes > 0:
+            level_breakdown[level_id] = level_omcubes
+            total_omcubes += level_omcubes
+            print(f"Level {level_id}: {level_omcubes:,} omcubes (from sub-geometries)")
     
     # Also count recursively to get exact total
-    total_qubits_exact = count_qubits_recursive(level_0)
+    total_omcubes_exact = count_omcubes_recursive(level_0)
     
     print()
     print("=" * 70)
     print("Capacity Summary")
     print("=" * 70)
-    print(f"Total logical qubits: {total_qubits_exact:,}")
-    print(f"Target qubits: {target_qubits:,}")
-    if target_qubits > 0:
-        print(f"Capacity: {total_qubits_exact / target_qubits * 100:.1f}% of target")
+    print(f"Total omcubes: {total_omcubes_exact:,}")
+    print(f"Target omcubes: {target_omcubes:,}")
+    if target_omcubes > 0:
+        print(f"Capacity: {total_omcubes_exact / target_omcubes * 100:.1f}% of target")
     print()
     print("Breakdown by level:")
     for level_id, count in sorted(level_breakdown.items()):
-        print(f"  Level {level_id}: {count:,} qubits")
+        print(f"  Level {level_id}: {count:,} omcubes")
     
     # Calculate theoretical maximum
     base_cells = base_lattice_size ** 3
@@ -168,33 +168,33 @@ def test_recursive_qubit_capacity(base_lattice_size: int = 5,
         theoretical_max += cells_at_depth
     
     print()
-    print(f"Theoretical maximum (if fully subdivided): {theoretical_max:,} qubits")
-    print(f"Actual capacity: {total_qubits_exact:,} qubits")
+    print(f"Theoretical maximum (if fully subdivided): {theoretical_max:,} omcubes")
+    print(f"Actual capacity: {total_omcubes_exact:,} omcubes")
     if theoretical_max > 0:
-        print(f"Utilization: {total_qubits_exact / theoretical_max * 100:.2f}%")
+        print(f"Utilization: {total_omcubes_exact / theoretical_max * 100:.2f}%")
     
     # Test if we can reach target
-    can_reach_target = total_qubits_exact >= target_qubits
+    can_reach_target = total_omcubes_exact >= target_omcubes
     
     print()
     print("=" * 70)
     if can_reach_target:
-        print(f"✅ SUCCESS: Can represent {total_qubits_exact:,} qubits (exceeds target of {target_qubits:,})")
+        print(f"✅ SUCCESS: Can represent {total_omcubes_exact:,} omcubes (exceeds target of {target_omcubes:,})")
     else:
-        print(f"⚠️  PARTIAL: Can represent {total_qubits_exact:,} qubits (below target of {target_qubits:,})")
-        print(f"   Need {target_qubits - total_qubits_exact:,} more qubits")
+        print(f"⚠️  PARTIAL: Can represent {total_omcubes_exact:,} omcubes (below target of {target_omcubes:,})")
+        print(f"   Need {target_omcubes - total_omcubes_exact:,} more omcubes")
         print(f"   Suggestions:")
         print(f"   - Increase base_lattice_size (currently {base_lattice_size})")
         print(f"   - Increase max_depth (currently {max_depth})")
     print("=" * 70)
     
     return {
-        'total_qubits': total_qubits_exact,
-        'target_qubits': target_qubits,
+        'total_omcubes': total_omcubes_exact,
+        'target_omcubes': target_omcubes,
         'can_reach_target': can_reach_target,
         'level_breakdown': level_breakdown,
         'theoretical_max': theoretical_max,
-        'utilization': total_qubits_exact / theoretical_max if theoretical_max > 0 else 0
+        'utilization': total_omcubes_exact / theoretical_max if theoretical_max > 0 else 0
     }
 
 
@@ -218,16 +218,16 @@ def test_scaling():
     for lattice_size, max_depth, target in test_cases:
         print(f"\n--- Testing: {lattice_size}×{lattice_size}×{lattice_size}, depth={max_depth}, target={target} ---")
         try:
-            result = test_recursive_qubit_capacity(
+            result = test_recursive_omcube_capacity(
                 base_lattice_size=lattice_size,
                 max_depth=max_depth,
-                target_qubits=target
+                target_omcubes=target
             )
             results.append({
                 'lattice_size': lattice_size,
                 'max_depth': max_depth,
                 'target': target,
-                'actual': result['total_qubits'],
+                'actual': result['total_omcubes'],
                 'success': result['can_reach_target']
             })
         except Exception as e:
@@ -253,25 +253,25 @@ def test_scaling():
 
 
 if __name__ == "__main__":
-    # Test with target of 2,953-4,000 qubits
-    print("Testing capacity for 2,953-4,000 logical qubits...")
+    # Test with target of 2,953-4,000 omcubes
+    print("Testing capacity for 2,953-4,000 omcubes...")
     print()
     
     # Test 1: Conservative (target 2,953)
-    print("TEST 1: Target 2,953 qubits")
-    result1 = test_recursive_qubit_capacity(
+    print("TEST 1: Target 2,953 omcubes")
+    result1 = test_recursive_omcube_capacity(
         base_lattice_size=5,
         max_depth=3,
-        target_qubits=2953
+        target_omcubes=2953
     )
     
     # Test 2: Ambitious (target 4,000)
     print("\n\n")
-    print("TEST 2: Target 4,000 qubits")
-    result2 = test_recursive_qubit_capacity(
+    print("TEST 2: Target 4,000 omcubes")
+    result2 = test_recursive_omcube_capacity(
         base_lattice_size=7,
         max_depth=3,
-        target_qubits=4000
+        target_omcubes=4000
     )
     
     # Scaling analysis
