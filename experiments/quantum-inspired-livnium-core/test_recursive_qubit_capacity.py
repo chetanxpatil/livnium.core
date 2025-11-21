@@ -105,14 +105,14 @@ def test_recursive_omcube_capacity(base_lattice_size: int = 5,
     
     # Count omcubes at each recursive level
     for level_id in range(1, max_depth + 1):
-        level_qubits = 0
+        level_omcubes = 0
         num_subgeometries = 0
         
         # Count all child geometries at this level
         for parent_coords, child_level in level_0.children.items():
             if child_level.level_id == level_id:
                 num_subgeometries += 1
-                level_qubits += len(child_level.geometry.lattice)
+                level_omcubes += len(child_level.geometry.lattice)
             else:
                 # Recursively count deeper levels
                 def count_deeper(child, target_level):
