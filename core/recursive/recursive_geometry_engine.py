@@ -158,7 +158,10 @@ class RecursiveGeometryEngine:
             return None
         
         # Create child geometry with same config (except size)
+        # CRITICAL: Copy parent's config so quantum settings pass down!
         from ..config import LivniumCoreConfig
+        
+        # Explicitly inherit ALL config from parent (quantum settings preserved)
         child_config = LivniumCoreConfig(
             lattice_size=child_size,
             enable_face_exposure=parent_geometry.config.enable_face_exposure,
@@ -167,9 +170,23 @@ class RecursiveGeometryEngine:
             enable_90_degree_rotations=parent_geometry.config.enable_90_degree_rotations,
             enable_global_observer=parent_geometry.config.enable_global_observer,
             enable_semantic_polarity=parent_geometry.config.enable_semantic_polarity,
+            # CRITICAL FIX: Explicitly inherit quantum features
+            enable_quantum=parent_geometry.config.enable_quantum,
+            enable_superposition=parent_geometry.config.enable_superposition,
+            enable_quantum_gates=parent_geometry.config.enable_quantum_gates,
+            enable_entanglement=parent_geometry.config.enable_entanglement,
+            enable_measurement=parent_geometry.config.enable_measurement,
+            enable_geometry_quantum_coupling=parent_geometry.config.enable_geometry_quantum_coupling,
         )
         
+        # Create child geometry with inherited config
         child_geometry = LivniumCoreSystem(child_config)
+        
+        # CRITICAL: If parent has quantum active, ensure child is ready for quantum state
+        # The child geometry now has quantum config enabled, but quantum state initialization
+        # happens when QuantumLattice is created (which happens in application code).
+        # This ensures the child geometry is "quantum-ready" from birth.
+        
         return child_geometry
     
     def subdivide_cell(self, level_id: int, coords: Tuple[int, int, int]) -> bool:
