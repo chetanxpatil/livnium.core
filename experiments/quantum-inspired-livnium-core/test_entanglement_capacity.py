@@ -463,18 +463,18 @@ def test_cluster_entanglement(base_lattice_size: int = 5,
               f"{stats['entanglements']:,} pairs, "
               f"{stats['entangled_cells']:,} entangled cells")
     
-    total_entangled = count_entangled_qubits_recursive(level_0, entanglement_managers)
+    total_entangled = count_entangled_omcubes_recursive(level_0, entanglement_managers)
     
     print()
     print(f"Total clusters: {total_clusters:,}")
     print(f"Total entanglements in clusters: {total_entanglements_in_clusters:,}")
-    print(f"Total entangled qubits: {total_entangled:,}")
+    print(f"Total entangled omcubes: {total_entangled:,}")
     print(f"Average cluster size: {total_entangled / total_clusters:.1f}" if total_clusters > 0 else "")
     
     return {
         'total_clusters': total_clusters,
         'total_entanglements': total_entanglements_in_clusters,
-        'total_entangled_qubits': total_entangled,
+        'total_entangled_omcubes': total_entangled,
         'level_stats': level_stats
     }
 
