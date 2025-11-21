@@ -261,6 +261,76 @@ class WordChain:
         
         combined_amplitudes /= len(self.letter_cubes)
         return combined_amplitudes
+    
+    @property
+    def geometry(self):
+        """Backward compatibility: return geometry-like object."""
+        class GeometryProxy:
+            def __init__(self, weights):
+                self.weights = weights
+        return GeometryProxy(self.get_geometry_vector().reshape(self.lattice_size, self.lattice_size, self.lattice_size))
+    
+    @property
+    def quantum_state(self):
+        """Backward compatibility: return quantum state-like object that modifies underlying letter cubes."""
+        class QuantumStateProxy:
+            def __init__(self, word_chain):
+                self.word_chain = word_chain
+            
+            @property
+            def amplitudes(self):
+                """Get combined quantum amplitudes that sync back when modified."""
+                class MutableAmplitudes:
+                    def __init__(self, word_chain):
+                        self.word_chain = word_chain
+                        self._value = word_chain.get_quantum_vector()
+                    
+                    def __array__(self, dtype=None):
+                        if dtype is not None:
+                            return np.array(self._value, dtype=dtype)
+                        return self._value
+                    
+                    def __imul__(self, factor):
+                        """In-place multiply: apply to all letter cubes."""
+                        if not self.word_chain.letter_cubes:
+                            return self
+                        # Apply scaling to each letter cube
+                        for cube in self.word_chain.letter_cubes:
+                            cube.quantum_state.amplitudes *= factor
+                            cube.quantum_state.normalize()
+                        # Update cached value
+                        self._value = self.word_chain.get_quantum_vector()
+                        return self
+                    
+                    def __getitem__(self, key):
+                        return self._value[key]
+                    
+                    def __setitem__(self, key, value):
+                        self._value[key] = value
+                        # Sync back to letter cubes (distribute proportionally)
+                        if self.word_chain.letter_cubes:
+                            for cube in self.word_chain.letter_cubes:
+                                cube.quantum_state.amplitudes = self._value.copy()
+                                cube.quantum_state.normalize()
+                
+                return MutableAmplitudes(self.word_chain)
+            
+            @amplitudes.setter
+            def amplitudes(self, value):
+                """Setter for amplitudes - apply to all letter cubes."""
+                if not self.word_chain.letter_cubes:
+                    return
+                # Distribute the new amplitudes to all letter cubes
+                for cube in self.word_chain.letter_cubes:
+                    cube.quantum_state.amplitudes = np.array(value, dtype=complex).copy()
+                    cube.quantum_state.normalize()
+            
+            def normalize(self):
+                """Normalize all letter cube quantum states."""
+                for cube in self.word_chain.letter_cubes:
+                    cube.quantum_state.normalize()
+        
+        return QuantumStateProxy(self)
 
 
 # ============================================================================
@@ -373,6 +443,16 @@ class SentenceChain:
             matches += 1
         
         return total_resonance / max(1, matches)
+    
+    @property
+    def chain(self):
+        """Backward compatibility: return word_chains as 'chain'."""
+        return self.word_chains
+    
+    @property
+    def words(self):
+        """Backward compatibility: return list of word strings."""
+        return [wc.word for wc in self.word_chains]
 
 
 # ============================================================================
