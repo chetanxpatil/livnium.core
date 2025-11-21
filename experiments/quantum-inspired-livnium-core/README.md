@@ -83,3 +83,25 @@ These experiments use:
 - Recursive geometry compresses entanglement into lower-scale geometry
 - Quantum features require proper configuration in `LivniumCoreConfig`
 
+## ⚠️ Important: What These Numbers Mean
+
+### ✅ What IS Real:
+- **Cell counts are accurate**: 2.5M cells = 2.5M quantum state capacity
+- **Math is verified**: All recursive geometry calculations are correct
+- **Tests are reproducible**: Run the tests yourself to verify
+- **Simulation is real**: These are actual classical simulations of quantum states
+
+### ⚠️ What These Are NOT:
+- **NOT physical qubits**: No actual quantum hardware
+- **NOT quantum speedup**: Still classical computation (no exponential speedup)
+- **NOT error-corrected**: Perfect by design, not by error correction
+- **NOT real entanglement**: Simulated correlations, not physical entanglement
+
+### 🎯 Honest Terminology:
+- **"Simulated logical qubits"** = Classical simulation of perfect quantum states
+- **"2.5M qubits"** = 2.5M cells, each capable of holding a quantum state
+- **"Entangled"** = Simulated quantum correlations between cells
+- **"Perfect"** = No errors by design (idealized simulation)
+
+**See `VERIFICATION.md` for complete mathematical verification of all claims.**
+
