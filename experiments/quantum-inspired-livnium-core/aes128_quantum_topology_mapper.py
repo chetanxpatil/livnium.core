@@ -97,14 +97,16 @@ class QuantumTopologyMapper:
                                 target_ct: bytes,
                                 num_samples: int = 1000) -> Tuple[List[float], List[float]]:
         """
-        Use quantum superposition to sample the landscape.
+        Use quantum superposition with RECURSIVE GEOMETRY to sample the landscape.
+        
+        Now uses RecursiveGeometryEngine to access 2.5M omcubes across all levels.
         
         Returns:
             (tensions, gradients) lists
         """
-        # Initialize system
+        # Initialize recursive geometry system
         config = LivniumCoreConfig(
-            lattice_size=5,  # 5×5×5 = 125 cells
+            lattice_size=5,  # 5×5×5 base = 125 cells at Level 0
             enable_quantum=True,
             enable_superposition=True,
             enable_quantum_gates=True,
@@ -113,38 +115,62 @@ class QuantumTopologyMapper:
             enable_geometry_quantum_coupling=True
         )
         
-        system = LivniumCoreSystem(config)
-        quantum_lattice = QuantumLattice(system)
+        base_system = LivniumCoreSystem(config)
         
-        # Encode true key as starting point
-        true_key_cells = self.encode_key_to_geometry(true_key, system)
+        # Create recursive geometry engine (access to 2.5M omcubes)
+        print("  Building recursive geometry (2.5M omcubes)...")
+        recursive_engine = RecursiveGeometryEngine(
+            base_geometry=base_system,
+            max_depth=3  # Level 0: 125, Level 1: 3,375, Level 2: 91,125, Level 3: 2,460,375
+        )
+        print("  ✓ Recursive geometry ready")
         
-        # Initialize quantum cells in superposition around true key
+        # Initialize quantum lattices for each recursive level
+        quantum_lattices: Dict[int, QuantumLattice] = {}
+        level_0 = recursive_engine.levels[0]
+        quantum_lattices[0] = QuantumLattice(level_0.geometry)
+        
+        # Recursively initialize quantum lattices for all child levels
+        def init_quantum_recursive(level):
+            """Recursively initialize quantum lattices."""
+            level_id = level.level_id
+            if level_id not in quantum_lattices:
+                if level.geometry.config.enable_quantum:
+                    try:
+                        quantum_lattices[level_id] = QuantumLattice(level.geometry)
+                    except Exception:
+                        pass  # Skip if quantum not enabled
+            
+            # Recursively process children
+            for child_level in level.children.values():
+                init_quantum_recursive(child_level)
+        
+        init_quantum_recursive(level_0)
+        print(f"  ✓ Initialized {len(quantum_lattices)} quantum lattices across recursive levels")
+        
+        # Distribute key search across recursive levels
+        # Strategy: Use Level 0 for primary key bytes, deeper levels for exploration
         tensions = []
         gradients = []
         
-        # Use first 16 cells for key bytes
-        key_coords = list(system.lattice.keys())[:16]
+        # Get key coordinates from Level 0 (primary key representation)
+        level_0_coords = list(level_0.geometry.lattice.keys())[:16]
         
-        # Initialize quantum superposition: each byte in superposition
-        # centered around true key value
-        for i, coords in enumerate(key_coords):
-            if coords in quantum_lattice.quantum_cells:
-                cell = quantum_lattice.quantum_cells[coords]
-                # Create 256-level qudit with amplitudes centered around true key byte
+        # Initialize quantum superposition at Level 0
+        ql_0 = quantum_lattices[0]
+        for i, coords in enumerate(level_0_coords):
+            if coords in ql_0.quantum_cells:
+                cell = ql_0.quantum_cells[coords]
                 true_byte = true_key[i] if i < len(true_key) else 0
                 
-                # Gaussian-like distribution centered at true_byte
+                # Gaussian distribution centered at true_byte
                 amplitudes = np.zeros(256, dtype=complex)
                 for val in range(256):
-                    # Distance from true byte
                     dist = min(abs(val - true_byte), 256 - abs(val - true_byte))
-                    # Gaussian: exp(-dist²/σ²)
-                    sigma = 10.0  # Spread parameter
+                    sigma = 10.0
                     amplitude = np.exp(-(dist**2) / (2 * sigma**2))
                     amplitudes[val] = amplitude
                 
-                # Normalize
                 norm = np.sqrt(np.sum(np.abs(amplitudes)**2))
                 if norm > 1e-10:
                     amplitudes /= norm
@@ -155,18 +181,37 @@ class QuantumTopologyMapper:
                 cell.num_levels = 256
                 cell.normalize()
         
-        # Sample from quantum superposition
+        # Sample from quantum superposition across all recursive levels
+        samples_per_level = max(1, num_samples // len(quantum_lattices))
+        
         for sample_idx in range(num_samples):
+            # Choose which level to sample from (distribute across levels)
+            level_id = sample_idx % len(quantum_lattices)
+            if level_id not in quantum_lattices:
+                level_id = 0  # Fallback to Level 0
+            
+            ql = quantum_lattices[level_id]
+            level = None
+            for lvl in recursive_engine.levels.values():
+                if lvl.level_id == level_id:
+                    level = lvl
+                    break
+            
+            if level is None:
+                continue
+            
+            # Get coordinates for this level (use first 16 cells)
+            level_coords = list(level.geometry.lattice.keys())[:16]
+            
             # Measure quantum state to get a candidate key
             candidate_key = bytearray(16)
-            for i, coords in enumerate(key_coords):
-                if coords in quantum_lattice.quantum_cells:
-                    cell = quantum_lattice.quantum_cells[coords]
+            for i, coords in enumerate(level_coords):
+                if coords in ql.quantum_cells:
+                    cell = ql.quantum_cells[coords]
                     measured_val = cell.measure()
                     candidate_key[i] = measured_val % 256
                     
-                    # Re-initialize for next measurement (maintain superposition)
-                    # Recreate Gaussian distribution
+                    # Re-initialize superposition (maintain Gaussian around true key)
                     true_byte = true_key[i] if i < len(true_key) else 0
                     amplitudes = np.zeros(256, dtype=complex)
                     for val in range(256):
@@ -191,6 +236,7 @@ class QuantumTopologyMapper:
             neighbor_tension = self.get_tension(cipher, bytes(neighbor_key), plaintext, target_ct)
             gradients.append(abs(tension - neighbor_tension))
         
+        print(f"  ✓ Sampled {len(tensions)} points across {len(quantum_lattices)} recursive levels")
         return tensions, gradients
     
     def classical_sample_landscape(self,
@@ -282,7 +328,8 @@ class QuantumTopologyMapper:
             print("\nUsing: Quantum Superposition + Recursive Geometry")
             print("  - Quantum superposition explores key space")
             print("  - Gaussian distribution centered on true key")
-            print("  - ~2.5M logical qubits available")
+            print("  - RecursiveGeometryEngine: 2.5M omcubes across 4 levels")
+            print("  - Parallel search across all recursive levels")
         else:
             print("\nUsing: Classical Random Sampling")
         
