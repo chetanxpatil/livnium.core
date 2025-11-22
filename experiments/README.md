@@ -30,6 +30,12 @@ Research experiments exploring Livnium's capabilities across different domains.
   - Dynamic tension fields
   - Checkpoint system for long-running searches
 
+- **`nxn_demo/`**: N×N×N Cube Size Demonstrations
+  - Demonstrates Omcubes (odd N ≥ 3) vs DataCubes (even N ≥ 2)
+  - Protects core Livnium intellectual property
+  - Shows why even cubes cannot implement Livnium axioms
+  - Architecture demonstration: DataCube → OmCube → DataCube
+
 ## Purpose
 
 These experiments explore:
