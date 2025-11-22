@@ -84,14 +84,29 @@ class MeasurementEngine:
     def measure_entangled_pair(self, pair: EntangledPair,
                                basis: str = "computational") -> Tuple[int, int]:
         """
+        DEPRECATED: Measures "fake" entanglement metadata.
+        
+        ⚠️ WARNING: This measures the metadata label, NOT the actual qubits! ⚠️
+        
+        This method measures the EntangledPair's state_vector which is just
+        metadata and does NOT affect the actual QuantumCell amplitudes. This
+        is why teleportation fidelity was 0.0 - the measurement result didn't
+        update the Source qubit's reality.
+        
+        For true quantum protocols, use `TrueQuantumRegister.measure_qubit()`
+        from `true_quantum_layer.py`.
+        
+        This method is kept for backward compatibility but should not be used
+        for quantum protocols.
+        
         Measure an entangled pair (2-qubit measurement).
         
         Args:
-            pair: Entangled pair
+            pair: Entangled pair (metadata only)
             basis: Measurement basis ("computational", "bell", etc.)
             
         Returns:
-            Tuple of (cell1_state, cell2_state)
+            Tuple of (cell1_state, cell2_state) - from metadata, not real qubits
         """
         if basis == "computational":
             # Measure in computational basis

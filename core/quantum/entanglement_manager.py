@@ -13,7 +13,19 @@ from collections import defaultdict
 @dataclass
 class EntangledPair:
     """
-    Represents entanglement between two cells.
+    DEPRECATED: This class represents "fake" entanglement metadata.
+    
+    It stores a 4-element vector that acts like a label but does NOT affect
+    the actual QuantumCell amplitudes, creating a disconnect.
+    
+    ⚠️ DO NOT USE FOR TRUE QUANTUM PROTOCOLS ⚠️
+    
+    For true quantum entanglement, use `TrueQuantumRegister` from
+    `true_quantum_layer.py` which implements proper tensor product mechanics.
+    
+    This class is kept for backward compatibility with geometry-quantum coupling,
+    but should not be used for quantum teleportation, Bell tests, or other
+    protocols requiring true multi-qubit entanglement.
     
     For 2-qubit entanglement: |ψ⟩ = α|00⟩ + β|01⟩ + γ|10⟩ + δ|11⟩
     """
@@ -76,6 +88,18 @@ class EntanglementManager:
                         cell2: Tuple[int, int, int],
                         bell_type: str = "phi_plus") -> EntangledPair:
         """
+        DEPRECATED: Creates "fake" Bell pair metadata.
+        
+        ⚠️ WARNING: This does NOT create true quantum entanglement! ⚠️
+        
+        This method only creates metadata that tracks entanglement but does NOT
+        affect the actual QuantumCell amplitudes. For true quantum protocols
+        (teleportation, Bell tests), use `TrueQuantumRegister` from
+        `true_quantum_layer.py`.
+        
+        This method is kept for backward compatibility with geometry-quantum
+        coupling, but should not be used for quantum protocols.
+        
         Create Bell state between two cells.
         
         Args:
@@ -84,7 +108,7 @@ class EntanglementManager:
             bell_type: Type of Bell state ("phi_plus", "phi_minus", "psi_plus", "psi_minus")
             
         Returns:
-            Entangled pair
+            Entangled pair (metadata only, not true entanglement)
         """
         # Bell states
         bell_states = {

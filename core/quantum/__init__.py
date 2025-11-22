@@ -10,6 +10,7 @@ from .quantum_lattice import QuantumLattice
 from .entanglement_manager import EntanglementManager, EntangledPair
 from .measurement_engine import MeasurementEngine, MeasurementResult
 from .geometry_quantum_coupling import GeometryQuantumCoupling
+from .true_quantum_layer import TrueQuantumRegister
 
 __all__ = [
     'QuantumCell',
@@ -21,5 +22,6 @@ __all__ = [
     'MeasurementEngine',
     'MeasurementResult',
     'GeometryQuantumCoupling',
+    'TrueQuantumRegister',  # True tensor product quantum mechanics
 ]
 
