@@ -41,6 +41,39 @@ Academic use is allowed only by individual students or
 individual researchers acting independently, not on behalf 
 of an institution.
 
+---------------------------------------------------------------------------
+Axiom & Architecture Protection Clause
+---------------------------------------------------------------------------
+
+The core axioms, rules, definitions, geometric constraints, collapse logic,
+recursive architecture, symbolic-weight system, state-space invariants,
+and computational framework of Livnium (collectively, the "Livnium Axioms")
+are an integral part of the Software and are protected under the same
+copyright and license terms.
+
+No person, organization, company, laboratory, research group, or institution
+may reproduce, reimplement, modify, translate, adapt, or use the Livnium
+Axioms or any substantially similar system for any commercial purpose or
+for any internal corporate or institutional research, development,
+evaluation, benchmarking, or experimental use.
+
+Any implementation—whether partial, full, rewritten, renamed, or
+reconstructed—that derives from, is based on, or is substantially similar
+to the Livnium Axioms is considered a derivative work and is prohibited
+from commercial or corporate use without a separate written commercial
+license from the Owner.
+
+This includes but is not limited to:
+- implementing the same axioms or rules in new code,
+- reproducing the recursive geometric structure,
+- using the inward-collapse computation model,
+- implementing the symbolic-weight or exposure system,
+- replicating the attractor-basin architecture,
+- or creating systems that emulate the functional behavior of Livnium.
+
+All commercial rights related to the Livnium Axioms and derivative systems
+are exclusively reserved by the Owner.
+
 You may NOT:
 
 - Use the Software for any commercial purpose.
