@@ -32,5 +32,35 @@ This module provides:
 3. **Geometric propagation**: Reward flows through connected geometric structures
 4. **Basin deepening**: Correct patterns become stronger attractors
 
+## Philosophy: Reward to Let Structure Emerge
+
+**Reward the good. Don't punish wrong answers.**
+
+- **Reward correct behaviors**: Deepen the basins that work (tension drops get large rewards)
+- **Let incorrect patterns fade naturally**: Bad outcomes get no reward (just absence of positive signal)
+- **Small exploration cost**: A tiny operational cost (0.05) for trying new actions, not punishment for being wrong
+- **Trust the geometry**: The structure will emerge from positive reinforcement alone
+- **No forced correction**: Don't fight the system - guide it gently
+
+**What the code does:**
+- ✅ Tension drops → Large positive rewards (2.0 × tension_drop × 10)
+- ✅ Staying in good basins → Stability rewards (0.1)
+- ⚠️ Exploration actions → Small cost (0.05) - operational, not punitive
+- ✅ Tension increases → No reward (just 0, or small exploration cost)
+
+This approach lets the geometric structure naturally organize itself around successful patterns, creating stable attractors without destructive interference.
+
 Used by training pipelines (e.g., NLI training) to reinforce correct behaviors through geometric feedback rather than gradient descent.
+
+## Future Directions
+
+Potential improvements and deeper analysis:
+
+- **Stability of reward curves**: Analyze long-term reward behavior and convergence patterns
+- **Long-run drift**: Monitor reward signals over extended training periods
+- **Reward saturation/explosion**: Ensure rewards remain bounded and effective
+- **Basin deepening rate**: Tune how quickly correct attractors strengthen
+- **Geometric attractor shaper**: Optimize reward system to properly shape the energy landscape for Livnium
+
+These improvements would enhance the learning system's ability to shape geometric attractors effectively.
 
