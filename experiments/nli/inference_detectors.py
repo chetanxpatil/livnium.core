@@ -237,7 +237,7 @@ class EntailmentDetector:
             'geometric_score': float(geometric_score),
             'entails': final_score > 0.5
         }
-
+    
 
 class ContradictionDetector:
     """Detect contradiction using geometric opposition (negative resonance)."""
@@ -459,8 +459,8 @@ class NLIClassifier:
                 confidence = con_score
             else:
                 # All equal or very close → Neutral
-                label = 'neutral'
-                confidence = neutral_score
+            label = 'neutral'
+            confidence = neutral_score
         
         return {
             'label': label,

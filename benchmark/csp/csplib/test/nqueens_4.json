@@ -1,0 +1,93 @@
+{
+  "variables": {
+    "Q1": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "Q2": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "Q3": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "Q4": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "constraints": [
+    {
+      "type": "all_different",
+      "vars": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4"
+      ]
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q1",
+        "Q2"
+      ],
+      "row_i": 0,
+      "row_j": 1
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q1",
+        "Q3"
+      ],
+      "row_i": 0,
+      "row_j": 2
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q1",
+        "Q4"
+      ],
+      "row_i": 0,
+      "row_j": 3
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q2",
+        "Q3"
+      ],
+      "row_i": 1,
+      "row_j": 2
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q2",
+        "Q4"
+      ],
+      "row_i": 1,
+      "row_j": 3
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q3",
+        "Q4"
+      ],
+      "row_i": 2,
+      "row_j": 3
+    }
+  ]
+}

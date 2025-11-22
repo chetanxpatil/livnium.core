@@ -1,0 +1,232 @@
+{
+  "livnium": [
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": {
+        "V1": 1,
+        "V2": 0,
+        "V3": 1
+      },
+      "time": 0.0009489059448242188,
+      "steps": 1,
+      "num_satisfied_constraints": 2,
+      "total_constraints": 3,
+      "file": "graph_coloring_triangle.json",
+      "num_vars": 3,
+      "num_constraints": 3
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": {
+        "Q1": 3,
+        "Q2": 0,
+        "Q3": 3,
+        "Q4": 0
+      },
+      "time": 0.33129119873046875,
+      "steps": 1000,
+      "num_satisfied_constraints": 5,
+      "total_constraints": 7,
+      "file": "nqueens_4.json",
+      "num_vars": 4,
+      "num_constraints": 7
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": {
+        "Q1": 2,
+        "Q2": 3,
+        "Q3": 2,
+        "Q4": 3,
+        "Q5": 4
+      },
+      "time": 0.5031449794769287,
+      "steps": 1000,
+      "num_satisfied_constraints": 5,
+      "total_constraints": 11,
+      "file": "nqueens_5.json",
+      "num_vars": 5,
+      "num_constraints": 11
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": {
+        "Q1": 3,
+        "Q2": 0,
+        "Q3": 3,
+        "Q4": 0,
+        "Q5": 3,
+        "Q6": 0
+      },
+      "time": 0.10754084587097168,
+      "steps": 171,
+      "num_satisfied_constraints": 12,
+      "total_constraints": 16,
+      "file": "nqueens_6.json",
+      "num_vars": 6,
+      "num_constraints": 16
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": {
+        "Q1": 3,
+        "Q2": 7,
+        "Q3": 3,
+        "Q4": 7,
+        "Q5": 3,
+        "Q6": 7,
+        "Q7": 3,
+        "Q8": 7
+      },
+      "time": 0.050692081451416016,
+      "steps": 57,
+      "num_satisfied_constraints": 28,
+      "total_constraints": 29,
+      "file": "nqueens_8.json",
+      "num_vars": 8,
+      "num_constraints": 29
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": {
+        "C11": 4,
+        "C12": 3,
+        "C13": 4,
+        "C14": 3,
+        "C21": 2,
+        "C22": 3,
+        "C23": 4,
+        "C24": 3,
+        "C31": 4,
+        "C32": 3,
+        "C33": 2,
+        "C34": 3,
+        "C41": 2,
+        "C42": 1,
+        "C43": 2,
+        "C44": 3
+      },
+      "time": 0.0018818378448486328,
+      "steps": 1,
+      "num_satisfied_constraints": 1,
+      "total_constraints": 12,
+      "file": "sudoku_4x4.json",
+      "num_vars": 16,
+      "num_constraints": 12
+    }
+  ],
+  "python_constraint": [
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": null,
+      "time": 3.409385681152344e-05,
+      "num_solutions": 0,
+      "num_satisfied_constraints": 0,
+      "total_constraints": 3,
+      "file": "graph_coloring_triangle.json",
+      "num_vars": 3,
+      "num_constraints": 3
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": null,
+      "time": 0.0001480579376220703,
+      "num_solutions": 0,
+      "num_satisfied_constraints": 0,
+      "total_constraints": 7,
+      "file": "nqueens_4.json",
+      "num_vars": 4,
+      "num_constraints": 7
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": null,
+      "time": 0.0006089210510253906,
+      "num_solutions": 0,
+      "num_satisfied_constraints": 0,
+      "total_constraints": 11,
+      "file": "nqueens_5.json",
+      "num_vars": 5,
+      "num_constraints": 11
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": null,
+      "time": 0.004194021224975586,
+      "num_solutions": 0,
+      "num_satisfied_constraints": 0,
+      "total_constraints": 16,
+      "file": "nqueens_6.json",
+      "num_vars": 6,
+      "num_constraints": 16
+    },
+    {
+      "solved": true,
+      "satisfiable": false,
+      "assignment": null,
+      "time": 0.39564013481140137,
+      "num_solutions": 0,
+      "num_satisfied_constraints": 0,
+      "total_constraints": 29,
+      "file": "nqueens_8.json",
+      "num_vars": 8,
+      "num_constraints": 29
+    },
+    {
+      "solved": true,
+      "satisfiable": true,
+      "assignment": {
+        "C11": 4,
+        "C12": 3,
+        "C13": 2,
+        "C14": 1,
+        "C21": 2,
+        "C22": 1,
+        "C23": 4,
+        "C24": 3,
+        "C31": 3,
+        "C41": 1,
+        "C32": 4,
+        "C42": 2,
+        "C33": 1,
+        "C34": 2,
+        "C43": 3,
+        "C44": 4
+      },
+      "time": 0.01862621307373047,
+      "num_solutions": 288,
+      "num_satisfied_constraints": 12,
+      "total_constraints": 12,
+      "file": "sudoku_4x4.json",
+      "num_vars": 16,
+      "num_constraints": 12
+    }
+  ],
+  "summary": {
+    "total_problems": 6,
+    "livnium": {
+      "solved": 6,
+      "unsolved": 0,
+      "avg_time": 0.165916641553243,
+      "min_time": 0.0009489059448242188,
+      "max_time": 0.5031449794769287
+    },
+    "python_constraint": {
+      "solved": 6,
+      "unsolved": 0,
+      "avg_time": 0.06987524032592773,
+      "min_time": 3.409385681152344e-05,
+      "max_time": 0.39564013481140137
+    }
+  }
+}

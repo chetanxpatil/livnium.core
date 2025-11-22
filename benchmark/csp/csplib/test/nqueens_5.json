@@ -1,0 +1,141 @@
+{
+  "variables": {
+    "Q1": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "Q2": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "Q3": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "Q4": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "Q5": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "constraints": [
+    {
+      "type": "all_different",
+      "vars": [
+        "Q1",
+        "Q2",
+        "Q3",
+        "Q4",
+        "Q5"
+      ]
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q1",
+        "Q2"
+      ],
+      "row_i": 0,
+      "row_j": 1
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q1",
+        "Q3"
+      ],
+      "row_i": 0,
+      "row_j": 2
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q1",
+        "Q4"
+      ],
+      "row_i": 0,
+      "row_j": 3
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q1",
+        "Q5"
+      ],
+      "row_i": 0,
+      "row_j": 4
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q2",
+        "Q3"
+      ],
+      "row_i": 1,
+      "row_j": 2
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q2",
+        "Q4"
+      ],
+      "row_i": 1,
+      "row_j": 3
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q2",
+        "Q5"
+      ],
+      "row_i": 1,
+      "row_j": 4
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q3",
+        "Q4"
+      ],
+      "row_i": 2,
+      "row_j": 3
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q3",
+        "Q5"
+      ],
+      "row_i": 2,
+      "row_j": 4
+    },
+    {
+      "type": "diagonal",
+      "vars": [
+        "Q4",
+        "Q5"
+      ],
+      "row_i": 3,
+      "row_j": 4
+    }
+  ]
+}

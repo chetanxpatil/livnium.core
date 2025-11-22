@@ -1,0 +1,39 @@
+{
+  "variables": {
+    "V1": [
+      0,
+      1
+    ],
+    "V2": [
+      0,
+      1
+    ],
+    "V3": [
+      0,
+      1
+    ]
+  },
+  "constraints": [
+    {
+      "type": "not_equal",
+      "vars": [
+        "V1",
+        "V2"
+      ]
+    },
+    {
+      "type": "not_equal",
+      "vars": [
+        "V2",
+        "V3"
+      ]
+    },
+    {
+      "type": "not_equal",
+      "vars": [
+        "V3",
+        "V1"
+      ]
+    }
+  ]
+}

@@ -205,13 +205,132 @@ class UniversalProblemEncoder:
         Solutions: Variable assignments (basins)
         
         Args:
-            problem: SAT specification
+            problem: SAT specification with:
+                - 'clauses': List of clauses, each clause is list of literals (ints)
+                - 'num_vars': Number of variables
+                - 'n_candidates': Number of candidate assignments (default: 20)
         
         Returns:
             EncodedProblem
         """
-        # TODO: Implement SAT encoding
-        raise NotImplementedError("SAT encoding not yet implemented")
+        clauses = problem.get('clauses', [])
+        num_vars = problem.get('num_vars', 0)
+        n_candidates = problem.get('n_candidates', 20)
+        
+        if not clauses or num_vars == 0:
+            raise ValueError("SAT problem must have clauses and num_vars")
+        
+        # Map variables to coordinates
+        # Each variable gets one coordinate (or multiple for redundancy)
+        coords_list = list(self.system.lattice.keys())
+        variable_mappings = {}
+        
+        # Assign coordinates to variables
+        for var_id in range(1, num_vars + 1):  # Variables are 1-indexed
+            if (var_id - 1) < len(coords_list):
+                var_coords = [coords_list[var_id - 1]]
+            else:
+                # Wrap around if more variables than coordinates
+                var_coords = [coords_list[(var_id - 1) % len(coords_list)]]
+            variable_mappings[f"var_{var_id}"] = var_coords
+            variable_mappings[f"var_{-var_id}"] = var_coords  # Negation uses same coords
+        
+        # Encode clauses as tension fields
+        tension_fields = []
+        
+        for clause_idx, clause in enumerate(clauses):
+            # Get coordinates for literals in this clause
+            clause_coords = []
+            for literal in clause:
+                var_id = abs(literal)
+                if f"var_{var_id}" in variable_mappings:
+                    clause_coords.extend(variable_mappings[f"var_{var_id}"])
+            
+            if not clause_coords:
+                continue
+            
+            # Create tension function: high tension if clause is unsatisfied
+            def create_clause_tension_fn(clause_literals, literal_coords_map):
+                def compute_tension(system: LivniumCoreSystem) -> float:
+                    # Check if clause is satisfied
+                    clause_satisfied = False
+                    
+                    for literal in clause_literals:
+                        var_id = abs(literal)
+                        if f"var_{var_id}" not in literal_coords_map:
+                            continue
+                        
+                        coords = literal_coords_map[f"var_{var_id}"]
+                        if not coords:
+                            continue
+                        
+                        # Get cell value (symbolic weight)
+                        cell = system.get_cell(coords[0])
+                        if not cell:
+                            continue
+                        
+                        # Decode assignment: SW < 10 = False, SW >= 10 = True
+                        var_value = cell.symbolic_weight >= 10.0
+                        
+                        # Check if literal is satisfied
+                        if literal > 0 and var_value:
+                            clause_satisfied = True
+                            break
+                        elif literal < 0 and not var_value:
+                            clause_satisfied = True
+                            break
+                    
+                    # Tension = 1.0 if clause unsatisfied, 0.0 if satisfied
+                    return 1.0 if not clause_satisfied else 0.0
+                
+                return compute_tension
+            
+            # Create mapping for this clause
+            literal_coords_map = {}
+            for literal in clause:
+                var_id = abs(literal)
+                if f"var_{var_id}" in variable_mappings:
+                    literal_coords_map[f"var_{var_id}"] = variable_mappings[f"var_{var_id}"]
+            
+            field = self.constraint_encoder.encode_custom_constraint(
+                constraint_id=f"clause_{clause_idx}",
+                involved_coords=clause_coords,
+                tension_fn=create_clause_tension_fn(clause, literal_coords_map),
+                description=f"Clause {clause_idx}: {clause}"
+            )
+            tension_fields.append(field)
+        
+        # Generate candidate basins (variable assignments)
+        candidate_basins = []
+        import random
+        
+        for _ in range(n_candidates):
+            # Random assignment: each variable gets True/False
+            basin_coords = []
+            for var_id in range(1, num_vars + 1):
+                if f"var_{var_id}" in variable_mappings:
+                    basin_coords.extend(variable_mappings[f"var_{var_id}"])
+            
+            # Initialize cells with random assignments
+            for coords in basin_coords:
+                cell = self.system.get_cell(coords)
+                if cell:
+                    # Random assignment: < 10 = False, >= 10 = True
+                    cell.symbolic_weight = random.choice([5.0, 15.0])
+            
+            candidate_basins.append(basin_coords)
+        
+        return EncodedProblem(
+            tension_fields=tension_fields,
+            candidate_basins=candidate_basins,
+            variable_mappings=variable_mappings,
+            problem_type='sat',
+            metadata={
+                'num_vars': num_vars,
+                'num_clauses': len(clauses),
+                'clauses': clauses
+            }
+        )
     
     def _encode_ramsey(
         self,
@@ -241,11 +360,151 @@ class UniversalProblemEncoder:
         Encode general constraint satisfaction problem.
         
         Args:
-            problem: CSP specification
+            problem: CSP specification with:
+                - 'variables': Dict[str, List[Any]] - variable names to domains
+                - 'constraints': List[Dict] - constraint definitions
+                - 'n_candidates': Number of candidate solutions (default: 20)
         
         Returns:
             EncodedProblem
         """
-        # TODO: Implement general CSP encoding
-        raise NotImplementedError("CSP encoding not yet implemented")
+        variables = problem.get('variables', {})
+        constraints = problem.get('constraints', [])
+        n_candidates = problem.get('n_candidates', 20)
+        
+        if not variables or not constraints:
+            raise ValueError("CSP problem must have variables and constraints")
+        
+        # Map variables to coordinates
+        coords_list = list(self.system.lattice.keys())
+        variable_mappings = {}
+        
+        for i, var_name in enumerate(variables.keys()):
+            if i < len(coords_list):
+                var_coords = [coords_list[i]]
+            else:
+                var_coords = [coords_list[i % len(coords_list)]]
+            variable_mappings[var_name] = var_coords
+        
+        # Encode constraints as tension fields
+        tension_fields = []
+        
+        for constraint_idx, constraint in enumerate(constraints):
+            constraint_type = constraint.get('type', 'custom')
+            vars_involved = constraint.get('vars', [])
+            
+            # Get coordinates for variables in this constraint
+            constraint_coords = []
+            for var_name in vars_involved:
+                if var_name in variable_mappings:
+                    constraint_coords.extend(variable_mappings[var_name])
+            
+            if not constraint_coords:
+                continue
+            
+            # Create tension function based on constraint type
+            def create_constraint_tension_fn(constraint_def, var_map, var_domains):
+                def compute_tension(system: LivniumCoreSystem) -> float:
+                    # Decode assignment from system
+                    assignment = {}
+                    for var_name in constraint_def.get('vars', []):
+                        if var_name not in var_map:
+                            continue
+                        coords = var_map[var_name]
+                        if not coords:
+                            continue
+                        cell = system.get_cell(coords[0])
+                        if not cell:
+                            continue
+                        
+                        # Map SW to domain value
+                        domain = var_domains.get(var_name, [])
+                        if domain:
+                            sw_value = int(cell.symbolic_weight) % len(domain)
+                            assignment[var_name] = domain[sw_value]
+                    
+                    # Check constraint satisfaction
+                    constraint_type = constraint_def.get('type', 'custom')
+                    vars_involved = constraint_def.get('vars', [])
+                    
+                    if not all(v in assignment for v in vars_involved):
+                        return 1.0  # Missing variables = violation
+                    
+                    values = [assignment[v] for v in vars_involved]
+                    
+                    if constraint_type == 'all_different':
+                        # All different: tension = 0 if all different, >0 if duplicates
+                        num_unique = len(set(values))
+                        num_total = len(values)
+                        if num_unique == num_total:
+                            return 0.0
+                        # Tension proportional to number of duplicates
+                        return float(num_total - num_unique) / num_total
+                    
+                    elif constraint_type == 'equal':
+                        # All equal: tension = 0 if all equal, >0 if different
+                        num_unique = len(set(values))
+                        if num_unique == 1:
+                            return 0.0
+                        return float(num_unique - 1) / len(values)
+                    
+                    elif constraint_type == 'not_equal':
+                        # Not equal: tension = 0 if all different, >0 if any equal
+                        if len(values) == len(set(values)):
+                            return 0.0
+                        return 1.0
+                    
+                    elif constraint_type == 'custom':
+                        # Custom constraint function
+                        fn = constraint_def.get('fn')
+                        if fn:
+                            is_satisfied = fn(assignment)
+                            return 0.0 if is_satisfied else 1.0
+                    
+                    return 0.0
+                
+                return compute_tension
+            
+            field = self.constraint_encoder.encode_custom_constraint(
+                constraint_id=f"constraint_{constraint_idx}",
+                involved_coords=constraint_coords,
+                tension_fn=create_constraint_tension_fn(constraint, variable_mappings, variables),
+                description=f"Constraint {constraint_idx}: {constraint_type}"
+            )
+            tension_fields.append(field)
+        
+        # Generate candidate basins
+        candidate_basins = []
+        import random
+        
+        for _ in range(n_candidates):
+            basin_coords = []
+            for var_name in variables.keys():
+                if var_name in variable_mappings:
+                    basin_coords.extend(variable_mappings[var_name])
+            
+            # Initialize cells with random domain values
+            for var_name, coords in variable_mappings.items():
+                domain = variables[var_name]
+                if domain and coords:
+                    cell = self.system.get_cell(coords[0])
+                    if cell:
+                        # Set SW to a value that maps to a random domain element
+                        domain_idx = random.randint(0, len(domain) - 1)
+                        # Map domain index to SW (use range 0-100, then modulo)
+                        cell.symbolic_weight = float(domain_idx * 10)
+            
+            candidate_basins.append(basin_coords)
+        
+        return EncodedProblem(
+            tension_fields=tension_fields,
+            candidate_basins=candidate_basins,
+            variable_mappings=variable_mappings,
+            problem_type='constraint_satisfaction',
+            metadata={
+                'variables': list(variables.keys()),
+                'num_constraints': len(constraints),
+                'constraints': constraints
+            }
+        )
 
