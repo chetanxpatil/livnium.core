@@ -29,6 +29,11 @@ The permission granted above does **NOT** include the right to sell, license,
 host, provide as a service, or commercialize the Software or any modified 
 version of it.
 
+**Non-Commercial use includes only personal, academic, or research use by 
+individuals. Use within any company or organization for internal purposes 
+(including research, development, or evaluation) is considered commercial 
+and requires prior written permission from the Owner.**
+
 **You may NOT:**
 
 - Use the Software for any commercial purpose.

@@ -13,6 +13,8 @@
 - ❌ **Prohibited**: Commercial use, selling, hosting as a service, redistribution without permission
 - 🔒 **Commercial Rights**: Reserved exclusively by the Owner
 
+**Non-Commercial use includes only personal, academic, or research use by individuals. Use within any company or organization for internal purposes (including research, development, or evaluation) is considered commercial and requires prior written permission from the Owner.**
+
 See [LICENSE](LICENSE) for full terms. For commercial licensing inquiries: chetan12patil@gmail.com
 
 ---
@@ -21,15 +23,13 @@ See [LICENSE](LICENSE) for full terms. For commercial licensing inquiries: cheta
 
 LIVNIUM is a **pure native computing system** that processes language and information through geometric quantum-inspired structures—**without transformers, embeddings, or neural networks**.
 
-### Core Innovation: The Livnium Phoneme Layer
+### Core Innovation: Geometric Quantum-Inspired Architecture
 
-**Letter-by-letter chained omcubes** form the atomic foundation:
-
-- **Letters** → Individual 3×3×3 quantum geometries (`LetterOmcube`)
-- **Words** → Chains of entangled letters (`WordChain`)
-- **Sentences** → Chains of word-chains (`SentenceChain`)
-
-This creates **natural morphological similarity**, **compositional meaning**, and **stable memory** through shared letter-level learning.
+LIVNIUM uses **3D geometric structures** (omcubes) as the fundamental unit of computation:
+- **Information** → Geometric patterns in 3D space
+- **Meaning** → Emerges from spatial relationships
+- **Learning** → Physics-based basin reinforcement
+- **Reasoning** → Geometric logic, not neural networks
 
 ---
 
@@ -46,53 +46,107 @@ This creates **natural morphological similarity**, **compositional meaning**, an
 - **Quantum Collapse**: 3-way decision making (Entailment/Contradiction/Neutral)
 - **Basin Reinforcement**: Physics-based learning through geometric feedback
 
-### Research-Grade Systems
-- **Livnium Core**: Real tensor network physics (DMRG/MPS) for quantum many-body problems
+### Complete System Architecture
+- **Classical Layer**: N×N×N geometric lattice with symbolic weights
 - **Quantum Layer**: True quantum mechanics with tensor products (`TrueQuantumRegister`)
 - **Recursive Geometry**: 2.5M+ qubit-analogue capacity through fractal compression
-- **NLI System**: Natural Language Inference using pure geometric reasoning
+- **Runtime System**: Temporal cognition engine (hierarchical timesteps, episodes)
+- **Semantic Layer**: Bridge between geometry and meaning
+- **Memory System**: Persistent memory that behaves like energy in a lattice
+- **Learning System**: Reward-based basin reinforcement (no gradients)
+- **Meta Layer**: Self-observation and adaptation
+- **Reasoning Engine**: Native logic and rule-based reasoning
+- **Search Module**: Multi-basin competition with corner rotation policy
+- **Universal Encoder**: Converts any problem → tension fields + basins
 
 ---
 
 ## 📐 Architecture Overview
 
-### The Livnium Phoneme Layer
+### System Layers
 
 ```
-Letter → LetterOmcube (3×3×3 geometry)
-  ↓
-Word → WordChain (chained LetterOmcubes)
-  ↓
-Sentence → SentenceChain (chained WordChains)
-  ↓
-Meaning → Emergent from geometric interactions
+Layer 4: Multi-Basin Competition  ← Complete
+    ↓
+Layer 3: Universal Encoding       ← Complete
+    ↓
+Layer 2: Task Encoding             ← Future
+    ↓
+Layer 1: Dynamic Basin Physics     ← Complete
+    ↓
+Layer 0: LivniumCoreSystem         ← Base
 ```
 
-**Why This Works:**
-- **Morphological Understanding**: "run" and "running" share letters → geometric overlap
-- **Stable Memory**: Letter-level learning shared across entire language
-- **Compositional Semantics**: Word meaning emerges from letter chains
+### Core Components
 
-### System Components
+1. **Classical Layer** (`core/classical/`)
+   - N×N×N lattice (any odd N ≥ 3)
+   - Symbolic Weight Law (SW = 9·f)
+   - 24-element rotation group
+   - Observer system (global + local)
+   - Semantic polarity
 
-1. **`native_chain.py`**: Core MPS architecture
-   - `LetterOmcube`: Atomic letter geometry
-   - `WordChain`: Letter entanglement
-   - `SentenceChain`: Word-level chains
-
-2. **`inference_detectors.py`**: Native logic engine
-   - Lexical overlap detection
-   - Negation handling
-   - Semantic gap analysis
-
-3. **`omcube.py`**: Quantum collapse engine
-   - 3-way classification (E/C/N)
-   - Basin reinforcement learning
-
-4. **`core/quantum/true_quantum_layer.py`**: True quantum mechanics
-   - Tensor product quantum states
+2. **Quantum Layer** (`core/quantum/`)
+   - True quantum mechanics (`TrueQuantumRegister`)
+   - Tensor product states
    - Multi-qubit entanglement
    - Meta-interference optimization
+   - Geometry-quantum coupling
+
+3. **Recursive Layer** (`core/recursive/`)
+   - Fractal geometry engine
+   - 2.5M+ qubit capacity
+   - Moksha convergence (fixed-point truth)
+   - Multi-scale physics
+
+4. **Runtime Layer** (`core/runtime/`)
+   - Temporal engine (hierarchical timesteps)
+   - Episode manager (experience buffer)
+   - Orchestrator (executive function)
+
+5. **Semantic Layer** (`core/semantic/`)
+   - Feature extraction
+   - Meaning graphs
+   - Geometric logic (entailment/contradiction)
+   - Bridge between geometry and meaning
+
+6. **Memory Layer** (`core/memory/`)
+   - Per-cell memory capsules
+   - Global memory lattice
+   - Geometric coupling
+   - Associative recall
+
+7. **Learning Layer** (`core/learning/`)
+   - Reward-based reinforcement
+   - Basin deepening
+   - No gradients, no neural nets
+
+8. **Meta Layer** (`core/meta/`)
+   - Self-observation
+   - Anomaly detection
+   - Auto-calibration
+   - Introspection
+
+9. **Reasoning Layer** (`core/reasoning/`)
+   - Rule-based inference
+   - Search strategies (A*, beam, greedy)
+   - Problem decomposition
+   - Native logic
+
+10. **Search Module** (`core/search/`)
+    - Dynamic basin reinforcement
+    - Multi-basin competition
+    - Corner rotation policy (post-convergence refinement)
+
+11. **Universal Encoder** (`core/encoder/`)
+    - Problem → tension fields + basins
+    - Constraint encoding
+    - Graph coloring, SAT, Ramsey, CSP support
+
+12. **Embedding Module** (`core/embedding/`)
+    - Geometric key embedding
+    - Locality-preserving mappings
+    - Gray code interleaving
 
 ---
 
@@ -101,6 +155,7 @@ Meaning → Emergent from geometric interactions
 ### Natural Language Inference (NLI)
 - **Task**: Classify premise-hypothesis pairs as Entailment, Contradiction, or Neutral
 - **Approach**: Pure geometric reasoning with zero neural networks
+- **Location**: `experiments/nli/`
 
 ### Quantum Many-Body Physics
 - **Task**: Solve 1D Transverse Field Ising Model ground states
@@ -110,10 +165,23 @@ Meaning → Emergent from geometric interactions
 - **Task**: Explore AES-128 key space using quantum superposition
 - **Approach**: Recursive geometry + quantum layer + tension fields
 - **Capacity**: 2.5M logical qubits, 125+ entangled qubits simultaneously
+- **Location**: `experiments/quantum_core/`
+
+### Quantum Protocol Tests
+- **Task**: True quantum teleportation and Bell's inequality
+- **Approach**: `TrueQuantumRegister` with tensor products
+- **Location**: `experiments/quantum_teleportation/`
 
 ### Ramsey Number Solving
 - **Task**: Find maximum clique-free graphs
 - **Approach**: Geometric basin search with dynamic tension
+- **Location**: `experiments/ramsey/`
+
+### Benchmark Problems
+- **Max-Cut**: GSET benchmark graphs
+- **SAT**: Boolean satisfiability (CNF formulas)
+- **CSP**: Constraint satisfaction (N-Queens, Graph Coloring, Sudoku)
+- **Location**: `benchmark/`
 
 ---
 
@@ -158,14 +226,50 @@ python3 experiments/quantum_core/aes128_recursive_collapse.py
 python3 experiments/quantum_core/aes128_quantum_topology_mapper.py
 ```
 
+### Run Benchmarks
+
+```bash
+# Max-Cut solver
+python3 benchmark/max_cut/max_cut_solver_livnium.py --graph gset_14
+
+# SAT solver
+python3 benchmark/sat/sat_solver_livnium.py --cnf problem.cnf
+
+# CSP solver
+python3 benchmark/csp/csp_solver_livnium.py --problem nqueens --size 8
+```
+
 ---
 
 ## 📚 Documentation
 
+### Core System
 - **Architecture**: `core/README.md` - Core system architecture
-- **Quantum Layer**: `core/quantum/QUANTUM_LAYER.md` - Quantum mechanics implementation
-- **NLI System**: `experiments/nli/DIAGNOSTIC_REPORT.md` - Complete diagnostic
+- **Classical Layer**: `core/classical/README.md` - Geometric foundation
+- **Quantum Layer**: `core/quantum/README.md` - Quantum mechanics implementation
+- **Recursive Layer**: `core/recursive/README.md` - Fractal geometry engine
+- **Runtime Layer**: `core/runtime/README.md` - Temporal cognition engine
+- **Semantic Layer**: `core/semantic/README.md` - Geometry → meaning bridge
+- **Memory System**: `core/memory/README.md` - Persistent memory
+- **Learning System**: `core/learning/README.md` - Reward-based learning
+- **Meta Layer**: `core/meta/README.md` - Self-observation
+- **Reasoning Engine**: `core/reasoning/README.md` - Native logic
+- **Search Module**: `core/search/README.md` - Multi-basin search
+- **Universal Encoder**: `core/encoder/README.md` - Problem encoding
+- **Embedding**: `core/embedding/README.md` - Geometric key embedding
+
+### Experiments
+- **NLI System**: `experiments/nli/README.md` - Natural Language Inference
 - **Quantum Experiments**: `experiments/quantum_core/README.md`
+- **Quantum Teleportation**: `experiments/quantum_teleportation/README.md`
+- **Ramsey Problems**: `experiments/ramsey/README.md`
+- **Crypto Experiments**: `experiments/crypto/README.md`
+
+### Benchmarks
+- **Benchmark Suite**: `benchmark/README.md`
+- **Max-Cut**: `benchmark/max_cut/README.md`
+- **SAT**: `benchmark/sat/README.md`
+- **CSP**: `benchmark/csp/README.md`
 
 ---
 
@@ -174,16 +278,26 @@ python3 experiments/quantum_core/aes128_quantum_topology_mapper.py
 ```
 livnium.core/
 ├── core/                          # Core Livnium systems
-│   ├── classical/                 # Classical geometry engine
+│   ├── classical/                 # Classical geometry engine (N×N×N lattice)
 │   ├── quantum/                   # Quantum layer (TrueQuantumRegister)
+│   ├── recursive/                 # Recursive geometry (fractal, Moksha)
+│   ├── runtime/                   # Temporal engine (episodes, orchestration)
+│   ├── semantic/                  # Semantic processing (geometry → meaning)
+│   ├── memory/                    # Memory system (persistent, associative)
+│   ├── learning/                  # Learning system (reward-based)
+│   ├── meta/                      # Meta layer (self-observation)
+│   ├── reasoning/                 # Reasoning engine (rules, search)
 │   ├── embedding/                 # Geometric key embedding
-│   └── search/                    # Multi-basin search
+│   ├── encoder/                   # Universal problem encoder
+│   ├── search/                    # Multi-basin search
+│   └── tests/                     # Test suite
 │
 ├── experiments/
 │   ├── nli/                       # Natural Language Inference
 │   ├── quantum_teleportation/     # Quantum protocol tests
 │   ├── quantum_core/              # Quantum-enhanced experiments
-│   └── crypto/                    # Cryptanalysis experiments
+│   ├── crypto/                    # Cryptanalysis experiments
+│   └── ramsey/                    # Ramsey number solving
 │
 └── benchmark/                     # Benchmark suites
     ├── max_cut/                   # Max-Cut problem solver
@@ -199,15 +313,25 @@ livnium.core/
 Information is encoded as **3D geometric structures**, not high-dimensional vectors.
 
 ### 2. Native Logic
-Built-in reasoning through lexical overlap, negation handling, and semantic analysis.
+Built-in reasoning through geometric logic, not neural networks:
+- Entailment = SW(premise) > SW(conclusion)
+- Contradiction = opposite classes + <2 distance
+- Causal link = SW differential + spatial proximity
 
 ### 3. Physics-Based Learning
 Learning through **geometric feedback**, not gradient descent:
 - Basin reinforcement (deepening correct attractors)
 - Natural decay (forgetting incorrect patterns)
+- Reward-only (no punishment)
 
 ### 4. Compositional Architecture
 Meaning emerges from structure: Letters → Words → Sentences
+
+### 5. Temporal Cognition
+Hierarchical timesteps (MACRO, MICRO, QUANTUM, MEMORY, SEMANTIC) create cognitive rhythm
+
+### 6. Recursive Universe
+Every cell can spawn a smaller universe, creating exponential capacity
 
 ---
 
@@ -241,6 +365,8 @@ This project is licensed under the **LIVNIUM License (MIT + Commons Clause)** - 
 - ✅ **Permitted**: Personal, non-commercial, research, and educational use; contributions (with credit)
 - ❌ **Prohibited**: Commercial use, selling, hosting as a service, redistribution without permission
 - 🔒 **Commercial Rights**: Reserved exclusively by the Owner
+
+**Non-Commercial use includes only personal, academic, or research use by individuals. Use within any company or organization for internal purposes (including research, development, or evaluation) is considered commercial and requires prior written permission from the Owner.**
 
 For full license terms, see [LICENSE](LICENSE) or [LICENSE.md](LICENSE.md).
 
@@ -289,6 +415,8 @@ LIVNIUM represents a **fundamental rethinking** of how computers can understand 
 - **From Statistics to Structure**: Meaning from composition, not correlation
 - **From Black Boxes to Transparency**: Every decision is traceable
 - **From Data to Physics**: Learning through geometric feedback
+- **From Static to Temporal**: Time-aware cognitive rhythms
+- **From Flat to Recursive**: Fractal universe with exponential capacity
 
 *"Information is geometry. Understanding is structure. Intelligence is composition."*
 
