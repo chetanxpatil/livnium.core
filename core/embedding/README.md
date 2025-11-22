@@ -24,7 +24,7 @@ This module provides:
   - Interleaves bits from x, y, z dimensions
   - Adds entropy_seed for fine-grained variation
 - **`get_neighbors()`**: Returns 6 geometric neighbors (adjacent cells)
-- **Locality preservation**: Neighbors in 3D space = neighbors in key space (1-bit flips)
+- **Locality preservation**: Neighbors in 3D space = neighbors in key space (minimal bit flips — typically 1–5 bits)
 
 ## How It Works
 
