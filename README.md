@@ -1,27 +1,25 @@
 # LIVNIUM
 ## Quantum-Inspired Geometric Computing & Native Language Understanding
 
-**A breakthrough computational architecture combining quantum-inspired geometry, native language processing, and tensor network physics.**
+**A computational architecture combining quantum-inspired geometry, native language processing, and tensor network physics.**
 
 ---
 
-## IMPORTANT: Personal/Research Use Only
+## ⚠️ License: Source Available, Non-Commercial
 
 **This software is provided for PERSONAL, NON-COMMERCIAL, RESEARCH, and EDUCATIONAL PURPOSES ONLY.**
 
-- ✅ **Permitted**: Personal study, research, education, non-commercial use
-- ❌ **Prohibited**: Commercial use, redistribution, derivative works, AI training, public hosting
+- ✅ **Permitted**: Personal study, research, education, non-commercial use, contributions (with credit)
+- ❌ **Prohibited**: Commercial use, selling, hosting as a service, redistribution without permission
 - 🔒 **Commercial Rights**: Reserved exclusively by the Owner
 
-**For commercial licensing inquiries**, please contact: chetan12patil@gmail.com
-
-See [LICENSE](LICENSE) for full terms and conditions.
+See [LICENSE](LICENSE) for full terms. For commercial licensing inquiries: chetan12patil@gmail.com
 
 ---
 
 ## 🌟 What is LIVNIUM?
 
-LIVNIUM is a **pure native computing system** that processes language and information through geometric quantum-inspired structures—**without transformers, embeddings, or neural networks**. It represents a fundamental departure from conventional deep learning approaches.
+LIVNIUM is a **pure native computing system** that processes language and information through geometric quantum-inspired structures—**without transformers, embeddings, or neural networks**.
 
 ### Core Innovation: The Livnium Phoneme Layer
 
@@ -31,111 +29,34 @@ LIVNIUM is a **pure native computing system** that processes language and inform
 - **Words** → Chains of entangled letters (`WordChain`)
 - **Sentences** → Chains of word-chains (`SentenceChain`)
 
-This creates **natural morphological similarity**, **compositional meaning**, and **stable memory** through shared letter-level learning—like DNA built from nucleotide chains.
+This creates **natural morphological similarity**, **compositional meaning**, and **stable memory** through shared letter-level learning.
 
 ---
 
 ## 🚀 Key Features
 
-### ✅ Pure Native Architecture
-- **Zero Transformers**: No BERT, GPT, or any neural language models
-- **Zero Embeddings**: No pre-trained word vectors or sentence transformers
-- **Zero External Dependencies**: Pure geometric physics and native logic
+### Pure Native Architecture
+- **Zero Transformers**: No BERT, GPT, or neural language models
+- **Zero Embeddings**: No pre-trained word vectors
 - **100% Interpretable**: Every decision is traceable through geometric structures
 
-### ✅ Quantum-Inspired Geometry
+### Quantum-Inspired Geometry
 - **3×3×3 Omcubes**: Each letter/word encoded as a quantum-inspired geometric structure
 - **Matrix Product States (MPS)**: Sentence-level entanglement through chained omcubes
 - **Quantum Collapse**: 3-way decision making (Entailment/Contradiction/Neutral)
 - **Basin Reinforcement**: Physics-based learning through geometric feedback
 
-### ✅ Research-Grade Systems
+### Research-Grade Systems
 - **Livnium Core**: Real tensor network physics (DMRG/MPS) for quantum many-body problems
-- **Islands System**: Quantum-inspired information processing (105-500+ qubit-analogues)
-- **Hierarchical System**: Geometry-in-geometry architecture (5000+ qubit-analogue capacity)
+- **Quantum Layer**: True quantum mechanics with tensor products (`TrueQuantumRegister`)
+- **Recursive Geometry**: 2.5M+ qubit-analogue capacity through fractal compression
 - **NLI System**: Natural Language Inference using pure geometric reasoning
-
----
-
-## 📖 Research Background & Theoretical Foundations
-
-### What "Qubit-Analogues" Means
-
-**Important**: This is **NOT** a physical quantum computer. The term "qubit-analogue" refers to classical simulation of quantum-like states using geometric structures.
-
-- **Real quantum computing**: Uses physical qubits with superposition and entanglement
-- **Livnium approach**: Uses 3×3×3 geometric structures that can represent quantum-like states classically
-- **Capacity claims**: A 5×5×5 base lattice with 2 levels of recursion = 94,625 cells, each capable of storing quantum-like state information
-- **Why "analogue"**: These are classical geometric structures that mimic quantum behavior, not actual qubits
-
-**Verification**: See `core/tests/test_qubit_capacity.py` for capacity measurements.
-
-### What "Self-Healing Geometry" Means
-
-The term refers to **tension-based convergence** in geometric search:
-
-- **Tension fields**: Geometric constraints create tension when violated
-- **Self-correction**: The system naturally moves toward lower-tension states
-- **No external optimization**: Convergence emerges from geometric physics, not gradient descent
-
-**Implementation**: See `core/RAMSEY_READY_PATCHES.md` for the tension-based system.
-
-### Scientific Foundations
-
-**Matrix Product States (MPS)**:
-- Standard method in quantum many-body physics (see Schuch et al., 2013; Orús, 2014)
-- Used here for sentence-level representation: words as tensors, sentences as chains
-- **Reference**: Schuch, N., et al. "Matrix product states, projected entangled pair states, and variational renormalization group methods for quantum spin systems." *Advances in Physics* 62.4 (2013): 277-356.
-
-**Density Matrix Renormalization Group (DMRG)**:
-- Real tensor network method for quantum ground states
-- Implemented in `core/quantum/` for solving 1D Transverse Field Ising Model
-- **Reference**: White, S. R. "Density matrix formulation for quantum renormalization groups." *Physical Review Letters* 69.19 (1992): 2863.
-
-**Tensor Networks**:
-- Mathematical framework for representing high-dimensional quantum states
-- Used throughout Livnium for geometric encoding
-- **Reference**: Orús, R. "A practical introduction to tensor networks: Matrix product states and projected entangled pair states." *Annals of Physics* 349 (2014): 117-158.
-
-### What This Project Is (And Isn't)
-
-**This IS**:
-- An experimental research system exploring geometric alternatives to neural networks
-- A classical simulation system that uses quantum-inspired structures
-- Open-source research code for academic investigation
-- A proof-of-concept for geometric language representation
-
-**This IS NOT**:
-- A published peer-reviewed paper (this is code-first research)
-- A production-ready system
-- A physical quantum computer
-- A replacement for transformer models (yet)
-
-### Verification & Reproducibility
-
-**To verify claims**:
-
-1. **Qubit capacity**: Run `python3 core/tests/test_qubit_capacity.py`
-2. **NLI performance**: Run `python3 experiments/nli/train_moksha_nli.py --clean`
-3. **Ramsey solver**: Run `python3 experiments/ramsey/run_ramsey_experiment.py`
-4. **Code inspection**: All code is available for review in the repository
-
-**Experimental status**: This is active research. Results are preliminary and subject to change.
-
-### Research Methodology
-
-- **Letter-by-letter encoding**: Novel approach, not from literature (experimental)
-- **Geometric NLI**: Experimental alternative to neural NLI systems
-- **Basin reinforcement**: Physics-inspired learning mechanism (experimental)
-- **MPS for language**: Adaptation of tensor networks to NLP (experimental)
-
-**Note**: Some components are based on established physics (MPS, DMRG), while others (letter-level encoding, geometric NLI) are novel experimental approaches.
 
 ---
 
 ## 📐 Architecture Overview
 
-### The Livnium Phoneme Layer (Letter-by-Letter Encoding)
+### The Livnium Phoneme Layer
 
 ```
 Letter → LetterOmcube (3×3×3 geometry)
@@ -151,7 +72,6 @@ Meaning → Emergent from geometric interactions
 - **Morphological Understanding**: "run" and "running" share letters → geometric overlap
 - **Stable Memory**: Letter-level learning shared across entire language
 - **Compositional Semantics**: Word meaning emerges from letter chains
-- **Zero Magic**: Everything is reversible, hash-based, structural
 
 ### System Components
 
@@ -159,25 +79,20 @@ Meaning → Emergent from geometric interactions
    - `LetterOmcube`: Atomic letter geometry
    - `WordChain`: Letter entanglement
    - `SentenceChain`: Word-level chains
-   - `GlobalLexicon`: Persistent letter-level memory
 
 2. **`inference_detectors.py`**: Native logic engine
    - Lexical overlap detection
-   - Negation detection
+   - Negation handling
    - Semantic gap analysis
-   - Double negative handling
 
 3. **`omcube.py`**: Quantum collapse engine
    - 3-way classification (E/C/N)
    - Basin reinforcement learning
-   - Cross-omcube coupling
-   - Geometric feedback
 
-4. **`train_moksha_nli.py`**: Complete training pipeline
-   - Native Chain encoding
-   - Quantum collapse classification
-   - Moksha convergence detection
-   - Reward-only learning
+4. **`core/quantum/true_quantum_layer.py`**: True quantum mechanics
+   - Tensor product quantum states
+   - Multi-qubit entanglement
+   - Meta-interference optimization
 
 ---
 
@@ -186,46 +101,19 @@ Meaning → Emergent from geometric interactions
 ### Natural Language Inference (NLI)
 - **Task**: Classify premise-hypothesis pairs as Entailment, Contradiction, or Neutral
 - **Approach**: Pure geometric reasoning with zero neural networks
-- **Status**: Functional 3-way collapse with physics-based learning
-
-### Ramsey Number Solving
-- **Task**: Find maximum clique-free graphs
-- **Approach**: Geometric basin search with dynamic tension
-- **Status**: Operational with checkpoint system
 
 ### Quantum Many-Body Physics
 - **Task**: Solve 1D Transverse Field Ising Model ground states
 - **Approach**: Real DMRG/MPS tensor network methods
-- **Status**: Production-ready physics solver
 
 ### Quantum-Inspired Cryptanalysis
 - **Task**: Explore AES-128 key space using quantum superposition
 - **Approach**: Recursive geometry + quantum layer + tension fields
-- **Status**: Phase transition measurement (2-3 rounds breakable, 4+ rounds hit geometric cliff)
 - **Capacity**: 2.5M logical qubits, 125+ entangled qubits simultaneously
 
----
-
-## 💡 Why This Matters
-
-### The Problem with Current AI
-- **Black Boxes**: Neural networks are uninterpretable
-- **Data Dependency**: Requires massive training datasets
-- **Computational Cost**: Expensive GPU clusters
-- **No True Understanding**: Pattern matching, not reasoning
-
-### The LIVNIUM Approach
-- **Transparent**: Every decision is geometrically traceable
-- **Data Efficient**: Learns from structure, not just statistics
-- **Lightweight**: Runs on CPU, no GPU required
-- **True Compositionality**: Meaning emerges from atomic units
-
-### Research Significance
-This represents a **fundamental alternative** to transformer-based AI:
-- **Geometric Computing**: Information as geometry, not vectors
-- **Native Logic**: Built-in reasoning, not learned patterns
-- **Physics-Based Learning**: Reinforcement through geometric feedback
-- **Compositional Semantics**: Meaning from structure, not statistics
+### Ramsey Number Solving
+- **Task**: Find maximum clique-free graphs
+- **Approach**: Geometric basin search with dynamic tension
 
 ---
 
@@ -244,52 +132,30 @@ pip install numpy
 ### Run NLI Training
 
 ```bash
-# Clean start (removes all caches)
 python3 experiments/nli/train_moksha_nli.py --clean --train 20000 --test 2000 --dev 2000
 ```
 
-### Test Collapse Mechanism (Quick Demo)
-
-```bash
-# Test a single premise-hypothesis pair
-python3 experiments/nli/test_golden_label_collapse.py \
-    --premise "A dog runs" \
-    --hypothesis "A dog is running"
-
-# Test contradiction
-python3 experiments/nli/test_golden_label_collapse.py \
-    --premise "The cat is sleeping" \
-    --hypothesis "The cat is awake"
-
-# Test neutral
-python3 experiments/nli/test_golden_label_collapse.py \
-    --premise "A bird flies" \
-    --hypothesis "The car is red"
-
-# Run full diagnostic suite
-python3 experiments/nli/test_golden_label_collapse.py --clean
-```
-
-### Run Ramsey Solver
-
-```bash
-python3 experiments/ramsey/run_ramsey_experiment.py
-```
-
-### Test Quantum-Inspired Capabilities
+### Test Quantum Capabilities
 
 ```bash
 # Test recursive qubit capacity (2.5M qubits)
 python3 experiments/quantum-inspired-livnium-core/test_recursive_qubit_capacity.py
 
-# Test entanglement capacity
-python3 experiments/quantum-inspired-livnium-core/test_entanglement_capacity.py
+# Test quantum teleportation
+python3 experiments/quantum-teleportation/test_quantum_teleportation.py
 
-# Run quantum-enhanced AES topology mapper
+# Test Bell's inequality violation
+python3 experiments/quantum-teleportation/test_bell_inequality.py
+```
+
+### Run AES Cryptanalysis
+
+```bash
+# Recursive collapse (geometric manifold search)
+python3 experiments/quantum-inspired-livnium-core/aes128_recursive_collapse.py
+
+# Quantum topology mapper
 python3 experiments/quantum-inspired-livnium-core/aes128_quantum_topology_mapper.py
-
-# Run quantum AES round sweep experiment
-python3 experiments/quantum-inspired-livnium-core/aes128_round_sweep_experiment_livnium.py
 ```
 
 ---
@@ -297,10 +163,9 @@ python3 experiments/quantum-inspired-livnium-core/aes128_round_sweep_experiment_
 ## 📚 Documentation
 
 - **Architecture**: `core/README.md` - Core system architecture
+- **Quantum Layer**: `core/quantum/QUANTUM_LAYER.md` - Quantum mechanics implementation
 - **NLI System**: `experiments/nli/DIAGNOSTIC_REPORT.md` - Complete diagnostic
-- **Ramsey Solver**: `experiments/ramsey/README.md` - Ramsey number solving
-- **Universal Encoder**: `core/Universal Encoder/README.md` - Constraint encoding
-- **Quantum Experiments**: `experiments/quantum-inspired-livnium-core/README.md` - Quantum-enhanced experiments
+- **Quantum Experiments**: `experiments/quantum-inspired-livnium-core/README.md`
 
 ---
 
@@ -310,61 +175,39 @@ python3 experiments/quantum-inspired-livnium-core/aes128_round_sweep_experiment_
 livnium.core/
 ├── core/                          # Core Livnium systems
 │   ├── classical/                 # Classical geometry engine
-│   ├── quantum/                   # Quantum layer
-│   ├── Universal Encoder/         # Constraint problem encoding
+│   ├── quantum/                   # Quantum layer (TrueQuantumRegister)
+│   ├── embedding/                 # Geometric key embedding
 │   └── search/                    # Multi-basin search
 │
 ├── experiments/
 │   ├── nli/                       # Natural Language Inference
-│   │   ├── native_chain.py        # Letter-by-letter MPS architecture
-│   │   ├── omcube.py              # Quantum collapse engine
-│   │   ├── inference_detectors.py # Native logic
-│   │   └── train_moksha_nli.py    # Training pipeline
-│   │
-│   ├── ramsey/                    # Ramsey number solving
-│   │   └── ramsey_dynamic_search.py
-│   │
-│   ├── crypto/                    # Classical cryptanalysis
-│   │   ├── aes128_base.py         # AES-128 implementation
-│   │   └── aes128_round_sweep_experiment.py  # Classical round sweep
-│   │
-│   └── quantum-inspired-livnium-core/  # Quantum-enhanced experiments
-│       ├── test_recursive_qubit_capacity.py      # 2.5M qubit capacity test
-│       ├── test_entanglement_capacity.py         # Entanglement capacity test
-│       ├── aes128_quantum_topology_mapper.py     # Quantum topology mapper
-│       └── aes128_round_sweep_experiment_livnium.py  # Quantum round sweep
+│   ├── quantum-teleportation/     # Quantum protocol tests
+│   ├── quantum-inspired-livnium-core/  # Quantum-enhanced experiments
+│   └── crypto/                    # Cryptanalysis experiments
 │
-└── archive/                       # Historical implementations
+└── benchmark/                     # Benchmark suites
+    ├── max_cut/                   # Max-Cut problem solver
+    ├── sat/                       # SAT solver
+    └── csp/                       # CSP solver
 ```
 
 ---
 
 ## 🔬 Key Principles
 
-### 1. **Geometric Computing**
-Information is encoded as **3D geometric structures**, not high-dimensional vectors. This enables:
-- Visual interpretability
-- Structural reasoning
-- Compositional semantics
+### 1. Geometric Computing
+Information is encoded as **3D geometric structures**, not high-dimensional vectors.
 
-### 2. **Native Logic**
-Built-in reasoning capabilities through:
-- Lexical overlap detection
-- Negation handling
-- Semantic gap analysis
-- Double negative resolution
+### 2. Native Logic
+Built-in reasoning through lexical overlap, negation handling, and semantic analysis.
 
-### 3. **Physics-Based Learning**
+### 3. Physics-Based Learning
 Learning through **geometric feedback**, not gradient descent:
 - Basin reinforcement (deepening correct attractors)
 - Natural decay (forgetting incorrect patterns)
-- Reward-only learning (no punishment)
 
-### 4. **Compositional Architecture**
-Meaning emerges from structure:
-- Letters → Words → Sentences
-- Atomic units → Complex structures
-- Local interactions → Global understanding
+### 4. Compositional Architecture
+Meaning emerges from structure: Letters → Words → Sentences
 
 ---
 
@@ -373,26 +216,13 @@ Meaning emerges from structure:
 ### Experimental Research Software
 **This is experimental research software.** It is:
 - ✅ Suitable for research and education
-- ✅ Designed for understanding novel computational approaches
 - ❌ NOT production-ready
-- ❌ NOT guaranteed to be error-free
 - ❌ NOT suitable for commercial deployment without licensing
-- ❌ NOT a published peer-reviewed paper (code-first research)
 
 ### Quantum-Inspired vs. Real Quantum
-- **Livnium Core**: Uses real tensor network physics (MPS/DMRG) - these are established methods
-- **Islands/Hierarchical**: Quantum-inspired classical systems (NOT physical quantum computers)
-- **NLI System**: Pure geometric computing with quantum-inspired collapse
-- **"Qubit-analogues"**: Classical geometric structures that simulate quantum-like behavior, not physical qubits
-
-### Transparency Statement
-This repository contains:
-- **Established methods**: MPS, DMRG tensor networks (well-documented in physics literature)
-- **Experimental approaches**: Letter-by-letter encoding, geometric NLI (novel, unproven)
-- **Verifiable code**: All implementations are open for inspection
-- **Test suites**: Capacity and functionality tests included
-
-**For skeptics**: We encourage code review, reproduction of results, and critical evaluation. This is research in progress, not a finished product.
+- **Livnium Core**: Uses real tensor network physics (MPS/DMRG)
+- **Quantum Layer**: Implements true quantum mechanics with tensor products
+- **"Qubit-analogues"**: Classical geometric structures that simulate quantum-like behavior
 
 ---
 
@@ -400,34 +230,29 @@ This repository contains:
 
 - **Python**: 3.7+
 - **Core Dependencies**: `numpy`
-- **Optional**: For faster performance, `numba` (JIT compilation)
+- **Optional**: `numba` for JIT compilation
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **Livnium License v1.1 (Fortress Grade)** - a proprietary research license.
+This project is licensed under the **LIVNIUM License (MIT + Commons Clause)** - Source Available, Non-Commercial.
 
-### Quick Summary
-- ✅ **Permitted**: Personal, non-commercial, research, and educational use
-- ❌ **Prohibited**: Commercial use, redistribution, derivative works, AI training, public hosting, reverse engineering
+- ✅ **Permitted**: Personal, non-commercial, research, and educational use; contributions (with credit)
+- ❌ **Prohibited**: Commercial use, selling, hosting as a service, redistribution without permission
 - 🔒 **Commercial Rights**: Reserved exclusively by the Owner
-- 🛡️ **Fortress Grade**: Includes protections against AI model training, data extraction, and public hosting
 
 For full license terms, see [LICENSE](LICENSE) or [LICENSE.md](LICENSE.md).
 
-**For commercial licensing inquiries**, please contact: chetan12patil@gmail.com
+**For commercial licensing inquiries**: chetan12patil@gmail.com
 
 ---
 
 ## 🤝 Contributing
 
-This is a research project. Contributions are welcome for:
-- Bug fixes
-- Documentation improvements
-- Research discussions
+Contributions are welcome for bug fixes, documentation improvements, and research discussions.
 
-**Note**: All contributions become the exclusive property of the Owner per the License terms.
+**Note**: All contributions become part of the Livnium project per the License terms.
 
 ---
 
@@ -448,10 +273,6 @@ LIVNIUM represents a **fundamental rethinking** of how computers can understand 
 - **From Statistics to Structure**: Meaning from composition, not correlation
 - **From Black Boxes to Transparency**: Every decision is traceable
 - **From Data to Physics**: Learning through geometric feedback
-
-This is not just another AI system—it's a **new computational paradigm**.
-
----
 
 *"Information is geometry. Understanding is structure. Intelligence is composition."*
 

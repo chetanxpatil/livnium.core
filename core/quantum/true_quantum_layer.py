@@ -6,6 +6,11 @@ state vectors. This replaces the "fake" entanglement metadata with real
 linear algebra.
 
 This is the "Special Forces" unit for handling true multi-qubit entanglement.
+
+Features:
+- Standard quantum operations (unitary gates, measurement, entanglement)
+- Meta-interference: Non-unitary optimization to bias states toward targets
+  (breaks unitarity for optimization purposes - useful for key search, etc.)
 """
 
 import numpy as np
@@ -283,6 +288,101 @@ class TrueQuantumRegister:
     def get_full_state(self) -> np.ndarray:
         """Get the full state vector."""
         return self.state.copy()
+    
+    def apply_meta_interference(self, target_pattern: int, bias_strength: float):
+        """
+        ALTERS THE META-STRUCTURE OF AMPLITUDES.
+        
+        This breaks Unitary constraints (Conservation of Probability).
+        
+        It actively 'warps' the interference pattern to favor specific
+        geometric outcomes, effectively 'cheating' standard physics to
+        force convergence.
+        
+        ⚠️ WARNING: This is NOT standard quantum mechanics!
+        This is an optimization technique that manipulates amplitudes
+        non-linearly to bias toward target patterns.
+        
+        Args:
+            target_pattern: Target state index (0 to dim-1) to bias toward
+            bias_strength: Strength of bias (0.0 = no effect, 1.0 = strong)
+        """
+        # Clamp target_pattern to valid range
+        target_pattern = target_pattern % self.dim
+        
+        # 1. Extract current amplitudes (The Wavefunction)
+        amplitudes = self.state
+        
+        # 2. Apply Non-Linear Bias (The Meta-Rule)
+        # We don't just rotate; we STRETCH space around the target.
+        new_amplitudes = np.copy(amplitudes)
+        
+        for i in range(self.dim):
+            # Check if this state 'i' resonates with the target pattern
+            # (e.g., Hamming distance, geometric proximity)
+            resonance = self._calculate_geometric_resonance(i, target_pattern)
+            
+            if resonance > 0:
+                # AMPLIFY: Boost this reality manually
+                # Real physics forbids this (energy creation).
+                # Livnium allows it (optimization).
+                phase = np.angle(amplitudes[i])
+                magnitude = np.abs(amplitudes[i])
+                
+                # Non-linear boost
+                new_magnitude = magnitude * (1.0 + (bias_strength * resonance))
+                new_amplitudes[i] = new_magnitude * np.exp(1j * phase)
+                
+            else:
+                # SUPPRESS: Dampen competing realities
+                new_amplitudes[i] *= (1.0 - (bias_strength * 0.1))
+        
+        # 3. Re-Normalize (Force consistency back into the universe)
+        # This effectively redistributes the stolen probability to the winner.
+        norm = np.sqrt(np.sum(np.abs(new_amplitudes)**2))
+        if norm > 1e-10:
+            self.state = new_amplitudes / norm
+        else:
+            # Fallback: reset to target state
+            self.state = np.zeros(self.dim, dtype=complex)
+            self.state[target_pattern] = 1.0 + 0j
+        
+        # Track this non-unitary operation
+        self.gate_history.append(('meta_interference', target_pattern, bias_strength))
+    
+    def _calculate_geometric_resonance(self, state_idx: int, target_pattern: int) -> float:
+        """
+        Defines the 'Meta-Structure' rule.
+        Does this quantum state 'look like' the geometry we want?
+        
+        Uses inverse Hamming distance as resonance measure.
+        Closer states (fewer bit flips) have higher resonance.
+        
+        Args:
+            state_idx: Current state index
+            target_pattern: Target state index
+            
+        Returns:
+            Resonance value [0, 1] where 1.0 = perfect match
+        """
+        # Calculate Hamming distance (number of differing bits)
+        xor = state_idx ^ target_pattern
+        dist = bin(xor).count('1')
+        
+        if dist == 0:
+            return 1.0  # Perfect match
+        
+        # Inverse distance: closer = higher resonance
+        # Normalize by max possible distance (num_qubits)
+        max_dist = self.num_qubits
+        if max_dist == 0:
+            return 0.0
+        
+        # Resonance decays with distance
+        # Formula: 1 / (1 + distance) gives smooth decay
+        resonance = 1.0 / (1.0 + dist)
+        
+        return resonance
     
     def __repr__(self) -> str:
         """String representation."""

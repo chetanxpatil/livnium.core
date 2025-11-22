@@ -1,200 +1,53 @@
-# Livnium License v1.1 (Fortress Grade)
-## Proprietary Research License
+# License: MIT License + Commons Clause
 
-**Copyright © 2025 Chetan Patil. All rights reserved.**
+## LIVNIUM License (Source Available, Non-Commercial)
 
----
+**Copyright (c) 2025 Chetan Patil**
 
-## TL;DR - Quick Summary
+Permission is hereby granted, free of charge, to any person obtaining a copy 
+of this software and associated documentation files (the "Software"), to read, 
+use, study, and contribute to the Software, subject to the following conditions:
 
-### ✅ YOU CAN:
-- Read and study the code for personal, non-commercial research
-- Use it for educational purposes
-- Create personal notes and analyses
+1. The above copyright notice and this permission notice shall be included in 
+   all copies or substantial portions of the Software.
 
-### ❌ YOU CANNOT:
-- Use it commercially (any revenue-generating activity)
-- Redistribute, fork, or create derivative works
-- Train AI models on this code
-- Host it publicly (HuggingFace, Kaggle, etc.)
-- Reverse engineer or extract algorithms
-- File patents based on this work
-- Use trademarks without permission
+2. Contributors will be publicly credited for their work. By submitting a 
+   contribution, you agree that your contribution becomes part of the Livnium 
+   project and may be used, modified, or redistributed by the project owner.
 
-### 🔒 ALL COMMERCIAL RIGHTS RESERVED EXCLUSIVELY BY THE OWNER
-
-**For full terms, read below. By using this software, you agree to all terms.**
+3. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 
 ---
 
-## Important Notice
-
-This software and associated documentation files (the "Software") are the proprietary and confidential property of **Chetan Patil** ("Owner"). The Software is provided under the terms of this Livnium License v1.1 (the "License").
-
-**The Software is EXPERIMENTAL RESEARCH SOFTWARE.** It is provided for research and educational purposes only. It is NOT general-purpose software and is NOT intended for production use.
-
-**By accessing, reading, or using the Software, you agree to be bound by the terms of this License. If you do not agree to these terms, you must not use, access, or distribute the Software in any form.**
+## Commons Clause Restriction (Non-Commercial Use Only)
 
 ---
 
-## 1. Ownership
+The permission granted above does **NOT** include the right to sell, license, 
+host, provide as a service, or commercialize the Software or any modified 
+version of it.
 
-The Software, including but not limited to source code, algorithms, architectures, documentation, mathematical formulations, design patterns, and all intellectual property rights therein, are and shall remain the **exclusive property of the Owner**. This License does not grant you any ownership rights in the Software.
+**You may NOT:**
 
-**All contributions, suggestions, feedback, or modifications to the Software, whether submitted directly or indirectly, shall be deemed assigned to and become the exclusive property of the Owner.** You hereby irrevocably assign to the Owner all right, title, and interest in and to any such contributions.
+- Use the Software for any commercial purpose.
 
-## 2. Purpose Scope
+- Sell, license, or monetize the Software.
 
-The Software is **experimental research software** intended for academic research, educational purposes, and personal study. The Software is NOT:
+- Host or provide the Software as part of a paid or free service 
+  (including APIs, SaaS, cloud hosting, model hosting platforms, or 
+  public code/model repositories such as HuggingFace, Kaggle, Colab, 
+  GitHub-hosted applications, etc.).
 
-- General-purpose software
-- Production-ready software
-- Software suitable for commercial deployment
-- Software guaranteed to be error-free or secure
+- Modify the Software to create a competing product or service.
 
-The Owner makes no representations or warranties regarding the suitability of the Software for any particular purpose. **Use of the Software is at your own risk.**
+- Redistribute the Software in any public platform without written 
+  permission from the Owner.
 
-## 3. Grant of License
-
-Subject to the terms and conditions of this License, the Owner hereby grants you a limited, non-exclusive, non-transferable, revocable license to:
-
-- **Access and read** the Software for personal, non-commercial, research, and educational purposes only
-- **Study** the Software for the purpose of understanding its concepts and methodologies
-- **Create personal notes, summaries, or analyses** of the Software for your own non-commercial use
-
-This License does **NOT** grant you the right to use, modify, distribute, or commercialize the Software in any form.
-
-## 4. Prohibited Uses
-
-You are **expressly prohibited** from:
-
-### Commercial Use
-Using the Software, or any portion thereof, for any commercial purpose, including but not limited to:
-- Developing commercial products or services
-- Providing consulting services based on the Software
-- Generating revenue from the Software in any form
-- Using the Software in any commercial application or service
-- Incorporating the Software into any commercial offering
-
-### Redistribution
-Copying, reproducing, distributing, publishing, or transmitting the Software, or any portion thereof, to any third party, whether in original or modified form, including but not limited to:
-- Posting on public repositories (GitHub, GitLab, Bitbucket, etc.)
-- Uploading to model hosting platforms (HuggingFace, ModelZoo, Kaggle, etc.)
-- Sharing via file sharing services
-- Including in public datasets or collections
-- Publishing in academic papers without explicit permission
-
-### Derivative Works
-Creating, developing, or distributing any derivative works, modifications, adaptations, or variations based on the Software, including but not limited to:
-- Forked repositories
-- Modified versions
-- Extensions or plugins
-- Ports to other languages or platforms
-- Implementations based on the Software's algorithms or architecture
-
-### Reverse Engineering
-Reverse engineering, decompiling, disassembling, or otherwise attempting to derive the source code, algorithms, or underlying ideas of the Software
-
-### Data Extraction
-Extracting, scraping, mining, or systematically collecting algorithms, code patterns, or architectural designs from the Software for use in other projects or systems
-
-### AI Training
-**Using the Software, its code, documentation, outputs, or any concepts derived therefrom to train, fine-tune, or derive any machine learning model, artificial intelligence system, or dataset**, including but not limited to:
-- Large Language Models (LLMs)
-- Neural networks
-- Training datasets
-- Model weights or parameters
-- Any form of automated learning system
-
-### Competitive Use
-Using the Software to develop competing technologies, products, or services
-
-### Patent Filing
-Using the Software or any concepts derived from it to file patent applications without explicit written permission from the Owner
-
-### Public Hosting
-Hosting, mirroring, or making the Software publicly accessible on any platform, service, or website, including but not limited to:
-- Code hosting platforms (GitHub, GitLab, etc.)
-- Model repositories (HuggingFace, ModelZoo, etc.)
-- Data science platforms (Kaggle, Colab, etc.)
-- Personal websites or blogs
-- Academic repositories
-- Any public-facing service
-
-## 5. Exclusive Commercial Rights
-
-All commercial rights, including but not limited to the right to:
-- License the Software for commercial use
-- Develop commercial products based on the Software
-- Grant commercial licenses to third parties
-- Monetize the Software in any form
-- Create derivative works for commercial purposes
-- Use the Software in commercial applications
-
-are **reserved exclusively by the Owner**. Any commercial use of the Software requires a separate, written commercial license agreement with the Owner.
-
-## 6. Trademark Protection
-
-"Livnium", "LivniumCore", "Omcube", "Livnium Phoneme Layer", and all related trademarks, service marks, and trade names are the exclusive property of the Owner. You may not use these marks in connection with any product, service, publication, or work without the prior written consent of the Owner.
-
-## 7. Confidentiality
-
-The Software contains proprietary and confidential information. You agree to maintain the confidentiality of the Software and not to disclose, publish, or distribute any portion of the Software to any third party without the express written permission of the Owner.
-
-## 8. Termination
-
-This License is effective until terminated. The Owner may terminate this License at any time, with or without cause, by providing written notice to you. Upon termination:
-
-- All rights granted to you under this License shall immediately cease
-- You must immediately cease all use of the Software
-- You must destroy all copies of the Software in your possession or control
-- Certain provisions of this License shall survive termination
-
-## 9. No Warranty
-
-**THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.** IN NO EVENT SHALL THE OWNER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-**THE SOFTWARE IS EXPERIMENTAL RESEARCH SOFTWARE. IT MAY CONTAIN ERRORS, BUGS, OR OTHER DEFECTS. USE AT YOUR OWN RISK.**
-
-## 10. Limitation of Liability
-
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE OWNER BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS OR REVENUES, WHETHER INCURRED DIRECTLY OR INDIRECTLY, OR ANY LOSS OF DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, ARISING OUT OF OR IN CONNECTION WITH THIS LICENSE OR THE USE OR INABILITY TO USE THE SOFTWARE.
-
-## 11. General Provisions
-
-- **Governing Law**: This License shall be governed by and construed in accordance with the laws of **India**, without regard to its conflict of law provisions. Any disputes arising from this License shall be subject to the exclusive jurisdiction of the courts of India.
-
-- **Entire Agreement**: This License constitutes the entire agreement between you and the Owner regarding the Software and supersedes all prior or contemporaneous communications, proposals, and agreements.
-
-- **Severability**: If any provision of this License is held to be invalid or unenforceable, the remaining provisions shall remain in full force and effect.
-
-- **Waiver**: The failure of the Owner to enforce any right or provision of this License shall not constitute a waiver of such right or provision.
-
-- **Assignment**: You may not assign or transfer this License or any rights granted hereunder without the prior written consent of the Owner.
-
-- **No Partnership**: Nothing in this License shall be construed as creating a partnership, joint venture, or agency relationship between you and the Owner.
-
-## 12. Contact
-
-For inquiries regarding commercial licensing, permissions, or other matters related to this License, please contact:
-
-**Chetan Patil**  
-Email: chetanxpatil@users.noreply.github.com
+All commercial rights to Livnium, including licensing, hosting, branding, 
+derivatives, and monetization, are exclusively reserved by the Owner.
 
 ---
 
-## Acknowledgment
-
-**BY ACCESSING OR USING THE SOFTWARE, YOU ACKNOWLEDGE THAT YOU HAVE READ THIS LICENSE, UNDERSTAND IT, AND AGREE TO BE BOUND BY ITS TERMS AND CONDITIONS. IF YOU DO NOT AGREE TO THESE TERMS, YOU MUST NOT USE THE SOFTWARE.**
-
-You further acknowledge that:
-- The Software is experimental research software
-- You will not use the Software for commercial purposes
-- You will not redistribute, fork, or create derivative works
-- You will not use the Software to train AI models
-- You will not host the Software publicly
-- All commercial rights belong exclusively to the Owner
-
----
-
-*This license is designed to provide open access for research and education while protecting commercial rights, intellectual property, and preventing unauthorized use including AI model training. It enables sharing of breakthrough research while maintaining complete control over commercial applications and derivative works.*
+**End of License**
