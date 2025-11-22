@@ -71,8 +71,9 @@ def solve_with_python_constraint(csp: CSPProblem, timeout: float = 60.0) -> Dict
                 if row_i is not None and row_j is not None:
                     qi_var = f"Q{row_i+1}"
                     qj_var = f"Q{row_j+1}"
+                    # Use default parameters to capture values (not references) in closure
                     problem.addConstraint(
-                        lambda qi, qj: abs(qi - qj) != abs(row_i - row_j),
+                        lambda qi, qj, ri=row_i, rj=row_j: abs(qi - qj) != abs(ri - rj),
                         [qi_var, qj_var]
                     )
             
