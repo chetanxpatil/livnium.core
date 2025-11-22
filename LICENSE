@@ -75,14 +75,22 @@ All commercial rights related to the Livnium Axioms and derivative systems
 are exclusively reserved by the Owner.
 
 ---------------------------------------------------------------------------
-Even-Dimensional Grids (DataCubes)
+2D and Even-Dimensional Grids (DataGrids and DataCubes)
 ---------------------------------------------------------------------------
 
-Even-dimensional grids (2×2×2, 4×4×4, 6×6×6, ...) are permitted for storage
-or data processing, but cannot implement any Livnium Axioms, Core Geometry,
-or Collapse Mechanics. These "DataCubes" are non-axiomatic resource containers
-and do not constitute Livnium computation. Only odd-dimensional grids
-(3×3×3, 5×5×5, 7×7×7, ...) can serve as Livnium Core Universes (Omcubes).
+2D grids (N×N, any N ≥ 2) and even-dimensional 3D grids (2×2×2, 4×4×4, 6×6×6, ...)
+are permitted for storage or data processing, but cannot implement any Livnium Axioms,
+Core Geometry, or Collapse Mechanics.
+
+- **DataGrids (2D)**: Cannot implement Livnium because Livnium is fundamentally 3D.
+  Face exposure, observer anchoring, and all axioms require 3D structure.
+
+- **DataCubes (3D, even N)**: Cannot implement Livnium because they lack a true
+  geometric center cell required for observer anchoring (Axiom A2).
+
+These "DataGrids" and "DataCubes" are non-axiomatic resource containers and do not
+constitute Livnium computation. Only 3D odd-dimensional grids (3×3×3, 5×5×5, 7×7×7, ...)
+can serve as Livnium Core Universes (Omcubes).
 
 You may NOT:
 
