@@ -18,8 +18,8 @@ from core.classical.livnium_core_system import LivniumCoreSystem
 from core.recursive import RecursiveGeometryEngine
 import importlib
 
-# Import Universal Encoder (directory name has space)
-encoder_module = importlib.import_module('core.Universal Encoder.problem_encoder')
+# Import Universal Encoder
+encoder_module = importlib.import_module('core.encoder.problem_encoder')
 UniversalProblemEncoder = encoder_module.UniversalProblemEncoder
 
 from core.search.multi_basin_search import Basin, MultiBasinSearch

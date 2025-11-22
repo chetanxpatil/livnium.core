@@ -9,12 +9,12 @@ Research experiments exploring Livnium's capabilities across different domains.
   - Letter-by-letter encoding with quantum collapse
   - Zero neural networks
 
-- **`quantum-teleportation/`**: Quantum Protocol Tests
+- **`quantum_teleportation/`**: Quantum Protocol Tests
   - True quantum teleportation using `TrueQuantumRegister`
   - Bell's inequality violation tests
   - Demonstrates quantum-only capabilities
 
-- **`quantum-inspired-livnium-core/`**: Quantum-Enhanced Applications
+- **`quantum_core/`**: Quantum-Enhanced Applications
   - AES-128 cryptanalysis using recursive geometry + quantum layer
   - Recursive qubit capacity tests (2.5M+ qubits)
   - Geometric swarm attacks

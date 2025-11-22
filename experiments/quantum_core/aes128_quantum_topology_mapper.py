@@ -32,7 +32,7 @@ import importlib
 
 # Dynamic imports for encoder
 try:
-    encoder_module = importlib.import_module('core.Universal Encoder.constraint_encoder')
+    encoder_module = importlib.import_module('core.encoder.constraint_encoder')
     ConstraintEncoder = encoder_module.ConstraintEncoder
     TensionField = encoder_module.TensionField
 except ImportError:

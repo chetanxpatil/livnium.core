@@ -25,6 +25,17 @@ Multiple competing attractors in geometric space:
 
 See `MULTI_BASIN_SEARCH.md` for complete explanation.
 
+### 3. Corner Rotation Policy (`corner_rotation_policy.py`)
+
+Post-convergence refinement physics:
+- **Corners are max-exposure cells** (face_exposure = 3, SW = 27)
+- **Early/mid process**: Corner rotations destabilize the lattice (locked)
+- **End process**: Corner rotations fix final parity, global symmetry, SW distribution (unlocked)
+- **Unlock condition**: `basin_depth > threshold AND drift < epsilon`
+- **Same physics as Rubik's cubes**: Last moves are almost always corner parity fixes
+
+This prevents chaos early but permits perfect symmetry at the end.
+
 ## Quick Start
 
 ### Dynamic Basin (Single Basin)
@@ -82,3 +93,14 @@ Layer 0: LivniumCoreSystem         ← Base
 **"Geometry decides the physics, not a parameter list."**
 
 The search module implements self-tuning systems that adapt to the geometry itself, creating stable, convergent behavior without static hyperparameters.
+
+## Corner Rotation Policy
+
+Corners (max-exposure cells) are the **final degree of freedom** in a closed cube universe. They must be locked during exploration but unlocked during post-convergence refinement to fix:
+- Final parity constraints
+- Global symmetry alignment
+- SW distribution
+- Basin geometry finalization
+- Ghost tension removal
+
+This is not a hack—it's a law of the universe. The same physics applies to Rubik's cubes, cube symmetry groups, and basin convergence algebra.

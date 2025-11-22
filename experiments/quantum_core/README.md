@@ -38,22 +38,22 @@ This directory contains quantum-related experiments and tests using the Livnium 
 
 ### Test Omcube Capacity
 ```bash
-python3 experiments/quantum-inspired-livnium-core/test_recursive_qubit_capacity.py
+python3 experiments/quantum_core/test_recursive_qubit_capacity.py
 ```
 
 ### Test Entanglement Capacity
 ```bash
-python3 experiments/quantum-inspired-livnium-core/test_entanglement_capacity.py
+python3 experiments/quantum_core/test_entanglement_capacity.py
 ```
 
 ### Run Quantum Topology Mapper
 ```bash
-python3 experiments/quantum-inspired-livnium-core/aes128_quantum_topology_mapper.py
+python3 experiments/quantum_core/aes128_quantum_topology_mapper.py
 ```
 
 ### Run AES Round Sweep (Quantum)
 ```bash
-python3 experiments/quantum-inspired-livnium-core/aes128_round_sweep_experiment_livnium.py
+python3 experiments/quantum_core/aes128_round_sweep_experiment_livnium.py
 ```
 
 ## Architecture

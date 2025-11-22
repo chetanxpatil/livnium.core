@@ -85,9 +85,16 @@ class ConstraintEncoder:
         involved_coords = var1_coords + var2_coords
         
         def compute_tension(system: LivniumCoreSystem) -> float:
-            # Get SW values
-            sw1 = np.mean([system.get_cell(c).symbolic_weight for c in var1_coords if system.get_cell(c)])
-            sw2 = np.mean([system.get_cell(c).symbolic_weight for c in var2_coords if system.get_cell(c)])
+            # Get SW values (with safety check)
+            vals1 = [system.get_cell(c).symbolic_weight for c in var1_coords if system.get_cell(c)]
+            vals2 = [system.get_cell(c).symbolic_weight for c in var2_coords if system.get_cell(c)]
+            
+            # Safety check: return 0.0 if no valid cells
+            if not vals1 or not vals2:
+                return 0.0
+            
+            sw1 = np.mean(vals1)
+            sw2 = np.mean(vals2)
             
             # Tension = violation magnitude
             violation = abs(sw1 - sw2 - target_value)
@@ -131,8 +138,16 @@ class ConstraintEncoder:
         involved_coords = var1_coords + var2_coords
         
         def compute_tension(system: LivniumCoreSystem) -> float:
-            sw1 = np.mean([system.get_cell(c).symbolic_weight for c in var1_coords if system.get_cell(c)])
-            sw2 = np.mean([system.get_cell(c).symbolic_weight for c in var2_coords if system.get_cell(c)])
+            # Get SW values (with safety check)
+            vals1 = [system.get_cell(c).symbolic_weight for c in var1_coords if system.get_cell(c)]
+            vals2 = [system.get_cell(c).symbolic_weight for c in var2_coords if system.get_cell(c)]
+            
+            # Safety check: return 0.0 if no valid cells
+            if not vals1 or not vals2:
+                return 0.0
+            
+            sw1 = np.mean(vals1)
+            sw2 = np.mean(vals2)
             
             # Tension = violation (if var1 < var2 + threshold)
             violation = max(0.0, (sw2 + threshold) - sw1)

@@ -53,12 +53,12 @@ Livnium Core implements **true tensor product quantum mechanics** with:
 
 ### Quantum Teleportation Test
 ```bash
-python experiments/quantum-teleportation/test_quantum_teleportation.py
+python experiments/quantum_teleportation/test_quantum_teleportation.py
 ```
 
 ### Bell's Inequality Test (Simpler, More Direct)
 ```bash
-python experiments/quantum-teleportation/test_bell_inequality.py
+python experiments/quantum_teleportation/test_bell_inequality.py
 ```
 
 The Bell test is simpler and more directly demonstrates quantum-only capabilities.

@@ -29,6 +29,7 @@ from core.search.native_dynamic_basin_search import (
     compute_noise_entropy,
     get_geometry_signals,
 )
+from core.search.corner_rotation_policy import should_allow_corner_rotations
 
 
 @dataclass
@@ -209,9 +210,22 @@ class MultiBasinSearch:
                 # Add noise to decorrelate losing basins
                 if random.random() < noise * 10:
                     if self.use_rotations:
+                        # Check if corner rotations are allowed (post-convergence refinement)
+                        winner = self.get_winner()
+                        convergence_stats = self.get_basin_stats()
+                        allow_corners = should_allow_corner_rotations(
+                            system,
+                            winner.active_coords if winner else None,
+                            basin_depth_threshold=0.5,
+                            tension_epsilon=0.1,
+                            convergence_stats=convergence_stats
+                        )
+                        
                         # Global rotation (can be destructive for tight constraints)
-                        axis = random.choice(list(RotationAxis))
-                        system.rotate(axis, quarter_turns=random.choice([1, 2, 3]))
+                        # Only apply if corners allowed OR if we're not in convergence phase
+                        if allow_corners or convergence_stats.get('num_alive', 10) > 1:
+                            axis = random.choice(list(RotationAxis))
+                            system.rotate(axis, quarter_turns=random.choice([1, 2, 3]))
                     # If rotations disabled, noise only affects SW (local adjustments)
                 
                 # Mark as dead if score too low
@@ -338,8 +352,25 @@ def solve_with_multi_basin(
         
         # Apply random rotations to explore (if enabled)
         if use_rotations and step % 10 == 0:
-            axis = random.choice(list(RotationAxis))
-            system.rotate(axis, quarter_turns=random.choice([1, 2, 3]))
+            # Check convergence state
+            stats = search.get_basin_stats()
+            winner = search.get_winner()
+            
+            # Check if corner rotations are allowed (post-convergence refinement)
+            allow_corners = should_allow_corner_rotations(
+                system,
+                winner.active_coords if winner else None,
+                basin_depth_threshold=0.5,
+                tension_epsilon=0.1,
+                convergence_stats=stats
+            )
+            
+            # Only apply rotations if:
+            # - Corners allowed (post-convergence), OR
+            # - Multiple basins still alive (exploration phase)
+            if allow_corners or stats.get('num_alive', 10) > 1:
+                axis = random.choice(list(RotationAxis))
+                system.rotate(axis, quarter_turns=random.choice([1, 2, 3]))
         
         # Check for convergence (single dominant basin)
         stats = search.get_basin_stats()

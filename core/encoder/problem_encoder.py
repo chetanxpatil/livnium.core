@@ -93,84 +93,71 @@ class UniversalProblemEncoder:
         problem: Dict[str, Any]
     ) -> EncodedProblem:
         """
-        Encode graph coloring problem.
+        Encode standard Graph (Vertex) Coloring problem.
         
-        Constraints: No monochromatic triangles (K₃)
-        Solutions: Valid 2-colorings
+        Constraint: Adjacent vertices cannot have the same color.
+        Variables: Vertices
+        Constraints: Edges (adjacency relationships)
+        Solutions: Valid vertex colorings
         
         Args:
-            problem: Graph coloring specification
+            problem: Graph coloring specification with:
+                - 'vertices': List of vertex identifiers
+                - 'edges': List of (u, v) edge tuples
+                - 'n_candidates': Number of candidate colorings (default: 10)
         
         Returns:
             EncodedProblem
         """
-        # Get graph structure
         vertices = problem.get('vertices', [])
         edges = problem.get('edges', [])
         
-        # Map variables (edges) to coordinates
+        # 1. Variables are VERTICES, not edges
         variable_mappings = {}
         coords_list = list(self.system.lattice.keys())
         
-        edge_to_coords = {}
-        for i, edge in enumerate(edges):
+        for i, vertex in enumerate(vertices):
             if i < len(coords_list):
-                coords = [coords_list[i]]
-                edge_to_coords[edge] = coords
-                variable_mappings[f"edge_{edge}"] = coords
+                # Map vertex to a coordinate
+                variable_mappings[vertex] = [coords_list[i]]
         
-        # Encode constraints: No monochromatic triangles
-        # For each triangle, create tension field
+        # 2. Constraints are EDGES (checking adjacency)
         tension_fields = []
         
-        # Find all triangles
-        from itertools import combinations
-        triangles = list(combinations(vertices, 3))
-        
-        for triangle in triangles:
-            # Get edges of triangle
-            triangle_edges = [
-                (triangle[0], triangle[1]),
-                (triangle[1], triangle[2]),
-                (triangle[0], triangle[2])
-            ]
-            
-            # Get coordinates for triangle edges
-            triangle_coords = []
-            for edge in triangle_edges:
-                if edge in edge_to_coords:
-                    triangle_coords.extend(edge_to_coords[edge])
-            
-            if not triangle_coords:
+        for u, v in edges:
+            if u not in variable_mappings or v not in variable_mappings:
                 continue
             
-            # Create tension field: high tension if all edges same color
-            def create_triangle_tension_fn(edge_coords_list):
+            u_coords = variable_mappings[u]
+            v_coords = variable_mappings[v]
+            involved_coords = u_coords + v_coords
+            
+            # Tension function: High if colors match (adjacent vertices same color)
+            def create_adjacency_tension_fn(u_coords, v_coords):
                 def compute_tension(system: LivniumCoreSystem) -> float:
-                    # Get SW values (colors) for edges
-                    sw_values = []
-                    for coords in edge_coords_list:
-                        cell = system.get_cell(coords)
-                        if cell:
-                            # Decode color: < 10 = color 0, >= 10 = color 1
-                            color = 0 if cell.symbolic_weight < 10.0 else 1
-                            sw_values.append(color)
+                    # Get colors (using threshold approach)
+                    # Assumes single coordinate per var for simplicity
+                    cell1 = system.get_cell(u_coords[0]) if u_coords else None
+                    cell2 = system.get_cell(v_coords[0]) if v_coords else None
                     
-                    if len(sw_values) < 3:
+                    if not cell1 or not cell2:
                         return 0.0
                     
-                    # Tension = 1.0 if all same color (monochromatic), 0.0 otherwise
-                    if len(set(sw_values)) == 1:
-                        return 1.0  # Monochromatic triangle
-                    return 0.0  # Valid coloring
+                    # Simple binary coloring check (Red/Blue)
+                    # You can expand this for k-coloring later
+                    color1 = 0 if cell1.symbolic_weight < 10.0 else 1
+                    color2 = 0 if cell2.symbolic_weight < 10.0 else 1
+                    
+                    # VIOLATION if colors are equal (adjacent vertices same color)
+                    return 1.0 if color1 == color2 else 0.0
                 
                 return compute_tension
             
             field = self.constraint_encoder.encode_custom_constraint(
-                constraint_id=f"triangle_{triangle}",
-                involved_coords=triangle_coords,
-                tension_fn=create_triangle_tension_fn(triangle_coords),
-                description=f"No monochromatic triangle: {triangle}"
+                constraint_id=f"edge_{u}_{v}",
+                involved_coords=involved_coords,
+                tension_fn=create_adjacency_tension_fn(u_coords, v_coords),
+                description=f"Adjacent vertices {u}-{v} must differ"
             )
             tension_fields.append(field)
         
@@ -178,12 +165,14 @@ class UniversalProblemEncoder:
         # For now, generate random colorings
         candidate_basins = []
         n_candidates = problem.get('n_candidates', 10)
+        import random
         
         for _ in range(n_candidates):
-            # Random coloring: assign random colors to edges
+            # Random coloring: assign random colors to vertices
             basin_coords = []
-            for edge, coords in edge_to_coords.items():
-                basin_coords.extend(coords)
+            for vertex in vertices:
+                if vertex in variable_mappings:
+                    basin_coords.extend(variable_mappings[vertex])
             candidate_basins.append(basin_coords)
         
         return EncodedProblem(
@@ -337,20 +326,166 @@ class UniversalProblemEncoder:
         problem: Dict[str, Any]
     ) -> EncodedProblem:
         """
-        Encode Ramsey problem.
+        Encode Ramsey problem (Edge Coloring with Triangle/K₄ constraints).
         
-        Constraints: No monochromatic K₄ (tension fields)
-        Solutions: 2-colorings (basins)
+        Constraints: No monochromatic triangles (K₃) or K₄ cliques
+        Variables: Edges (edge coloring)
+        Solutions: Valid 2-colorings of edges
         
         Args:
-            problem: Ramsey specification
+            problem: Ramsey specification with:
+                - 'vertices': List of vertex identifiers
+                - 'edges': List of (u, v) edge tuples
+                - 'constraint_type': 'k3' (triangles) or 'k4' (4-cliques), default 'k3'
+                - 'n_candidates': Number of candidate colorings (default: 10)
         
         Returns:
             EncodedProblem
         """
-        # Similar to graph coloring but with K₄ constraints
-        # TODO: Implement Ramsey-specific encoding
-        return self._encode_graph_coloring(problem)  # For now, use graph coloring
+        vertices = problem.get('vertices', [])
+        edges = problem.get('edges', [])
+        constraint_type = problem.get('constraint_type', 'k3')  # 'k3' or 'k4'
+        
+        # Map variables (edges) to coordinates
+        variable_mappings = {}
+        coords_list = list(self.system.lattice.keys())
+        
+        edge_to_coords = {}
+        for i, edge in enumerate(edges):
+            if i < len(coords_list):
+                coords = [coords_list[i]]
+                edge_to_coords[edge] = coords
+                variable_mappings[f"edge_{edge}"] = coords
+        
+        # Encode constraints: No monochromatic triangles (K₃) or K₄
+        tension_fields = []
+        
+        if constraint_type == 'k3':
+            # Find all triangles
+            from itertools import combinations
+            triangles = list(combinations(vertices, 3))
+            
+            for triangle in triangles:
+                # Get edges of triangle
+                triangle_edges = [
+                    (triangle[0], triangle[1]),
+                    (triangle[1], triangle[2]),
+                    (triangle[0], triangle[2])
+                ]
+                
+                # Get coordinates for triangle edges
+                triangle_coords = []
+                for edge in triangle_edges:
+                    # Handle both (u,v) and (v,u) edge orderings
+                    if edge in edge_to_coords:
+                        triangle_coords.extend(edge_to_coords[edge])
+                    elif (edge[1], edge[0]) in edge_to_coords:
+                        triangle_coords.extend(edge_to_coords[(edge[1], edge[0])])
+                
+                if not triangle_coords:
+                    continue
+                
+                # Create tension field: high tension if all edges same color
+                def create_triangle_tension_fn(edge_coords_list):
+                    def compute_tension(system: LivniumCoreSystem) -> float:
+                        # Get SW values (colors) for edges
+                        sw_values = []
+                        for coords in edge_coords_list:
+                            cell = system.get_cell(coords)
+                            if cell:
+                                # Decode color: < 10 = color 0, >= 10 = color 1
+                                color = 0 if cell.symbolic_weight < 10.0 else 1
+                                sw_values.append(color)
+                        
+                        if len(sw_values) < 3:
+                            return 0.0
+                        
+                        # Tension = 1.0 if all same color (monochromatic), 0.0 otherwise
+                        if len(set(sw_values)) == 1:
+                            return 1.0  # Monochromatic triangle
+                        return 0.0  # Valid coloring
+                    
+                    return compute_tension
+                
+                field = self.constraint_encoder.encode_custom_constraint(
+                    constraint_id=f"triangle_{triangle}",
+                    involved_coords=triangle_coords,
+                    tension_fn=create_triangle_tension_fn(triangle_coords),
+                    description=f"No monochromatic triangle: {triangle}"
+                )
+                tension_fields.append(field)
+        
+        elif constraint_type == 'k4':
+            # Find all K₄ cliques (4-vertex complete subgraphs)
+            from itertools import combinations
+            k4_cliques = list(combinations(vertices, 4))
+            
+            for clique in k4_cliques:
+                # Get all 6 edges of K₄
+                clique_edges = list(combinations(clique, 2))
+                
+                # Get coordinates for clique edges
+                clique_coords = []
+                for edge in clique_edges:
+                    if edge in edge_to_coords:
+                        clique_coords.extend(edge_to_coords[edge])
+                    elif (edge[1], edge[0]) in edge_to_coords:
+                        clique_coords.extend(edge_to_coords[(edge[1], edge[0])])
+                
+                if not clique_coords:
+                    continue
+                
+                # Create tension field: high tension if all edges same color
+                def create_k4_tension_fn(edge_coords_list):
+                    def compute_tension(system: LivniumCoreSystem) -> float:
+                        sw_values = []
+                        for coords in edge_coords_list:
+                            cell = system.get_cell(coords)
+                            if cell:
+                                color = 0 if cell.symbolic_weight < 10.0 else 1
+                                sw_values.append(color)
+                        
+                        if len(sw_values) < 6:
+                            return 0.0
+                        
+                        # Tension = 1.0 if all same color (monochromatic K₄)
+                        if len(set(sw_values)) == 1:
+                            return 1.0
+                        return 0.0
+                    
+                    return compute_tension
+                
+                field = self.constraint_encoder.encode_custom_constraint(
+                    constraint_id=f"k4_{clique}",
+                    involved_coords=clique_coords,
+                    tension_fn=create_k4_tension_fn(clique_coords),
+                    description=f"No monochromatic K₄: {clique}"
+                )
+                tension_fields.append(field)
+        
+        # Generate candidate basins (valid colorings)
+        candidate_basins = []
+        n_candidates = problem.get('n_candidates', 10)
+        import random
+        
+        for _ in range(n_candidates):
+            # Random coloring: assign random colors to edges
+            basin_coords = []
+            for edge, coords in edge_to_coords.items():
+                basin_coords.extend(coords)
+            candidate_basins.append(basin_coords)
+        
+        return EncodedProblem(
+            tension_fields=tension_fields,
+            candidate_basins=candidate_basins,
+            variable_mappings=variable_mappings,
+            problem_type='ramsey',
+            metadata={
+                'vertices': vertices,
+                'edges': edges,
+                'constraint_type': constraint_type
+            }
+        )
     
     def _encode_constraint_satisfaction(
         self,

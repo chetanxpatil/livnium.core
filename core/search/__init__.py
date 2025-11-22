@@ -28,6 +28,13 @@ from .multi_basin_search import (
     create_candidate_basins,
 )
 
+# Corner rotation policy
+from .corner_rotation_policy import (
+    should_allow_corner_rotations,
+    rotation_affects_corners,
+    get_safe_rotation,
+)
+
 __all__ = [
     # Dynamic basin
     'update_basin_dynamic',
@@ -42,5 +49,9 @@ __all__ = [
     'MultiBasinSearch',
     'solve_with_multi_basin',
     'create_candidate_basins',
+    # Corner rotation policy
+    'should_allow_corner_rotations',
+    'rotation_affects_corners',
+    'get_safe_rotation',
 ]
 

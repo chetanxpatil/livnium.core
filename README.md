@@ -139,23 +139,23 @@ python3 experiments/nli/train_moksha_nli.py --clean --train 20000 --test 2000 --
 
 ```bash
 # Test recursive qubit capacity (2.5M qubits)
-python3 experiments/quantum-inspired-livnium-core/test_recursive_qubit_capacity.py
+python3 experiments/quantum_core/test_recursive_qubit_capacity.py
 
 # Test quantum teleportation
-python3 experiments/quantum-teleportation/test_quantum_teleportation.py
+python3 experiments/quantum_teleportation/test_quantum_teleportation.py
 
 # Test Bell's inequality violation
-python3 experiments/quantum-teleportation/test_bell_inequality.py
+python3 experiments/quantum_teleportation/test_bell_inequality.py
 ```
 
 ### Run AES Cryptanalysis
 
 ```bash
 # Recursive collapse (geometric manifold search)
-python3 experiments/quantum-inspired-livnium-core/aes128_recursive_collapse.py
+python3 experiments/quantum_core/aes128_recursive_collapse.py
 
 # Quantum topology mapper
-python3 experiments/quantum-inspired-livnium-core/aes128_quantum_topology_mapper.py
+python3 experiments/quantum_core/aes128_quantum_topology_mapper.py
 ```
 
 ---
@@ -165,7 +165,7 @@ python3 experiments/quantum-inspired-livnium-core/aes128_quantum_topology_mapper
 - **Architecture**: `core/README.md` - Core system architecture
 - **Quantum Layer**: `core/quantum/QUANTUM_LAYER.md` - Quantum mechanics implementation
 - **NLI System**: `experiments/nli/DIAGNOSTIC_REPORT.md` - Complete diagnostic
-- **Quantum Experiments**: `experiments/quantum-inspired-livnium-core/README.md`
+- **Quantum Experiments**: `experiments/quantum_core/README.md`
 
 ---
 
@@ -181,8 +181,8 @@ livnium.core/
 │
 ├── experiments/
 │   ├── nli/                       # Natural Language Inference
-│   ├── quantum-teleportation/     # Quantum protocol tests
-│   ├── quantum-inspired-livnium-core/  # Quantum-enhanced experiments
+│   ├── quantum_teleportation/     # Quantum protocol tests
+│   ├── quantum_core/              # Quantum-enhanced experiments
 │   └── crypto/                    # Cryptanalysis experiments
 │
 └── benchmark/                     # Benchmark suites

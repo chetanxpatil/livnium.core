@@ -150,7 +150,7 @@ Depending on the problem:
 ## Usage
 
 ```python
-from core.Universal Encoder import UniversalProblemEncoder
+from core.encoder import UniversalProblemEncoder
 from core.search import solve_with_multi_basin
 
 # Create encoder
