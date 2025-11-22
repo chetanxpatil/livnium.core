@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from core.config import LivniumCoreConfig
 from core.classical.livnium_core_system import LivniumCoreSystem
+from core.recursive import RecursiveGeometryEngine
 import importlib
 
 # Import Universal Encoder (directory name has space)
@@ -156,16 +157,20 @@ def solve_csp_livnium(
     csp: CSPProblem,
     max_steps: int = 1000,
     max_time: float = 60.0,
-    verbose: bool = False
+    verbose: bool = False,
+    use_recursive: bool = False,
+    recursive_depth: int = 2
 ) -> Dict[str, Any]:
     """
-    Solve a CSP problem using Livnium.
+    Solve a CSP problem using Livnium with optional recursive geometry.
     
     Args:
         csp: CSPProblem instance
         max_steps: Maximum search steps
         max_time: Maximum time in seconds
         verbose: Print progress
+        use_recursive: Use RecursiveGeometryEngine for more capacity
+        recursive_depth: Recursion depth if using recursive geometry
     
     Returns:
         Dictionary with results
@@ -180,15 +185,44 @@ def solve_csp_livnium(
     if n_lattice % 2 == 0:
         n_lattice += 1  # Must be odd
     
-    if verbose:
-        print(f"  Lattice size: {n_lattice}×{n_lattice}×{n_lattice} = {n_lattice**3} cells")
+    # For recursive, use smaller base lattice
+    if use_recursive:
+        base_lattice = min(5, n_lattice)  # Use 5×5×5 base for recursive
+        if base_lattice % 2 == 0:
+            base_lattice += 1
+    else:
+        base_lattice = n_lattice
     
-    # Create Livnium system
+    if verbose:
+        if use_recursive:
+            print(f"  Base lattice: {base_lattice}×{base_lattice}×{base_lattice} = {base_lattice**3} cells")
+            print(f"  Recursive depth: {recursive_depth}")
+        else:
+            print(f"  Lattice size: {base_lattice}×{base_lattice}×{base_lattice} = {base_lattice**3} cells")
+    
+    # Create base Livnium system
     config = LivniumCoreConfig(
-        lattice_size=n_lattice,
+        lattice_size=base_lattice,
         enable_semantic_polarity=True
     )
-    system = LivniumCoreSystem(config)
+    base_system = LivniumCoreSystem(config)
+    
+    # Optionally create recursive geometry engine
+    recursive_engine = None
+    if use_recursive:
+        if verbose:
+            print("  Building recursive geometry hierarchy...")
+        recursive_engine = RecursiveGeometryEngine(
+            base_geometry=base_system,
+            max_depth=recursive_depth
+        )
+        # Use base system for encoding (recursive levels available for expansion)
+        system = base_system
+        if verbose:
+            total_cells = sum(len(level.geometry.lattice) for level in recursive_engine.levels.values())
+            print(f"  ✓ Recursive geometry ready: {total_cells:,} total cells across {recursive_depth + 1} levels")
+    else:
+        system = base_system
     
     # Encode CSP problem
     encoder = UniversalProblemEncoder(system)

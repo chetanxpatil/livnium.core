@@ -1,0 +1,506 @@
+{
+  "csp_file": "benchmark/csp/csplib/test/nqueens_8.json",
+  "runs": 50,
+  "results": [
+    {
+      "run": 1,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.16441988945007324,
+      "steps": 188,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 2,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.41241002082824707,
+      "steps": 471,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 3,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.14673566818237305,
+      "steps": 170,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 4,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.005113124847412109,
+      "steps": 6,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 5,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.05553483963012695,
+      "steps": 67,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 6,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.01576399803161621,
+      "steps": 19,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 7,
+      "score": 23,
+      "total_constraints": 29,
+      "score_ratio": 0.7931034482758621,
+      "time": 0.002431154251098633,
+      "steps": 3,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 8,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.0715630054473877,
+      "steps": 84,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 9,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.015331029891967773,
+      "steps": 17,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 10,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.09173417091369629,
+      "steps": 106,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 11,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.023799896240234375,
+      "steps": 26,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 12,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.10407137870788574,
+      "steps": 121,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 13,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.0031337738037109375,
+      "steps": 4,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 14,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.06767487525939941,
+      "steps": 76,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 15,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.07348299026489258,
+      "steps": 83,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 16,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.29439210891723633,
+      "steps": 341,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 17,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.19005084037780762,
+      "steps": 218,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 18,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.1065521240234375,
+      "steps": 121,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 19,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.0022919178009033203,
+      "steps": 3,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 20,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.10632705688476562,
+      "steps": 125,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 21,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.07856297492980957,
+      "steps": 91,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 22,
+      "score": 26,
+      "total_constraints": 29,
+      "score_ratio": 0.896551724137931,
+      "time": 0.011949777603149414,
+      "steps": 14,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 23,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.13965201377868652,
+      "steps": 166,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 24,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.10679006576538086,
+      "steps": 125,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 25,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.08260297775268555,
+      "steps": 97,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 26,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.014132261276245117,
+      "steps": 17,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 27,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.15375208854675293,
+      "steps": 176,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 28,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.07512283325195312,
+      "steps": 87,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 29,
+      "score": 23,
+      "total_constraints": 29,
+      "score_ratio": 0.7931034482758621,
+      "time": 0.1972031593322754,
+      "steps": 225,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 30,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.06096696853637695,
+      "steps": 71,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 31,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.05682492256164551,
+      "steps": 65,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 32,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.029333114624023438,
+      "steps": 33,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 33,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.017049074172973633,
+      "steps": 21,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 34,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.11947393417358398,
+      "steps": 140,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 35,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.07439994812011719,
+      "steps": 86,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 36,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.002357006072998047,
+      "steps": 3,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 37,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.07409405708312988,
+      "steps": 88,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 38,
+      "score": 23,
+      "total_constraints": 29,
+      "score_ratio": 0.7931034482758621,
+      "time": 0.015892982482910156,
+      "steps": 19,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 39,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.035758256912231445,
+      "steps": 45,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 40,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.006002902984619141,
+      "steps": 7,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 41,
+      "score": 25,
+      "total_constraints": 29,
+      "score_ratio": 0.8620689655172413,
+      "time": 0.04844999313354492,
+      "steps": 55,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 42,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.15540361404418945,
+      "steps": 183,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 43,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.15386104583740234,
+      "steps": 177,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 44,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.10051703453063965,
+      "steps": 115,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 45,
+      "score": 27,
+      "total_constraints": 29,
+      "score_ratio": 0.9310344827586207,
+      "time": 0.10814905166625977,
+      "steps": 126,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 46,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.24485182762145996,
+      "steps": 281,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 47,
+      "score": 25,
+      "total_constraints": 29,
+      "score_ratio": 0.8620689655172413,
+      "time": 0.2946798801422119,
+      "steps": 333,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 48,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.03055119514465332,
+      "steps": 36,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 49,
+      "score": 28,
+      "total_constraints": 29,
+      "score_ratio": 0.9655172413793104,
+      "time": 0.03538393974304199,
+      "steps": 43,
+      "solved": true,
+      "satisfiable": false
+    },
+    {
+      "run": 50,
+      "score": 19,
+      "total_constraints": 29,
+      "score_ratio": 0.6551724137931034,
+      "time": 0.22231674194335938,
+      "steps": 259,
+      "solved": true,
+      "satisfiable": false
+    }
+  ]
+}

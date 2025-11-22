@@ -119,7 +119,9 @@ def run_benchmark(
     csp_files: List[Path],
     max_steps: int = 1000,
     max_time: float = 60.0,
-    verbose: bool = False
+    verbose: bool = False,
+    use_recursive: bool = False,
+    recursive_depth: int = 2
 ) -> Dict[str, Any]:
     """
     Run benchmark on a set of CSP files.
@@ -154,7 +156,9 @@ def run_benchmark(
             csp,
             max_steps=max_steps,
             max_time=max_time,
-            verbose=False
+            verbose=verbose,
+            use_recursive=use_recursive,
+            recursive_depth=recursive_depth
         )
         livnium_result['file'] = csp_file.name
         livnium_result['num_vars'] = csp.num_vars
@@ -260,6 +264,8 @@ def main():
     parser.add_argument('--limit', type=int, help='Limit number of problems to test')
     parser.add_argument('--output', type=str, default='benchmark/csp/csp_results.json', help='Output JSON file')
     parser.add_argument('--verbose', action='store_true', help='Verbose output')
+    parser.add_argument('--use-recursive', action='store_true', default=False, help='Use recursive geometry (default: False)')
+    parser.add_argument('--recursive-depth', type=int, default=2, help='Recursive geometry depth (default: 2)')
     
     args = parser.parse_args()
     
@@ -286,7 +292,9 @@ def main():
         csp_files,
         max_steps=args.max_steps,
         max_time=args.max_time,
-        verbose=args.verbose
+        verbose=args.verbose,
+        use_recursive=args.use_recursive,
+        recursive_depth=args.recursive_depth
     )
     
     # Print summary
