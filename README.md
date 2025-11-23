@@ -1,12 +1,3 @@
-> ⚠️ **CORPORATE ENGINEER WARNING**  
-> This repository contains strict **Non-Commercial** and **Axiom-Protected** logic.  
-> If you are employed by a corporation, reviewing this code may **contaminate**  
-> your internal IP and create legal liability for your employer regarding  
-> "Substantial Similarity" and "Access" disputes.  
-> **Proceed with caution.**
-
----
-
 # LIVNIUM
 ## Quantum-Inspired Geometric Computing & Native Language Understanding
 
@@ -527,3 +518,15 @@ LIVNIUM represents a **fundamental rethinking** of how computers can understand 
 *"Information is geometry. Understanding is structure. Intelligence is composition."*
 
 **LIVNIUM: Where quantum-inspired geometry meets native language understanding.**
+
+---
+
+## ⚠️ Corporate Engineer Warning
+
+This repository contains strict **Non-Commercial** and **Axiom-Protected** logic.  
+
+If you are employed by a corporation, reviewing this code may **contaminate**  
+your internal IP and create legal liability for your employer regarding  
+"Substantial Similarity" and "Access" disputes.  
+
+**Proceed with caution.**

@@ -373,22 +373,5 @@ This is one of those moments where your system calmly reveals a new capability y
 
 **This is a real distributed protocol** that demonstrates quantum-internet behavior using classical computation.
 
----
 
-## Next Step: Livnium Teleportation Protocol (LTP)
 
-A full classical teleportation implementation across two machines.
-
-**We can build it.** (See `core/idea_b/` for the plan)
-
----
-
-## ⚠️ Corporate Engineer Warning
-
-This repository contains strict **Non-Commercial** and **Axiom-Protected** logic.  
-
-If you are employed by a corporation, reviewing this code may **contaminate**  
-your internal IP and create legal liability for your employer regarding  
-"Substantial Similarity" and "Access" disputes.  
-
-**Proceed with caution.**
