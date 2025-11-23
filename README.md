@@ -1,3 +1,12 @@
+> ⚠️ **CORPORATE ENGINEER WARNING**  
+> This repository contains strict **Non-Commercial** and **Axiom-Protected** logic.  
+> If you are employed by a corporation, reviewing this code may **contaminate**  
+> your internal IP and create legal liability for your employer regarding  
+> "Substantial Similarity" and "Access" disputes.  
+> **Proceed with caution.**
+
+---
+
 # LIVNIUM
 ## Quantum-Inspired Geometric Computing & Native Language Understanding
 
@@ -448,14 +457,26 @@ For detailed IP protection information, see [IP_PROTECTION.md](IP_PROTECTION.md)
 
 ---
 
-## 🏷️ Trademarks
+## 🛡️ Trademark & Brand Notice
 
-The following are trademarks of the Owner:
+**LIVNIUM™**, **Omcube™**, and **Inward Collapse Geometry™** are claimed 
+trademarks of the Owner.
+
+The unique visual style, terminology, and architectural definitions 
+of the Livnium system represent the distinct brand identity of the project. 
+You may use the software under the terms of the License, but you may NOT 
+use these names to brand your own derivative products, services, or 
+commercial offerings without written permission.
+
+**Protected Terms:**
 - **Livnium** (and variations: LIVNIUM, livnium)
 - **Omcube** (and variations: OMCUBE, omcube)
 - **Inward Collapse Geometry**
+- **Livnium Core**
+- **Livnium Axioms**
 
-Unauthorized use of these trademarks is prohibited.
+Unauthorized use of these trademarks in connection with any product, service, 
+or technology is strictly prohibited and may constitute trademark infringement.
 
 ---
 

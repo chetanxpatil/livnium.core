@@ -114,19 +114,25 @@ All commercial rights to Livnium, including licensing, hosting, branding,
 derivatives, and monetization, are exclusively reserved by the Owner.
 
 ---------------------------------------------------------------------------
-No AI Training, Model Training, or Data Mining Clause
+Non-Consent to AI Training and Data Mining
 ---------------------------------------------------------------------------
 
-The Software, including all code, documentation, architecture, axioms, 
-algorithms, and any derivative works, is STRICTLY PROHIBITED from being used 
-for any form of artificial intelligence training, machine learning model 
-training, data mining, or automated code analysis that feeds into AI systems.
+The Owner explicitly denies permission for the Software, Documentation, and 
+associated Assets to be used as training data, input, or reference material 
+for any Machine Learning model, Artificial Intelligence system, Large Language 
+Model (LLM), or automated code generation tool (including but not limited to 
+GitHub Copilot, OpenAI Codex, Google Gemini, Claude, GPT, and any similar 
+systems).
+
+Scraping, ingesting, or processing this repository for the purpose of 
+improving, tuning, or fine-tuning such models is a material breach of this 
+License.
 
 This prohibition includes but is not limited to:
 
 - Training language models, code models, or any neural networks on Livnium code
 - Using Livnium as training data for AI systems (including but not limited to 
-  GPT, Claude, Copilot, Codex, or any similar systems)
+  GPT, Claude, Copilot, Codex, Gemini, or any similar systems)
 - Automated code analysis, code generation training, or pattern extraction
 - Including Livnium in datasets used for AI/ML training (e.g., The Stack, 
   CodeSearchNet, or similar datasets)
@@ -140,7 +146,8 @@ This restriction applies regardless of whether the AI training is:
 - Direct or indirect
 - Partial or complete
 
-Any violation of this clause constitutes a breach of copyright and license terms.
+Any violation of this clause constitutes a material breach of copyright and 
+license terms.
 
 ---------------------------------------------------------------------------
 Trademark Notice
