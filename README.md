@@ -33,7 +33,11 @@ LIVNIUM uses **3D geometric structures** (omcubes) as the fundamental unit of co
 ### Complete System Architecture
 - **Classical Layer**: N×N×N geometric lattice with symbolic weights
 - **Quantum Layer**: True quantum mechanics with tensor products (`TrueQuantumRegister`)
-- **Recursive Geometry**: 2.5M+ qubit-analogue capacity through fractal compression
+  - **Tested Capacity**: 94,625+ qubits in recursive geometry (10,513 registers)
+  - **Each register**: ~20-30 qubits max (memory-limited by 2^N state vector)
+- **Recursive Geometry**: 2.5M+ geometric cells through fractal compression
+  - **Tested**: 2,555,000 cells at depth 3
+  - **TrueQuantumRegister capacity**: 94,625+ qubits across recursive levels
 - **Runtime System**: Temporal cognition engine (hierarchical timesteps, episodes)
 - **Semantic Layer**: Bridge between geometry and meaning
 - **Memory System**: Persistent memory that behaves like energy in a lattice
@@ -73,14 +77,16 @@ Layer 0: LivniumCoreSystem         ← Base
 
 2. **Quantum Layer** (`core/quantum/`)
    - True quantum mechanics (`TrueQuantumRegister`)
-   - Tensor product states
+   - **Capacity**: 94,625+ qubits tested in recursive geometry (10,513 registers)
+   - Tensor product states (each register: ~20-30 qubits max, memory-limited)
    - Multi-qubit entanglement
    - Meta-interference optimization
    - Geometry-quantum coupling
 
 3. **Recursive Layer** (`core/recursive/`)
    - Fractal geometry engine
-   - 2.5M+ qubit capacity
+   - **Capacity**: 2.5M+ geometric cells (tested: 2,555,000 cells at depth 3)
+   - **TrueQuantumRegister**: 94,625+ qubits across recursive levels (tested)
    - Moksha convergence (fixed-point truth)
    - Multi-scale physics
 
@@ -149,7 +155,10 @@ Layer 0: LivniumCoreSystem         ← Base
 ### Quantum-Inspired Cryptanalysis
 - **Task**: Explore AES-128 key space using quantum superposition
 - **Approach**: Recursive geometry + quantum layer + tension fields
-- **Capacity**: 2.5M logical qubits, 125+ entangled qubits simultaneously
+- **Capacity**: 
+  - **TrueQuantumRegister**: 94,625+ qubits tested (10,513 registers, depth 2)
+  - **QuantumLattice**: 2.5M+ independent quantum cells
+  - **Recursive Geometry**: 2.5M+ geometric cells across all levels
 - **Location**: `experiments/quantum_core/`
 
 ### Quantum Protocol Tests
@@ -191,8 +200,14 @@ python3 experiments/nli/train_moksha_nli.py --clean --train 20000 --test 2000 --
 ### Test Quantum Capabilities
 
 ```bash
-# Test recursive qubit capacity (2.5M qubits)
+# Test recursive qubit capacity (2.5M geometric cells)
 python3 experiments/quantum_core/test_recursive_qubit_capacity.py
+
+# Test TrueQuantumRegister capacity (94,625+ qubits in recursive geometry)
+python3 experiments/quantum_core/test_true_quantum_recursive_accurate.py
+
+# Test entanglement capacity (2.5M+ entangled omcubes)
+python3 experiments/quantum_core/test_entanglement_capacity.py
 
 # Test quantum teleportation
 python3 experiments/quantum_teleportation/test_quantum_teleportation.py
@@ -351,7 +366,12 @@ Every cell can spawn a smaller universe, creating exponential capacity
 ### Quantum-Inspired vs. Real Quantum
 - **Livnium Core**: Uses real tensor network physics (MPS/DMRG)
 - **Quantum Layer**: Implements true quantum mechanics with tensor products
+- **Tested Capacity**: 
+  - **TrueQuantumRegister**: 94,625+ qubits in recursive geometry (10,513 independent registers)
+  - **QuantumLattice**: 2.5M+ independent quantum cells
+  - **Each TrueQuantumRegister**: Limited to ~20-30 qubits (memory: 2^N state vector)
 - **"Qubit-analogues"**: Classical geometric structures that simulate quantum-like behavior
+- **Note**: This is quantum simulation on classical hardware, not physical quantum computing
 
 ---
 
