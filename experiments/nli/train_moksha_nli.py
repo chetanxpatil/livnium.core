@@ -29,8 +29,7 @@ from core.config import LivniumCoreConfig
 from core.classical.livnium_core_system import LivniumCoreSystem
 # Removed: RecursiveGeometryEngine and ConvergenceState (using Native Chain instead)
 from experiments.nli.native_chain_encoder import NativeChainNLIEncoder, NativeEncodedPair
-from experiments.nli.omcube import OmcubeNLIClassifier, CrossOmcubeCoupling
-from experiments.nli.nli_memory import NLIMemory
+from experiments.nli.omcube import OmcubeNLIClassifier
 from experiments.nli.native_chain import GlobalLexicon
 
 
@@ -155,7 +154,7 @@ def clean_all_caches(nli_dir: str = None):
     
     This function:
     1. Clears GlobalLexicon (word state memory)
-    2. Clears NLIMemory (pattern storage)
+    2. Clears all caches
     3. Removes all __pycache__ directories
     4. Removes all .pyc files
     5. Removes all .pyo files
@@ -386,13 +385,7 @@ def main():
         nli_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
         clean_all_caches(nli_dir)
     
-    # The Memory (Experience)
-    memory = NLIMemory(max_patterns_per_label=5000)
-    if args.clean:
-        memory.clear()
-        print("  ✓ Memory cleared (clean start)")
-    else:
-        print("  ✓ Memory initialized")
+    # NLIMemory removed (simplified system)
     
     # Global Lexicon (Word State Memory)
     if args.clean:
@@ -401,13 +394,6 @@ def main():
     else:
         print("  ✓ Global Lexicon initialized")
     
-    # Shared coupling system (for learning persistence)
-    if args.clean:
-        shared_coupling = CrossOmcubeCoupling(initial_depth=1.0)
-        print("  ✓ Coupling system reset (clean start)")
-    else:
-        shared_coupling = CrossOmcubeCoupling(initial_depth=1.0)
-        print("  ✓ Coupling system initialized")
     print()
 
     # Load Data
@@ -472,8 +458,6 @@ def main():
             # --- C. QUANTUM DECISION (Soul) ---
             classifier = OmcubeNLIClassifier(encoded_pair)
             
-            # Use shared coupling for learning persistence
-            classifier.coupling = shared_coupling
             
             # Classify using quantum collapse
             result = classifier.classify(collapse=True)
@@ -492,6 +476,7 @@ def main():
             
             # Apply feedback to the geometry
             # This updates SW, which updates Curvature, which updates the Physics
+            # OPTIMIZATION: Always apply feedback but commit_learning is now batched
             classifier.apply_learning_feedback(
                 result, 
                 gold_idx, 
@@ -499,11 +484,7 @@ def main():
             )
             
             # Store in memory
-            memory.store_pattern(
-                premise, hypothesis, gold_label, 
-                encoded_pair=encoded_pair, 
-                importance=(1.0 if result.label == gold_label else 0.5)
-            )
+            # Memory storage removed (simplified system)
 
             # Track predictions for confusion matrix
             train_y_true.append(gold_label)
@@ -520,7 +501,8 @@ def main():
                 moksha_rate = moksha_reached_count / total_steps if total_steps > 0 else 0.0
                 
                 # Get Geometry Signals from the Coupling System
-                depths = classifier.coupling.get_basin_depths()
+                # Basin depths removed (simplified classifier)
+                depths = {0: 1.0, 1: 1.0, 2: 1.0}
                 
                 # Get Native Chain resonance
                 resonance = encoded_pair.get_resonance()
@@ -552,20 +534,15 @@ def main():
     print()
     
     # Get final basin depths
-    depths = shared_coupling.get_basin_depths()
+    # Basin depths removed (simplified classifier)
+    depths = {0: 1.0, 1: 1.0, 2: 1.0}
     print("Final Basin Depths:")
     print(f"  Entailment:     {depths.get(0, 0):.3f}")
     print(f"  Contradiction:  {depths.get(1, 0):.3f}")
     print(f"  Neutral:        {depths.get(2, 0):.3f}")
     print()
     
-    # Memory stats
-    mem_stats = memory.get_stats()
-    print("Memory Stats:")
-    print(f"  Total stored: {mem_stats['total_stored']}")
-    print(f"  Entailment:   {mem_stats.get('entailment', 0)}")
-    print(f"  Contradiction: {mem_stats.get('contradiction', 0)}")
-    print(f"  Neutral:      {mem_stats.get('neutral', 0)}")
+    # Memory stats removed (NLIMemory removed)
     print()
     
     # Print confusion matrix for training set
@@ -593,7 +570,6 @@ def main():
             try:
                 encoded_pair = encoder.encode_pair(premise, hypothesis)
                 classifier = OmcubeNLIClassifier(encoded_pair)
-                classifier.coupling = shared_coupling
                 result = classifier.classify(collapse=True)
                 
                 test_y_true.append(gold_label)
@@ -634,7 +610,6 @@ def main():
             try:
                 encoded_pair = encoder.encode_pair(premise, hypothesis)
                 classifier = OmcubeNLIClassifier(encoded_pair)
-                classifier.coupling = shared_coupling
                 result = classifier.classify(collapse=True)
                 
                 dev_y_true.append(gold_label)
@@ -666,6 +641,22 @@ def main():
         print("  ✅ Moksha convergence detected - system is stabilizing")
     else:
         print("  ⚠️  System needs more training to reach moksha")
+    print()
+    
+    # Save the brain to disk
+    brain_path = os.path.join(os.path.dirname(__file__), 'brain_state.pkl')
+    GlobalLexicon().save_to_file(brain_path)
+    print(f"✓ Brain saved to: {brain_path}")
+    print(f"  - Words learned: {len(GlobalLexicon().polarity_store)}")
+    print(f"  - Letters learned: {len(GlobalLexicon().letter_store)}")
+    print()
+    
+    # Save the brain to disk
+    brain_path = os.path.join(os.path.dirname(__file__), 'brain_state.pkl')
+    GlobalLexicon().save_to_file(brain_path)
+    print(f"✓ Brain saved to: {brain_path}")
+    print(f"  - Words learned: {len(GlobalLexicon().polarity_store)}")
+    print(f"  - Letters learned: {len(GlobalLexicon().letter_store)}")
     print()
 
 

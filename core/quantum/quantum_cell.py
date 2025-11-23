@@ -195,6 +195,61 @@ class QuantumCell:
         self.amplitudes = np.array(state, dtype=complex)
         self.normalize()
     
+    def apply_meta_interference(self, target_state: int, bias_strength: float):
+        """
+        Apply meta-interference: Non-linear bias toward target state.
+        
+        This breaks unitarity (non-standard quantum mechanics) to bias amplitudes
+        toward a specific state. Useful for optimization and forcing convergence.
+        
+        ⚠️ WARNING: This is NOT standard quantum mechanics!
+        This is an optimization technique that manipulates amplitudes non-linearly.
+        
+        Args:
+            target_state: Target state index (0 to num_levels-1) to bias toward
+            bias_strength: Strength of bias (0.0 = no effect, 1.0 = strong)
+        """
+        # Clamp target_state to valid range
+        target_state = target_state % self.num_levels
+        
+        # Extract current amplitudes
+        amplitudes = self.amplitudes.copy()
+        new_amplitudes = np.copy(amplitudes)
+        
+        for i in range(self.num_levels):
+            # Calculate geometric resonance (how "close" is state i to target?)
+            # For 3-class: distance = |i - target|
+            distance = abs(i - target_state)
+            
+            if distance == 0:
+                # Perfect match: maximum resonance
+                resonance = 1.0
+            else:
+                # Resonance decays with distance
+                # For 3-class: max distance is 2, so resonance = 1 / (1 + distance)
+                resonance = 1.0 / (1.0 + distance)
+            
+            if resonance > 0:
+                # AMPLIFY: Boost this state manually
+                phase = np.angle(amplitudes[i])
+                magnitude = np.abs(amplitudes[i])
+                
+                # Non-linear boost
+                new_magnitude = magnitude * (1.0 + (bias_strength * resonance))
+                new_amplitudes[i] = new_magnitude * np.exp(1j * phase)
+            else:
+                # SUPPRESS: Dampen competing states
+                new_amplitudes[i] *= (1.0 - (bias_strength * 0.1))
+        
+        # Re-normalize (force consistency)
+        norm = np.sqrt(np.sum(np.abs(new_amplitudes)**2))
+        if norm > 1e-10:
+            self.amplitudes = new_amplitudes / norm
+        else:
+            # Fallback: reset to target state
+            self.amplitudes = np.zeros(self.num_levels, dtype=complex)
+            self.amplitudes[target_state] = 1.0 + 0j
+    
     def is_entangled_with(self, other: 'QuantumCell') -> bool:
         """
         Check if this cell is entangled with another.

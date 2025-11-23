@@ -8,8 +8,8 @@ of the Livnium Core System.
 from .native_chain import Omchain, WordOmcube
 from .native_chain_encoder import NativeChainNLIEncoder, NativeEncodedPair
 from .inference_detectors import EntailmentDetector, ContradictionDetector, NLIClassifier
-from .omcube import OmcubeNLIClassifier, OmcubeCollapseResult, CrossOmcubeCoupling, GeometricFeedback
-from .nli_memory import NLIMemory, MemoryPattern
+from .omcube import OmcubeNLIClassifier, OmcubeCollapseResult, GeometricFeedback
+# NLIMemory and CrossOmcubeCoupling removed (simplified system)
 
 __all__ = [
     'Omchain',
@@ -21,9 +21,6 @@ __all__ = [
     'NLIClassifier',
     'OmcubeNLIClassifier',
     'OmcubeCollapseResult',
-    'CrossOmcubeCoupling',
     'GeometricFeedback',
-    'NLIMemory',
-    'MemoryPattern',
 ]
 

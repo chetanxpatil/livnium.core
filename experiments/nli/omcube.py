@@ -1,7 +1,7 @@
 """
-Omcube System: Coupling and Classification
+Omcube System: Simplified Classification
 
-Combines cross-omcube coupling (basin dynamics) and omcube classifier (quantum collapse).
+Minimal wrapper around NLIClassifier with simple class bias tracking.
 """
 
 import numpy as np
@@ -9,14 +9,40 @@ from typing import Dict, Tuple, Optional, Any
 from dataclasses import dataclass
 
 from .native_chain_encoder import NativeEncodedPair
-from .inference_detectors import EntailmentDetector, ContradictionDetector, NLIClassifier
-from core.classical.livnium_core_system import LivniumCoreSystem
-from core.quantum.quantum_cell import QuantumCell
-from core.quantum.measurement_engine import MeasurementEngine
+from .inference_detectors import NLIClassifier
+from .native_chain import GlobalLexicon
+
 
 
 # ============================================================================
-# Coupling System: Basin Dynamics
+# Simple Class Bias Tracker (Replaces Basin Dynamics)
+# ============================================================================
+
+class SimpleClassBias:
+    """
+    Simple class prior tracking (replaces complex basin dynamics).
+    
+    Tracks how often each class is correct to create a simple bias.
+    """
+    
+    def __init__(self):
+        """Initialize with equal priors."""
+        self.class_counts = np.array([1.0, 1.0, 1.0], dtype=float)  # [E, C, N]
+    
+    def update(self, correct_class: int, strength: float = 1.0):
+        """Update class count when correct."""
+        self.class_counts[correct_class] += strength
+    
+    def get_weights(self) -> np.ndarray:
+        """Get normalized class weights (simple prior)."""
+        total = np.sum(self.class_counts)
+        if total > 0:
+            return self.class_counts / total
+        return np.array([1.0/3, 1.0/3, 1.0/3])
+
+
+# ============================================================================
+# OLD CODE (kept for reference, but not used)
 # ============================================================================
 
 @dataclass
@@ -59,7 +85,8 @@ class CrossOmcubeCoupling:
         ])
         
         # Learning rates (reward-only)
-        self.reinforcement_rate = 0.15  # Standard reinforcement rate
+        # FIX: Increased reinforcement rate for faster basin learning (was 0.15, now 0.3)
+        self.reinforcement_rate = 0.3  # Faster reinforcement rate
         self.coupling_strength = 0.5  # Cross-omcube influence
         
         # NATURAL DECAY RATES:
@@ -131,23 +158,16 @@ class CrossOmcubeCoupling:
         Returns:
             Array of 3 weights (one per omcube)
         """
-        depths = np.array([self.basins[i].depth for i in [0, 1, 2]])
+        depths = np.array([self.basins[i].depth for i in [0, 1, 2]], dtype=np.float64)
         
-        # Lower threshold calculation (more lenient)
+        # Calculate basin weights using softmax with temperature
+        temperature = 3.0
         threshold = np.mean(depths) * self.suppression_threshold_multiplier
-        
-        # Apply suppression (less harsh penalty)
         suppressed_depths = depths.copy()
         for i in range(3):
             if depths[i] < threshold:
-                suppressed_depths[i] = depths[i] * 0.2  # Less harsh: was 0.1
-        
-        # FIX: Dampen the exponential explosion
-        # Divide by temperature so e^11 doesn't crush e^7
-        # Temperature = 3.0 means: e^(11/3) ≈ 39 vs e^(8/3) ≈ 14 (ratio ~3:1, not 36:1)
-        temperature = 3.0
+                suppressed_depths[i] = depths[i] * 0.2
         exp_depths = np.exp(suppressed_depths / temperature)
-        
         weights = exp_depths / np.sum(exp_depths)
         
         return weights
@@ -215,18 +235,23 @@ class CrossOmcubeCoupling:
 
 class GeometricFeedback:
     """
-    Propagates collapse feedback into geometry.
+    Propagates collapse feedback into geometry and LEARNS WORD POLARITY.
     
     Updates:
-    - Symbolic weights
-    - Face exposure
-    - Quantum amplitudes
-    - Polarity fields
+    - Quantum amplitudes (entanglement strength)
+    - Word semantic polarities (learned from training)
+    - Letter vectors (direct updates to GlobalLexicon)
     """
     
     def __init__(self, encoded_pair: NativeEncodedPair):
-        """Initialize geometric feedback."""
+        """
+        Initialize geometric feedback.
+        
+        Args:
+            encoded_pair: The encoded premise-hypothesis pair
+        """
         self.encoded_pair = encoded_pair
+        self.lexicon = GlobalLexicon()  # Access to global memory
     
     def reinforce_geometry(self, 
                           correct_omcube: int,
@@ -246,39 +271,72 @@ class GeometricFeedback:
         premise_chain = self.encoded_pair.premise_chain
         hypothesis_chain = self.encoded_pair.hypothesis_chain
         
-        learning_rate = 0.5 * strength
+        # FIX: Increased learning rate for faster convergence (was 0.5, now 1.0)
+        learning_rate = 1.0 * strength
+        
+        # OPTIMIZATION: Build word->cube maps for O(1) lookup (was O(P*H) nested loops)
+        premise_word_map = {cube.word: cube for cube in premise_chain.chain}
+        hypothesis_word_map = {cube.word: cube for cube in hypothesis_chain.chain}
+        
+        # Find matching words (O(P+H) instead of O(P*H))
+        matching_words = set(premise_word_map.keys()) & set(hypothesis_word_map.keys())
         
         if correct_omcube == 0:  # ENTAILMENT -> Strengthen resonance
             # Increase entanglement between matching words
-            for p_cube in premise_chain.chain:
-                for h_cube in hypothesis_chain.chain:
-                    if p_cube.word == h_cube.word:
-                        # Strengthen quantum coupling
-                        p_cube.quantum_state.amplitudes *= (1.0 + learning_rate * 0.1)
-                        h_cube.quantum_state.amplitudes *= (1.0 + learning_rate * 0.1)
-                        p_cube.quantum_state.normalize()
-                        h_cube.quantum_state.normalize()
+            # FIX: Increased from 0.1 to 0.2 for faster learning (was 5%, now 20%)
+            factor = 1.0 + learning_rate * 0.2
+            for word in matching_words:
+                p_cube = premise_word_map[word]
+                h_cube = hypothesis_word_map[word]
+                # Strengthen quantum coupling
+                # Update amplitudes directly
+                p_cube.quantum_state.amplitudes *= factor
+                h_cube.quantum_state.amplitudes *= factor
                         
         elif correct_omcube == 1:  # CONTRADICTION -> Weaken resonance
             # Decrease entanglement (polarize)
-            for p_cube in premise_chain.chain:
-                for h_cube in hypothesis_chain.chain:
-                    if p_cube.word == h_cube.word:
-                        # Weaken quantum coupling
-                        p_cube.quantum_state.amplitudes *= (1.0 - learning_rate * 0.1)
-                        h_cube.quantum_state.amplitudes *= (1.0 - learning_rate * 0.1)
-                        p_cube.quantum_state.normalize()
-                        h_cube.quantum_state.normalize()
+            # FIX: Increased from 0.1 to 0.2 for faster learning (was 5%, now 20%)
+            factor = 1.0 - learning_rate * 0.2
+            for word in matching_words:
+                p_cube = premise_word_map[word]
+                h_cube = hypothesis_word_map[word]
+                # Weaken quantum coupling
+                # Update amplitudes directly
+                p_cube.quantum_state.amplitudes *= factor
+                h_cube.quantum_state.amplitudes *= factor
                         
-        elif correct_omcube == 2:  # NEUTRAL -> Slight strengthening
-            # Weak reinforcement - just normalize
-            for cube in premise_chain.chain + hypothesis_chain.chain:
-                cube.quantum_state.normalize()
+        elif correct_omcube == 2:  # NEUTRAL -> Weak reinforcement
+            # FIX: Add reinforcement for neutral (was completely skipped!)
+            # Use smaller factor than entailment/contradiction (neutral is ambiguous)
+            factor = 1.0 + learning_rate * 0.05  # 5% increase (small but non-zero)
+            for word in matching_words:
+                p_cube = premise_word_map[word]
+                h_cube = hypothesis_word_map[word]
+                # Apply small reinforcement for neutral pairs
+                p_cube.quantum_state.amplitudes *= factor
+                h_cube.quantum_state.amplitudes *= factor
         
-        # CRITICAL: Commit changes to Global Memory
-        # This prevents "amnesia" by saving learned states across examples
-        self.encoded_pair.premise_chain.commit_learning()
-        self.encoded_pair.hypothesis_chain.commit_learning()
+        # Batch normalize all cubes at once
+        all_cubes = premise_chain.chain + hypothesis_chain.chain
+        for cube in all_cubes:
+            cube.quantum_state.normalize()
+        
+        # UPDATE LEARNED WORD POLARITIES (Semantic Learning)
+        # Iterate through all words and nudge them towards the correct class label
+        all_words = premise_chain.words + hypothesis_chain.words
+        unique_words = set(all_words)
+        
+        for word in unique_words:
+            # Faster semantic learning - "not" will learn contradiction faster
+            # "cat" will see label=0,1,2 equally and stay Neutral
+            self.lexicon.update_word_polarity(word, correct_omcube, strength=0.15)
+        
+        # DIRECT MEMORY UPDATES (No consolidation delays)
+        # Save all letter states immediately
+        for word_chain in [premise_chain, hypothesis_chain]:
+            if hasattr(word_chain, 'letter_cubes'):
+                for letter_cube in word_chain.letter_cubes:
+                    letter_cube.save_state()
     
     def apply_collapse_feedback(self,
                                 collapsed_omcube: int,
@@ -313,156 +371,60 @@ class OmcubeCollapseResult:
 
 class OmcubeNLIClassifier:
     """
-    3-Omcube Collapse Classifier (3-Class Classification).
+    Simplified NLI Classifier - Minimal wrapper around NLIClassifier.
     
-    Uses quantum measurement to collapse to one of three states:
-    - Omcube 0: Entailment
-    - Omcube 1: Contradiction
-    - Omcube 2: Neutral
+    Uses NLIClassifier for core classification with simple class bias tracking.
     """
     
     def __init__(self, encoded_pair: NativeEncodedPair):
         """
-        Initialize 3-omcube classifier (3-class classification).
+        Initialize simplified classifier.
         
         Args:
             encoded_pair: Native Chain encoded premise-hypothesis pair
         """
         self.encoded_pair = encoded_pair
-        self.entailment_detector = EntailmentDetector(encoded_pair)
-        self.contradiction_detector = ContradictionDetector(encoded_pair)
-        # FIX: Use NLIClassifier to get improved neutral detection
         self.nli_classifier = NLIClassifier(encoded_pair)
-        self.measurement_engine = MeasurementEngine()
         
-        # Cross-omcube coupling (enables communication between omcubes)
-        self.coupling = CrossOmcubeCoupling(initial_depth=1.0)
+        # Simple class bias tracker (replaces basin dynamics)
+        self.class_bias = SimpleClassBias()
         
-        # Geometric feedback (propagates collapse into Native Chain)
+        # Geometric feedback (word-level learning)
         self.geometric_feedback = GeometricFeedback(encoded_pair)
-        
-        # Create 3 omcubes (quantum cells) for 3-class classification
-        initial_amplitudes = np.array([1.0/np.sqrt(3), 1.0/np.sqrt(3), 1.0/np.sqrt(3)], dtype=complex)
-        self.omcube_cell = QuantumCell(
-            coordinates=(0, 0, 0),  # Dummy coordinates
-            num_levels=3,  # 3 levels = 3 omcubes
-            amplitudes=initial_amplitudes
-        )
     
     def classify(self, 
                  collapse: bool = True,
                  deterministic_threshold: float = 0.1) -> OmcubeCollapseResult:
         """
-        Classify using 3-omcube collapse (3-class classification).
+        Classify using NLIClassifier with simple class bias.
         
         Args:
-            collapse: Whether to collapse after measurement
-            deterministic_threshold: Threshold for deterministic selection
+            collapse: Whether to collapse after measurement (unused, kept for compatibility)
+            deterministic_threshold: Threshold for deterministic selection (unused, kept for compatibility)
             
         Returns:
             OmcubeCollapseResult with collapsed label
         """
-        # Get base scores
-        # FIX: Use NLIClassifier to get improved neutral detection with moderate resonance checks
+        # Get scores from NLIClassifier (core classification)
         nli_result = self.nli_classifier.classify()
         entailment_score = nli_result['scores']['entailment']
         contradiction_score = nli_result['scores']['contradiction']
-        neutral_score = nli_result['scores']['neutral']  # This has the improved logic!
+        neutral_score = nli_result['scores']['neutral']
         
-        # CROSS-OMCUBE COUPLING: Get basin weights and depths (learned from previous collapses)
-        basin_weights = self.coupling.get_basin_weights()
-        basin_depths = self.coupling.get_basin_depths()
+        # Apply simple class bias (learned prior)
+        bias_weights = self.class_bias.get_weights()
+        scores = np.array([
+            entailment_score * (1.0 + bias_weights[0] * 0.2),  # Small bias boost
+            contradiction_score * (1.0 + bias_weights[1] * 0.2),
+            neutral_score * (1.0 + bias_weights[2] * 0.2)
+        ])
         
-        # CLEAN 3-WAY COMPETITION: All classes compete equally
-        depth_E = basin_depths.get(0, 1.0)
-        depth_C = basin_depths.get(1, 1.0)
-        depth_N = basin_depths.get(2, 1.0)
+        # Get predicted class (argmax)
+        measured_omcube = int(np.argmax(scores))
         
-        # FIX: Dynamic Temperature (Thermodynamic Intelligence)
-        # Prevents "Black Hole Problem" - system resists falling into deepest basin
-        # when semantic signal is weak (ambiguous text).
-        
-        # 1. Calculate Semantic Confidence (How clear is the text?)
-        # If scores are [0.9, 0.1], confidence is high.
-        # If scores are [0.3, 0.3], confidence is low.
-        semantic_confidence = max(entailment_score, contradiction_score)
-        
-        # 2. Calculate Dynamic Temperature (The "Anti-Gravity" Force)
-        # High Confidence -> Low Temp (Freeze/Commit) - Trust the basin
-        # Low Confidence -> High Temp (Explore/Resist Gravity) - Trust the signal
-        # Range: 1.0 (Cold) to 10.0 (Hot)
-        temperature = 1.0 + (1.0 - semantic_confidence) * 9.0
-        
-        # 3. Apply Basin Gravity (Modulated by Temperature)
-        # If we are "Hot" (Confused), we divide the basin depth, making it shallow.
-        # This prevents "Falling In" when we shouldn't.
-        # When Hot (temp=8.0), depth 200 → effective_depth 25 (weak gravity)
-        # When Cold (temp=1.0), depth 200 → effective_depth 200 (strong gravity)
-        effective_depth_E = depth_E / temperature
-        effective_depth_C = depth_C / temperature
-        effective_depth_N = depth_N / temperature
-        
-        # 4. Boost semantic signal (keep the 5.0 multiplier)
-        adj_entailment = entailment_score * 5.0
-        adj_contradiction = contradiction_score * 5.0
-        
-        # 5. Compute Neutral Signal (FIXED: Use improved neutral score from NLIClassifier)
-        # NLIClassifier already handles:
-        # - Moderate resonance checks (0.4-0.65)
-        # - Low lexical overlap (< 0.3)
-        # - Both moderate scores (0.3-0.65)
-        # - Boosts neutral to 0.85 when conditions are met
-        # We just need to apply the same 5.0 multiplier for consistency
-        neutral_semantic = neutral_score * 5.0
-        
-        # 6. Compute Final Scores
-        # Score = Signal × Effective_Depth
-        score_E = adj_entailment * effective_depth_E
-        score_C = adj_contradiction * effective_depth_C
-        score_N = neutral_semantic * effective_depth_N
-        
-        # Apply basin weights (cross-coupling influence)
-        if len(basin_weights) >= 3:
-            score_E *= (1.0 + basin_weights[0] * 0.5)
-            score_C *= (1.0 + basin_weights[1] * 0.5)
-            score_N *= (1.0 + basin_weights[2] * 0.5)
-        
-        # 3-way competition: winner is argmax(score_E, score_C, score_N)
-        scores = [score_E, score_C, score_N]
-        measured_omcube = scores.index(max(scores))
-        
-        # Probabilities proportional to scores (softmax-like)
-        score_sum = sum(scores)
-        prob_E = score_E / score_sum
-        prob_C = score_C / score_sum
-        prob_N = score_N / score_sum
-        
-        # Normalize probabilities
-        probs = np.array([prob_E, prob_C, prob_N])
-        probs = np.clip(probs, 0.0, 1.0)
-        probs = probs / np.sum(probs)
-        
-        # FIX: Winner-Take-All for Training Stability
-        # If one probability dominates, force it to 1.0 to stabilize the geometry
-        # This breaks the probabilistic cycle: Clear Winner → Deterministic Collapse → 
-        # Consistent Feedback → Stable Geometry → Moksha
-        max_prob = np.max(probs)
-        if max_prob > 0.4:  # If any class has > 40% probability (slightly better than random)
-            # Hard collapse to the winner
-            best_idx = np.argmax(probs)
-            probs = np.zeros_like(probs)
-            probs[best_idx] = 1.0
-            # Update measured_omcube to match deterministic choice
-            measured_omcube = best_idx
-        
-        # Set quantum amplitudes (square root of probabilities for Born rule)
-        self.omcube_cell.amplitudes = np.sqrt(probs).astype(complex)
-        self.omcube_cell.normalize()
-        
-        # Collapse quantum state to measured omcube
-        if collapse:
-            self.omcube_cell.amplitudes = np.zeros(3, dtype=complex)
-            self.omcube_cell.amplitudes[measured_omcube] = 1.0 + 0j
+        # Convert scores to probabilities (softmax)
+        exp_scores = np.exp(scores - np.max(scores))  # Numerical stability
+        probs = exp_scores / np.sum(exp_scores)
         
         # Map to label
         label_map = {0: 'entailment', 1: 'contradiction', 2: 'neutral'}
@@ -470,18 +432,17 @@ class OmcubeNLIClassifier:
         
         result = OmcubeCollapseResult(
             label=label,
-            collapsed_omcube=int(measured_omcube),
+            collapsed_omcube=measured_omcube,
             probabilities={
                 'entailment': float(probs[0]),
                 'contradiction': float(probs[1]),
                 'neutral': float(probs[2])
             },
             confidence=float(probs[measured_omcube]),
-            amplitudes=self.omcube_cell.amplitudes.copy()
+            amplitudes=np.sqrt(probs).astype(complex)  # Simple amplitude representation
         )
         
-        # Store coupling and feedback references for learning
-        result._coupling = self.coupling
+        # Store feedback reference for learning
         result._geometric_feedback = self.geometric_feedback
         
         return result
@@ -491,77 +452,51 @@ class OmcubeNLIClassifier:
                                    correct_omcube: int,
                                    learning_strength: float):
         """
-        Apply learning feedback (clean routing law).
-        
-        Always reinforce ground-truth basin (correct_omcube).
-        This ensures all classes grow independently.
+        Apply learning feedback - update class bias and geometry.
         
         Args:
             result: Collapse result (used for statistics)
-            correct_omcube: Ground-truth omcube (0, 1, or 2) - THIS is what gets reinforced
+            correct_omcube: Ground-truth omcube (0, 1, or 2)
             learning_strength: Learning strength (always 1.0)
         """
         if learning_strength > 0.0:
-            # Reinforce ground-truth basin
-            self.coupling.apply_collapse_feedback(
-                correct_omcube, correct_omcube, learning_strength
-            )
+            # Update simple class bias
+            self.class_bias.update(correct_omcube, learning_strength)
             
-            # Update geometry
+            # Update geometry (word-level learning)
             self.geometric_feedback.apply_collapse_feedback(
                 correct_omcube, correct_omcube, learning_strength
             )
-            
-            # Update quantum amplitudes
-            self.omcube_cell.amplitudes[correct_omcube] *= (1.0 + learning_strength * 0.1)
-            self.omcube_cell.normalize()
     
     def get_superposition_state(self) -> Dict[str, Any]:
         """
-        Get current superposition state (before collapse).
+        Get current classification state.
         
         Returns:
-            Dict with amplitudes and probabilities
+            Dict with probabilities and bias weights
         """
-        probs = self.omcube_cell.get_probabilities()
+        nli_result = self.nli_classifier.classify()
+        bias_weights = self.class_bias.get_weights()
+        
+        scores = np.array([
+            nli_result['scores']['entailment'] * (1.0 + bias_weights[0] * 0.2),
+            nli_result['scores']['contradiction'] * (1.0 + bias_weights[1] * 0.2),
+            nli_result['scores']['neutral'] * (1.0 + bias_weights[2] * 0.2)
+        ])
+        exp_scores = np.exp(scores - np.max(scores))
+        probs = exp_scores / np.sum(exp_scores)
+        
         return {
-            'amplitudes': self.omcube_cell.amplitudes.copy(),
             'probabilities': {
                 'entailment': float(probs[0]),
                 'contradiction': float(probs[1]),
                 'neutral': float(probs[2])
             },
+            'bias_weights': {
+                'entailment': float(bias_weights[0]),
+                'contradiction': float(bias_weights[1]),
+                'neutral': float(bias_weights[2])
+            },
             'entropy': float(-np.sum(probs * np.log(probs + 1e-10)))  # Shannon entropy
         }
-    
-    def collapse_to(self, omcube_index: int) -> OmcubeCollapseResult:
-        """
-        Manually collapse to a specific omcube.
-        
-        Args:
-            omcube_index: 0=entailment, 1=contradiction, 2=neutral
-            
-        Returns:
-            OmcubeCollapseResult
-        """
-        if omcube_index not in [0, 1, 2]:
-            raise ValueError("omcube_index must be 0, 1, or 2")
-        
-        probs = self.omcube_cell.get_probabilities()
-        self.omcube_cell.amplitudes = np.zeros(3, dtype=complex)
-        self.omcube_cell.amplitudes[omcube_index] = 1.0 + 0j
-        
-        label_map = {0: 'entailment', 1: 'contradiction', 2: 'neutral'}
-        
-        return OmcubeCollapseResult(
-            label=label_map[omcube_index],
-            collapsed_omcube=omcube_index,
-            probabilities={
-                'entailment': float(probs[0]),
-                'contradiction': float(probs[1]),
-                'neutral': float(probs[2])
-            },
-            confidence=float(probs[omcube_index]),
-            amplitudes=self.omcube_cell.amplitudes.copy()
-        )
 

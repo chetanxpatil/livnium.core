@@ -10,6 +10,8 @@ from typing import Dict, List, Tuple, Optional, Any
 from collections import Counter
 
 from .native_chain_encoder import NativeEncodedPair
+from .native_chain import GlobalLexicon
+
 
 
 class NativeLogic:
@@ -20,34 +22,65 @@ class NativeLogic:
         return [t.lower() for t in token_map.keys()]
 
     @staticmethod
-    def detect_negation(tokens: List[str]) -> bool:
-        negations = {'not', 'no', 'never', 'nothing', 'none', 'neither', 'nowhere', "n't", 'cannot', "can't", "won't", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't"}
-        return any(t in negations for t in tokens)
-
-    @staticmethod
-    def count_negations(tokens: List[str]) -> int:
-        """Count number of negation words in tokens."""
-        negations = {'not', 'no', 'never', 'nothing', 'none', 'neither', 'nowhere', "n't", 'cannot', "can't", "won't", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't"}
-        return sum(1 for t in tokens if t in negations)
+    def detect_learned_polarity(tokens: List[str], target_class: int = 1) -> Tuple[bool, float]:
+        """
+        Check if any token has learned to be a strong indicator for a class.
+        target_class: 0=Entailment, 1=Contradiction, 2=Neutral
+        
+        Returns: (found_strong_indicator, max_strength)
+        """
+        lexicon = GlobalLexicon()
+        max_strength = 0.0
+        found = False
+        
+        for token in tokens:
+            # Get learned polarity vector [E, C, N]
+            polarity = lexicon.get_word_polarity(token)
+            
+            # Check strength of target class
+            strength = polarity[target_class]
+            
+            # If word strongly points to target class (e.g. > 0.55)
+            # "not" will eventually reach ~0.9 for Contradiction
+            if strength > 0.55:
+                found = True
+                max_strength = max(max_strength, strength)
+                
+        return found, max_strength
 
     @staticmethod
     def detect_double_negative(premise_tokens: List[str], hypothesis_tokens: List[str]) -> bool:
         """
-        Detect if premise and hypothesis have same polarity (double negative = entailment).
+        Detect if premise and hypothesis have same polarity using learned word polarities.
+        
+        Uses learned polarity vectors to determine if both sentences have similar semantic polarity.
+        No hard-coded word lists - only geometry + learned data.
         
         Returns True if same polarity (both positive OR both negative), False if opposite.
-        Example: "happy" vs "not sad" → True (both positive, double negative)
-        Example: "happy" vs "sad" → False (opposite polarity)
         """
-        premise_neg_count = NativeLogic.count_negations(premise_tokens)
-        hypothesis_neg_count = NativeLogic.count_negations(hypothesis_tokens)
+        lexicon = GlobalLexicon()
         
-        # Polarity: even number of negations = positive, odd = negative
-        premise_polarity = premise_neg_count % 2  # 0 = positive, 1 = negative
-        hypothesis_polarity = hypothesis_neg_count % 2
+        # Get average polarity for premise and hypothesis
+        premise_polarities = [lexicon.get_word_polarity(token) for token in premise_tokens]
+        hypothesis_polarities = [lexicon.get_word_polarity(token) for token in hypothesis_tokens]
         
-        # Same polarity → double negative (entailment)
-        return premise_polarity == hypothesis_polarity
+        if not premise_polarities or not hypothesis_polarities:
+            return False
+        
+        # Average polarity vectors
+        avg_premise = np.mean(premise_polarities, axis=0)
+        avg_hypothesis = np.mean(hypothesis_polarities, axis=0)
+        
+        # Check if both lean toward same class (entailment vs contradiction)
+        # If both have high contradiction polarity OR both have low contradiction polarity
+        pre_contradiction = avg_premise[1]  # Contradiction class
+        hyp_contradiction = avg_hypothesis[1]
+        
+        # Same polarity if both are high contradiction OR both are low contradiction
+        both_high = (pre_contradiction > 0.5) and (hyp_contradiction > 0.5)
+        both_low = (pre_contradiction < 0.4) and (hyp_contradiction < 0.4)
+        
+        return both_high or both_low
 
     @staticmethod
     def compute_overlap(tokens1: List[str], tokens2: List[str]) -> float:
@@ -93,33 +126,30 @@ class NativeLogic:
     @staticmethod
     def detect_negation_word_level(encoded_pair) -> Tuple[bool, float]:
         """
-        Detect negation using word-level geometric opposition (METHOD 2).
+        Detect negation using word-level geometric opposition (pure geometry, no word lists).
         
-        Checks if specific word pairs have negative geometric similarity,
-        especially when one word is a negation word.
+        Checks if specific word pairs have negative geometric similarity.
+        Uses learned polarity to identify words that might indicate negation.
         
         Returns:
             (has_negation, opposition_strength)
         """
         premise_chain = encoded_pair.premise_chain
         hypothesis_chain = encoded_pair.hypothesis_chain
-        
-        # Known negation words (for fallback, but we prefer geometric detection)
-        negation_words = {'not', 'no', 'never', 'nothing', 'none', 'neither', 'nowhere', 
-                         "n't", 'cannot', "can't", "won't", "don't", "doesn't", "didn't", 
-                         "isn't", "aren't", "wasn't", "weren't"}
+        lexicon = GlobalLexicon()
         
         max_opposition = 0.0
-        has_negation_word = False
+        has_learned_negation_word = False
         
         # Check each word pair for geometric opposition
         for h_word_chain in hypothesis_chain.word_chains:
             h_geo = h_word_chain.get_geometry_vector()
             h_word = h_word_chain.word
             
-            # Check if this is a negation word
-            if h_word in negation_words:
-                has_negation_word = True
+            # Check learned polarity (no hard-coded list)
+            h_polarity = lexicon.get_word_polarity(h_word)
+            if h_polarity[1] > 0.55:  # Strong contradiction polarity
+                has_learned_negation_word = True
             
             for p_word_chain in premise_chain.word_chains:
                 p_geo = p_word_chain.get_geometry_vector()
@@ -128,17 +158,18 @@ class NativeLogic:
                 dot_prod = np.dot(p_geo, h_geo)
                 norm_p = np.linalg.norm(p_geo)
                 norm_h = np.linalg.norm(h_geo)
-                
                 if norm_p > 0 and norm_h > 0:
                     geo_sim = dot_prod / (norm_p * norm_h)
+                else:
+                    geo_sim = 0.0
                     
-                    # Negative similarity = opposition
-                    if geo_sim < 0:
-                        opposition = abs(geo_sim)
-                        max_opposition = max(max_opposition, opposition)
+                # Negative similarity = opposition
+                if geo_sim < 0:
+                    opposition = abs(geo_sim)
+                    max_opposition = max(max_opposition, opposition)
         
-        # If we found geometric opposition, or negation word with any opposition
-        if max_opposition > 0.2 or (has_negation_word and max_opposition > 0.1):
+        # If we found geometric opposition, or learned negation word with any opposition
+        if max_opposition > 0.2 or (has_learned_negation_word and max_opposition > 0.1):
             return (True, min(1.0, max_opposition))
         
         return (False, 0.0)
@@ -191,45 +222,21 @@ class EntailmentDetector:
         
         overlap = NativeLogic.compute_overlap(p_tokens, h_tokens)
         
-        # GEOMETRIC NEGATION DETECTION (replaces lexical hack)
-        has_negation_geo, geo_opposition = NativeLogic.detect_negation_geometric(self.encoded_pair)
-        has_negation_word, word_opposition = NativeLogic.detect_negation_word_level(self.encoded_pair)
-        has_negation_res, res_confidence = NativeLogic.detect_negation_resonance_pattern(self.encoded_pair)
+        # Check learned polarity for Contradiction (Class 1)
+        has_learned_negation, neg_strength = NativeLogic.detect_learned_polarity(h_tokens, target_class=1)
         
-        # Combine geometric signals (any method detecting negation = negation)
-        has_negation = has_negation_geo or has_negation_word or has_negation_res
-        opposition_strength = max(geo_opposition, word_opposition, res_confidence)
+        # Check learned polarity for Entailment (Class 0)
+        # Note: Words don't usually learn strong Entailment polarity because they are context-dependent,
+        # but double-negatives or strong confirmers might.
         
-        # Fallback to lexical for edge cases (but prefer geometric)
-        has_negation_lexical = NativeLogic.detect_negation(h_tokens)
-        if has_negation_lexical and not has_negation:
-            # Lexical detected but geometric didn't - use lexical as fallback
-            has_negation = True
-            opposition_strength = 0.5  # Medium confidence for lexical-only
-        
-        is_double_negative = NativeLogic.detect_double_negative(p_tokens, h_tokens)
-        
-        # FIX: Double negative detection using semantic heuristic
-        # If high resonance (>0.7) + negation + high overlap → likely double negative (entailment)
-        # Example: "happy" vs "not sad" → high resonance means they mean the same thing
-        is_likely_double_negative = (has_negation and resonance > 0.7 and overlap > 0.5)
-        
-        if has_negation and (is_double_negative or is_likely_double_negative):
-            # Double negative: boost lexical score (they mean the same thing)
-            lexical_score = overlap * 1.5  # Boost for double negative
-        elif has_negation:
-            # Single negation (opposite polarity) → suppress entailment
+        if has_learned_negation:
+            # If "not" is present (high contradiction polarity), suppress entailment
             lexical_score = 0.0
         else:
-            # No negation → normal overlap
             lexical_score = overlap
         
         # Combined: 60% Geometry, 40% Lexical
         final_score = 0.6 * geometric_score + 0.4 * lexical_score
-        
-        # Additional boost for double negatives
-        if is_double_negative or is_likely_double_negative:
-            final_score = min(1.0, final_score * 1.3)  # Strong boost
         
         return {
             'entailment_score': float(np.clip(final_score, 0.0, 1.0)),
@@ -253,84 +260,30 @@ class ContradictionDetector:
         
         overlap = NativeLogic.compute_overlap(p_tokens, h_tokens)
         
-        # GEOMETRIC NEGATION DETECTION (replaces lexical hack)
-        has_negation_geo, geo_opposition = NativeLogic.detect_negation_geometric(self.encoded_pair)
-        has_negation_word, word_opposition = NativeLogic.detect_negation_word_level(self.encoded_pair)
-        has_negation_res, res_confidence = NativeLogic.detect_negation_resonance_pattern(self.encoded_pair)
+        # 1. CHECK LEARNED POLARITY (Replaces hardcoded list)
+        has_learned_negation, neg_strength = NativeLogic.detect_learned_polarity(h_tokens, target_class=1)
         
-        # Combine geometric signals (any method detecting negation = negation)
-        has_negation = has_negation_geo or has_negation_word or has_negation_res
-        opposition_strength = max(geo_opposition, word_opposition, res_confidence)
-        
-        # Fallback to lexical for edge cases (but prefer geometric)
-        has_negation_lexical = NativeLogic.detect_negation(h_tokens)
-        if has_negation_lexical and not has_negation:
-            # Lexical detected but geometric didn't - use lexical as fallback
-            has_negation = True
-            opposition_strength = 0.5  # Medium confidence for lexical-only
-        
-        is_double_negative = NativeLogic.detect_double_negative(p_tokens, h_tokens)
-        
-        # FIX: Double negative detection using semantic heuristic
-        # If high resonance (>0.7) + negation + high overlap → likely double negative (entailment)
-        is_likely_double_negative = (has_negation and resonance > 0.7 and overlap > 0.5)
-        
-        # FIX: Geometric Opposition Detection
-        # Low resonance (even if positive) indicates contradiction
-        # Map resonance [0, 1] to opposition [1, 0]
-        # Resonance 0.0 -> Opposition 1.0 (strong contradiction)
-        # Resonance 0.5 -> Opposition 0.5 (medium)
-        # Resonance 1.0 -> Opposition 0.0 (no contradiction)
         geometric_opposition = 1.0 - resonance
         
-        # FIX: Semantic Gap Detection ("happy" vs "sad", "runs" vs "sleeps")
-        # High overlap + Different key words = Contradiction
-        # This catches antonyms that share context words but have opposite meanings
         semantic_gap = 0.0
         if overlap > 0.3:
             if resonance < overlap:
-                # Gap exists when overlap exceeds resonance
-                # Example: overlap 0.6, resonance 0.4 → gap 0.2
-                semantic_gap = min(1.0, (overlap - resonance) * 3.0)
+                semantic_gap = min(1.0, (overlap - resonance) * 3.5)
             elif overlap > 0.5:
-                # High overlap but different key words = semantic contradiction
-                # Example: "happy" vs "sad": overlap 0.6 (share "the man is"), resonance 0.7
-                # The key insight: High overlap means shared context, but if resonance isn't very high (0.95+),
-                # it means the key words differ, indicating contradiction
-                # Formula: gap = overlap * (how far resonance is from perfect entailment)
-                resonance_gap_from_perfect = 1.0 - resonance
-                semantic_gap = min(1.0, overlap * resonance_gap_from_perfect * 5.0)  # Increased from 2.5 to 5.0
+                resonance_gap = 1.0 - resonance
+                semantic_gap = min(1.0, overlap * resonance_gap * 6.0)
             
-        # Lexical Negation
-        # FIX: Double negative detection
-        # If same polarity (double negative), suppress contradiction
-        # Example: "happy" vs "not sad" → same polarity → NOT contradiction
-        if has_negation and is_double_negative:
-            # Double negative → suppress contradiction (it's actually entailment)
-            lexical_score = 0.0
+        if has_learned_negation:
+            # Learned that this word (e.g. "not") implies contradiction
+            # Strength depends on how certain the lexicon is
+            final_score = 0.5 + (0.5 * neg_strength)
+            lexical_score = neg_strength  # Use learned negation strength
+        elif semantic_gap > 0.15:
+            final_score = semantic_gap * 2.5 + geometric_opposition * 0.2
+            lexical_score = 0.0  # No lexical negation detected
         else:
-            lexical_score = 1.0 if has_negation else 0.0
-        
-        # Combined Score
-        if has_negation and not is_double_negative:
-            # Explicit negation (opposite polarity) is very strong in SNLI
-            final_score = 0.5 + (0.5 * overlap)
-        elif has_negation and is_double_negative:
-            # Double negative → suppress contradiction score
-            final_score = max(geometric_opposition, semantic_gap) * 0.3  # Heavily suppress
-        else:
-            # Semantic contradiction: combine geometric opposition and semantic gap
-            # Strategy: Use weighted sum to combine signals, not just max
-            # Semantic gap is more reliable for antonyms (high overlap, different key words)
-            if semantic_gap > 0.1:
-                # Semantic gap dominates when present (antonyms with shared context)
-                final_score = semantic_gap * 2.0 + geometric_opposition * 0.3  # Increased semantic gap weight
-            else:
-                # Pure geometric opposition (low resonance)
-                final_score = geometric_opposition
-            
-            # Cap at 1.0
-            final_score = min(1.0, final_score)
+            final_score = geometric_opposition * 0.5
+            lexical_score = 0.0  # No lexical negation detected
         
         return {
             'contradiction_score': float(np.clip(final_score, 0.0, 1.0)),
@@ -349,7 +302,7 @@ class NLIClassifier:
         self.entailment_detector = EntailmentDetector(encoded_pair)
         self.contradiction_detector = ContradictionDetector(encoded_pair)
     
-    def classify(self, entailment_threshold: float = 0.6, contradiction_threshold: float = 0.6) -> Dict[str, Any]:
+    def classify(self, entailment_threshold: float = 0.8, contradiction_threshold: float = 0.5) -> Dict[str, Any]:
         """
         Classify NLI pair into Entailment, Contradiction, or Neutral.
         
@@ -368,13 +321,11 @@ class NLIClassifier:
         resonance = self.encoded_pair.get_resonance()
         
         # Check if both scores are moderate (uncertainty case)
-        both_moderate = (0.3 < ent_score < 0.65 and 0.3 < con_score < 0.65)
+        both_moderate = (0.35 < ent_score < 0.6 and 0.35 < con_score < 0.6)
         
-        # Also check if resonance is moderate (0.4-0.7) for unrelated topics
-        # AND entailment is moderate (< 0.8) - relaxed threshold for edge cases
-        # Test 6: resonance 0.607, entailment 0.690 → should be Neutral
-        moderate_resonance = (0.4 < resonance < 0.7)  # Relaxed from 0.65 to 0.7
-        moderate_entailment = (ent_score < 0.8)  # Relaxed from 0.75 to 0.8
+        # Also check if resonance is moderate for unrelated topics
+        moderate_resonance = (resonance < 0.6)
+        moderate_entailment = (ent_score < 0.8)
         
         # For unrelated topics: moderate resonance + moderate entailment = Neutral
         # Check lexical overlap - filter out common words (is, the, a, etc.)
@@ -382,21 +333,36 @@ class NLIClassifier:
         h_tokens = self.encoded_pair.hypothesis_chain.tokens
         lexical_overlap = NativeLogic.compute_overlap(p_tokens, h_tokens)
         
-        # Filter out common words to get semantic overlap
-        common_words = {'is', 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'}
-        p_content = [t for t in p_tokens if t not in common_words]
-        h_content = [t for t in h_tokens if t not in common_words]
+        # Filter out words with neutral polarity (learned, not hard-coded)
+        # Words that appear equally in all classes stay neutral
+        lexicon = GlobalLexicon()
+        p_content = []
+        h_content = []
+        
+        for token in p_tokens:
+            polarity = lexicon.get_word_polarity(token)
+            # Keep words that have some class preference (not perfectly neutral)
+            max_polarity = np.max(polarity)
+            if max_polarity > 0.4:  # Has some class preference
+                p_content.append(token)
+        
+        for token in h_tokens:
+            polarity = lexicon.get_word_polarity(token)
+            max_polarity = np.max(polarity)
+            if max_polarity > 0.4:  # Has some class preference
+                h_content.append(token)
+        
         semantic_overlap = NativeLogic.compute_overlap(p_content, h_content) if (p_content and h_content) else 0.0
         
         # Low overlap: either lexical < 0.4 OR semantic < 0.2 (after filtering common words)
         low_overlap = (lexical_overlap < 0.4) or (semantic_overlap < 0.2)
         
         # Unrelated neutral: moderate resonance + moderate entailment + low overlap + low contradiction
-        is_unrelated_neutral = (moderate_resonance and moderate_entailment and con_score < 0.5 and low_overlap)
+        is_unrelated = (resonance < 0.6 and lexical_overlap < 0.4)
         
-        if both_moderate or is_unrelated_neutral:
-            # Both moderate OR unrelated topics with moderate signals → Neutral (no clear winner)
-            neutral_score = 0.85  # Strong boost neutral for moderate/uncertain signals
+        if both_moderate or is_unrelated:
+            # Both moderate OR unrelated topics → Neutral
+            neutral_score = 0.75
         else:
             # Standard calculation: absence of strong signals
             neutral_score = 1.0 - max(ent_score, con_score)
@@ -407,60 +373,29 @@ class NLIClassifier:
             'neutral': float(neutral_score)
         }
         
-        # Hard classification logic (FIXED: Higher thresholds 0.6)
-        # Priority: Check Neutral first if it's boosted, then strong signals
-        # FIX: Ensure Neutral wins when it has the boosted score (0.85)
-        
-        # Check Neutral first if it's boosted (from moderate/unrelated detection)
-        if neutral_score > 0.8 and (both_moderate or is_unrelated_neutral):
-            # Neutral has been boosted and conditions are met → Neutral wins
-            label = 'neutral'
-            confidence = neutral_score
-        # Strong signals take priority (but only if Neutral isn't boosted)
-        elif ent_score > entailment_threshold and ent_score > con_score and ent_score >= 0.75:
-            # Strong entailment signal (>= 0.75)
-            label = 'entailment'
-            confidence = ent_score
-        elif con_score > contradiction_threshold and con_score > ent_score and con_score >= 0.75:
-            # Strong contradiction signal (>= 0.75)
+        # Hard classification logic using learned polarities
+        if con_score > contradiction_threshold and con_score > (ent_score + 0.15):
             label = 'contradiction'
             confidence = con_score
-        elif both_moderate or is_unrelated_neutral:
-            # Both moderate OR unrelated topics → Neutral
-            label = 'neutral'
-            confidence = neutral_score
-        elif ent_score > entailment_threshold and ent_score > con_score:
-            # Strong entailment signal (>= 0.75)
+            
+        elif ent_score >= entailment_threshold and ent_score > (con_score + 0.2):
             label = 'entailment'
             confidence = ent_score
-        elif con_score > contradiction_threshold and con_score > ent_score and con_score >= 0.75:
-            # Strong contradiction signal (>= 0.75)
-            label = 'contradiction'
-            confidence = con_score
-        elif ent_score > entailment_threshold and ent_score > con_score:
-            # Strong entailment signal
-            label = 'entailment'
-            confidence = ent_score
-        elif con_score > contradiction_threshold and con_score > ent_score:
-            # Strong contradiction signal
-            label = 'contradiction'
-            confidence = con_score
-        elif neutral_score > max(ent_score, con_score):
-            # Neutral is highest
+            
+        elif neutral_score > 0.7 and (both_moderate or is_unrelated):
             label = 'neutral'
             confidence = neutral_score
+            
         else:
-            # Default: choose highest score
-            if ent_score > con_score:
+            if ent_score < 0.6 and con_score < 0.6:
+                label = 'neutral'
+                confidence = neutral_score
+            elif ent_score > con_score:
                 label = 'entailment'
                 confidence = ent_score
-            elif con_score > ent_score:
+            else:
                 label = 'contradiction'
                 confidence = con_score
-            else:
-                # All equal or very close → Neutral
-            label = 'neutral'
-            confidence = neutral_score
         
         return {
             'label': label,

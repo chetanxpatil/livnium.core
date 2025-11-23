@@ -18,9 +18,7 @@ from dataclasses import dataclass
 # Add project root to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-from core.classical.livnium_core_system import LivniumCoreSystem
 from core.quantum.quantum_cell import QuantumCell
-from core.config import LivniumCoreConfig
 
 
 # ============================================================================
@@ -28,8 +26,9 @@ from core.config import LivniumCoreConfig
 # ============================================================================
 class GlobalLexicon:
     """
-    Persistent storage for Letter Geometries and Quantum States.
-    Stores at letter-level for shared learning across words.
+    Persistent storage for:
+    1. Letter Geometries (Physics)
+    2. Word Polarities (Semantics) - REPLACES HARDCODED NEGATION LISTS
     """
     _instance = None
     
@@ -37,6 +36,9 @@ class GlobalLexicon:
         if cls._instance is None:
             cls._instance = super(GlobalLexicon, cls).__new__(cls)
             cls._instance.letter_store = {}  # Maps letter -> (weights, amplitudes)
+            # Maps word -> [entailment_score, contradiction_score, neutral_score]
+            # E.g., "not" -> [0.1, 0.9, 0.0]
+            cls._instance.polarity_store = {}
         return cls._instance
     
     def get_state(self, letter: str) -> Optional[Tuple[np.ndarray, np.ndarray]]:
@@ -47,83 +49,153 @@ class GlobalLexicon:
         """Save learned state for a letter."""
         self.letter_store[letter.lower()] = (weights.copy(), amplitudes.copy())
 
+    def update_word_polarity(self, word: str, label_idx: int, strength: float = 0.1):
+        """
+        Learn the semantic polarity of a word.
+        
+        Args:
+            word: The word to update (e.g., "not")
+            label_idx: 0=Entailment, 1=Contradiction, 2=Neutral
+            strength: Learning rate
+        """
+        w = word.lower()
+        if w not in self.polarity_store:
+            # Initialize with weak neutral prior
+            self.polarity_store[w] = np.array([0.33, 0.33, 0.33], dtype=float)
+        
+        # Create target vector (one-hot)
+        target = np.zeros(3)
+        target[label_idx] = 1.0
+        
+        # Move current polarity towards target (Exponential Moving Average)
+        # "not" will drift towards [0, 1, 0] over time
+        current = self.polarity_store[w]
+        self.polarity_store[w] = current * (1.0 - strength) + target * strength
+
+    def get_word_polarity(self, word: str) -> np.ndarray:
+        """Get learned polarity vector for a word."""
+        return self.polarity_store.get(word.lower(), np.array([0.33, 0.33, 0.33]))
+
     def clear(self):
         """Clear all stored states (for clean start)."""
         self.letter_store = {}
+        self.polarity_store = {}
+    
+    def save_to_file(self, filepath: str = 'experiments/nli/brain_state.pkl'):
+        """
+        Save the brain (learned state) to disk.
+        
+        Args:
+            filepath: Path to save the brain state (default: experiments/nli/brain_state.pkl)
+        """
+        import pickle
+        import os
+        
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        
+        # Convert numpy arrays to lists for JSON compatibility, or use pickle
+        brain_data = {
+            'letter_store': {},
+            'polarity_store': {}
+        }
+        
+        # Save letter store (convert numpy arrays to lists)
+        for letter, (weights, amplitudes) in self.letter_store.items():
+            brain_data['letter_store'][letter] = (
+                weights.tolist() if isinstance(weights, np.ndarray) else weights,
+                amplitudes.tolist() if isinstance(amplitudes, np.ndarray) else amplitudes
+            )
+        
+        # Save polarity store (convert numpy arrays to lists)
+        for word, polarity in self.polarity_store.items():
+            brain_data['polarity_store'][word] = (
+                polarity.tolist() if isinstance(polarity, np.ndarray) else polarity
+            )
+        
+        with open(filepath, 'wb') as f:
+            pickle.dump(brain_data, f)
+    
+    def load_from_file(self, filepath: str = 'experiments/nli/brain_state.pkl'):
+        """
+        Load the brain (learned state) from disk.
+        
+        Args:
+            filepath: Path to load the brain state from (default: experiments/nli/brain_state.pkl)
+        """
+        import pickle
+        import os
+        
+        if not os.path.exists(filepath):
+            return False  # File doesn't exist
+        
+        try:
+            with open(filepath, 'rb') as f:
+                brain_data = pickle.load(f)
+            
+            # Restore letter store (convert lists back to numpy arrays)
+            self.letter_store = {}
+            for letter, (weights, amplitudes) in brain_data.get('letter_store', {}).items():
+                self.letter_store[letter] = (
+                    np.array(weights) if isinstance(weights, list) else weights,
+                    np.array(amplitudes) if isinstance(amplitudes, list) else amplitudes
+                )
+            
+            # Restore polarity store (convert lists back to numpy arrays)
+            self.polarity_store = {}
+            for word, polarity in brain_data.get('polarity_store', {}).items():
+                self.polarity_store[word] = (
+                    np.array(polarity) if isinstance(polarity, list) else polarity
+                )
+            
+            return True
+        except Exception as e:
+            print(f"⚠️  Error loading brain from {filepath}: {e}")
+            return False
 
 
 # ============================================================================
-# CORE LOGIC: Letter-Level Geometry
+# CORE LOGIC: Letter-Level Geometry (Simplified - Direct Vectors)
 # ============================================================================
 
-def letter_to_lattice(letter: str, lattice_size: int = 3) -> LivniumCoreSystem:
+def letter_to_vector(letter: str, lattice_size: int = 3) -> np.ndarray:
     """
-    Convert a single letter to a native lattice geometry.
+    Generate a 27-element vector directly for a letter (no 3D objects).
     
-    This is the atomic unit - each letter gets its own 3x3x3 geometry.
+    Uses hash-based seeding for reproducibility, same as before.
     """
-    config = LivniumCoreConfig(
-        lattice_size=lattice_size,
-        enable_quantum=False,
-        enable_symbolic_weight=True,
-        enable_face_exposure=True,
-    )
-    
-    geometry = LivniumCoreSystem(config)
-    
-    # Check Global Lexicon first!
     lexicon = GlobalLexicon()
     stored_data = lexicon.get_state(letter)
     
     if stored_data:
         # LOAD FROM MEMORY (Learned State)
         weights, _ = stored_data
-        geometry.weights = weights.copy()
-        
-        # Hydrate cells for compatibility
-        boundary = (lattice_size - 1) // 2
-        for x in range(-boundary, boundary + 1):
-            for y in range(-boundary, boundary + 1):
-                for z in range(-boundary, boundary + 1):
-                    idx_x, idx_y, idx_z = x + boundary, y + boundary, z + boundary
-                    cell = geometry.get_cell((x, y, z))
-                    if cell:
-                        cell.symbolic_weight = weights[idx_x, idx_y, idx_z]
-                        cell.symbol = letter
+        # If stored as 3D array, flatten it
+        if weights.ndim == 3:
+            return weights.flatten()
+        return weights.copy()
     else:
         # CREATE FROM HASH (Factory Default)
         letter_hash = hash(letter.lower()) % (2**32)
         np.random.seed(letter_hash)
         
+        # Generate 27-element vector directly
+        vector = np.zeros(lattice_size * lattice_size * lattice_size)
         boundary = (lattice_size - 1) // 2
-        for x in range(-boundary, boundary + 1):
-            for y in range(-boundary, boundary + 1):
-                for z in range(-boundary, boundary + 1):
-                    coords = (x, y, z)
-                    cell = geometry.get_cell(coords)
-                    if cell:
-                        position_hash = hash((x, y, z)) % (2**16)
-                        combined_hash = (letter_hash + position_hash) % (2**32)
-                        np.random.seed(combined_hash)
-                        
-                        # Zero-Centered Weights (-10.0 to 10.0)
-                        # Allows dot products to be 0 (orthogonal) or negative (opposing)
-                        cell.symbolic_weight = np.random.uniform(-10.0, 10.0)
-                        cell.face_exposure = np.random.uniform(0.0, 3.0)
-                        cell.symbol = letter
         
-        # Init weights matrix
-        weights = np.zeros((lattice_size, lattice_size, lattice_size))
         for x in range(-boundary, boundary + 1):
             for y in range(-boundary, boundary + 1):
                 for z in range(-boundary, boundary + 1):
-                    cell = geometry.get_cell((x, y, z))
-                    if cell:
-                        idx_x, idx_y, idx_z = x + boundary, y + boundary, z + boundary
-                        weights[idx_x, idx_y, idx_z] = cell.symbolic_weight
-        geometry.weights = weights
-    
-    return geometry
+                    position_hash = hash((x, y, z)) % (2**16)
+                    combined_hash = (letter_hash + position_hash) % (2**32)
+                    np.random.seed(combined_hash)
+                    
+                    # Zero-Centered Weights (-10.0 to 10.0)
+                    # Allows dot products to be 0 (orthogonal) or negative (opposing)
+                    idx = (x + boundary) * lattice_size * lattice_size + (y + boundary) * lattice_size + (z + boundary)
+                    vector[idx] = np.random.uniform(-10.0, 10.0)
+        
+        return vector
 
 
 # ============================================================================
@@ -132,7 +204,7 @@ def letter_to_lattice(letter: str, lattice_size: int = 3) -> LivniumCoreSystem:
 
 class LetterOmcube:
     """
-    A single letter encapsulated in an Omcube geometry.
+    A single letter with direct vector representation (simplified).
     
     This is the atomic unit - the "phoneme" of Livnium.
     """
@@ -141,8 +213,8 @@ class LetterOmcube:
         self.letter = letter.lower()
         self.lattice_size = lattice_size
         
-        # 1. Create/Load Geometry
-        self.geometry = letter_to_lattice(letter, lattice_size)
+        # 1. Create/Load Vector (direct, no 3D objects)
+        self.weights = letter_to_vector(letter, lattice_size)
         
         # 2. Create/Load Quantum State
         lexicon = GlobalLexicon()
@@ -168,15 +240,13 @@ class LetterOmcube:
         lexicon = GlobalLexicon()
         lexicon.update_state(
             self.letter, 
-            self.geometry.weights, 
-            self.quantum_state.amplitudes
+            self.weights.copy(), 
+            self.quantum_state.amplitudes.copy()
         )
     
     def get_mass(self) -> float:
         """Get the mass (total ABSOLUTE symbolic weight) of this letter."""
-        if hasattr(self.geometry, 'weights'):
-            return float(np.sum(np.abs(self.geometry.weights)))
-        return 0.0
+        return float(np.sum(np.abs(self.weights)))
 
 
 # ============================================================================
@@ -234,32 +304,38 @@ class WordChain:
         """
         Get a combined geometry vector for the word.
         
-        This aggregates all letter geometries into a single vector.
+        This aggregates all letter vectors into a single vector.
         Used for word-level comparison.
         """
         if not self.letter_cubes:
             return np.zeros(27)  # 3x3x3 = 27
         
-        # Sum all letter weight matrices
-        combined_weights = np.zeros((self.lattice_size, self.lattice_size, self.lattice_size))
+        # Sum all letter vectors directly (fast!)
+        combined_weights = np.zeros(27)
         for cube in self.letter_cubes:
-            if hasattr(cube.geometry, 'weights'):
-                combined_weights += cube.geometry.weights
+            combined_weights += cube.weights
         
-        # Flatten to vector
-        return combined_weights.flatten()
+        return combined_weights
     
     def get_quantum_vector(self) -> np.ndarray:
         """Get combined quantum state vector for the word."""
         if not self.letter_cubes:
             return np.array([1.0, 0.0, 0.0], dtype=complex)
         
-        # Average quantum amplitudes across letters
+        # Average quantum amplitudes across letters - Numba-accelerated if available
+        num_letters = len(self.letter_cubes)
+        
+        # OPTIMIZATION: Direct NumPy operations (faster than Numba for small arrays)
+        # For small arrays (3 elements), NumPy overhead is minimal
+        # Numba shines for larger arrays or many iterations
         combined_amplitudes = np.zeros(3, dtype=complex)
         for cube in self.letter_cubes:
-            combined_amplitudes += cube.quantum_state.amplitudes
+            # Direct access to amplitudes (already NumPy array in QuantumCell)
+            amps = np.asarray(cube.quantum_state.amplitudes, dtype=np.complex128)
+            combined_amplitudes += amps
         
-        combined_amplitudes /= len(self.letter_cubes)
+        combined_amplitudes /= num_letters
+        
         return combined_amplitudes
     
     @property
@@ -267,8 +343,8 @@ class WordChain:
         """Backward compatibility: return geometry-like object."""
         class GeometryProxy:
             def __init__(self, weights):
-                self.weights = weights
-        return GeometryProxy(self.get_geometry_vector().reshape(self.lattice_size, self.lattice_size, self.lattice_size))
+                self.weights = weights.reshape(3, 3, 3) if len(weights) == 27 else weights
+        return GeometryProxy(self.get_geometry_vector())
     
     @property
     def quantum_state(self):
@@ -386,7 +462,6 @@ class SentenceChain:
                 dot_prod = np.dot(p_geo_vec, h_geo_vec)
                 norm_p = np.linalg.norm(p_geo_vec)
                 norm_h = np.linalg.norm(h_geo_vec)
-                
                 if norm_p > 0 and norm_h > 0:
                     geo_sim = dot_prod / (norm_p * norm_h)
                 else:
@@ -463,25 +538,4 @@ class SentenceChain:
 Omchain = SentenceChain
 WordOmcube = WordChain  # Old code expects WordOmcube, but now it's WordChain
 
-# Keep old function name for compatibility
-def text_to_lattice_native_v2(word: str, lattice_size: int = 3) -> LivniumCoreSystem:
-    """
-    Backward compatibility: Create a geometry for a word.
-    
-    This now creates a WordChain and returns its combined geometry.
-    """
-    word_chain = WordChain(word, lattice_size)
-    # Create a dummy geometry with combined weights
-    combined_weights = word_chain.get_geometry_vector().reshape(3, 3, 3)
-    
-    config = LivniumCoreConfig(
-        lattice_size=lattice_size,
-        enable_quantum=False,
-        enable_symbolic_weight=True,
-        enable_face_exposure=True,
-    )
-    
-    geometry = LivniumCoreSystem(config)
-    geometry.weights = combined_weights
-    
-    return geometry
+# Backward compatibility function removed - no longer needed
