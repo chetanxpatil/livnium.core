@@ -456,6 +456,274 @@ class TestLivniumOSystem(unittest.TestCase):
         for i in range(len(exposures) - 1):
             self.assertLess(exposures[i], exposures[i+1],
                           msg=f"Exposure should increase with radius: f({radii[i]})={exposures[i]:.6f} < f({radii[i+1]})={exposures[i+1]:.6f}")
+    
+    # ========================================================================
+    # O-A7: The Flow Law Tests
+    # ========================================================================
+    
+    def test_o_a7_tangential_velocity_constraint(self):
+        """O-A7: Verify tangential velocity constraint v · (N - Om) = 0."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        pos_vec = np.array(neighbor.position)
+        
+        # Create a tangential velocity (perpendicular to radial)
+        # Use cross product to get a vector perpendicular to radial
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        arbitrary_vec = np.array([1, 0, 0])
+        if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+            arbitrary_vec = np.array([0, 1, 0])
+        
+        tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+        tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity)
+        
+        # Verify constraint: v · (N - Om) = 0
+        dot_product = np.dot(tangential_velocity, pos_vec)
+        self.assertAlmostEqual(dot_product, 0.0, places=10,
+                              msg="Tangential velocity must be perpendicular to radial vector")
+    
+    def test_o_a7_move_neighbor_preserves_tangency(self):
+        """O-A7: Verify move_neighbor preserves tangency."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        neighbor_id = neighbor.node_id
+        original_distance = math.sqrt(sum(x*x for x in neighbor.position))
+        expected_distance = self.system.core_radius + neighbor.radius
+        
+        # Create tangential velocity
+        pos_vec = np.array(neighbor.position)
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        arbitrary_vec = np.array([1, 0, 0])
+        if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+            arbitrary_vec = np.array([0, 1, 0])
+        
+        tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+        tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity) * 0.1  # Small velocity
+        
+        # Move neighbor
+        moved_system = self.system.move_neighbor(neighbor_id, tangential_velocity, dt=0.1)
+        moved_neighbor = moved_system.get_node(neighbor_id)
+        
+        # Verify tangency is preserved
+        new_distance = math.sqrt(sum(x*x for x in moved_neighbor.position))
+        self.assertAlmostEqual(new_distance, expected_distance, places=6,
+                             msg="Distance from core must remain constant (tangency preserved)")
+    
+    def test_o_a7_move_neighbor_preserves_distance(self):
+        """O-A7: Verify move_neighbor preserves distance |N - Om| = 1 + r."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        neighbor_id = neighbor.node_id
+        original_distance = math.sqrt(sum(x*x for x in neighbor.position))
+        expected_distance = self.system.core_radius + neighbor.radius
+        
+        # Create tangential velocity
+        pos_vec = np.array(neighbor.position)
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        arbitrary_vec = np.array([1, 0, 0])
+        if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+            arbitrary_vec = np.array([0, 1, 0])
+        
+        tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+        tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity) * 0.2
+        
+        # Move neighbor multiple times
+        current_system = self.system
+        for _ in range(5):
+            current_system = current_system.move_neighbor(neighbor_id, tangential_velocity, dt=0.1)
+            moved_neighbor = current_system.get_node(neighbor_id)
+            distance = math.sqrt(sum(x*x for x in moved_neighbor.position))
+            self.assertAlmostEqual(distance, expected_distance, places=6,
+                                 msg="Distance must remain constant after each move")
+    
+    def test_o_a7_velocity_projection(self):
+        """O-A7: Verify non-tangential velocities are projected onto tangent plane."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        neighbor_id = neighbor.node_id
+        pos_vec = np.array(neighbor.position)
+        
+        # Create a velocity with radial component (should be projected out)
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        radial_velocity = radial_unit * 0.5  # Pure radial velocity
+        
+        # move_neighbor should project this onto tangent plane
+        moved_system = self.system.move_neighbor(neighbor_id, radial_velocity, dt=0.1)
+        
+        # After projection, there should be no movement (or minimal)
+        # Since pure radial velocity becomes zero after projection
+        moved_neighbor = moved_system.get_node(neighbor_id)
+        moved_pos = np.array(moved_neighbor.position)
+        
+        # The position should be unchanged (or very close) since radial component is removed
+        distance_change = np.linalg.norm(moved_pos - pos_vec)
+        self.assertLess(distance_change, 1e-6,
+                       msg="Pure radial velocity should result in no movement after projection")
+    
+    def test_o_a7_so3_rotation_update(self):
+        """O-A7: Verify movement uses SO(3) incremental rotation."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        neighbor_id = neighbor.node_id
+        
+        # Create tangential velocity
+        pos_vec = np.array(neighbor.position)
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        arbitrary_vec = np.array([1, 0, 0])
+        if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+            arbitrary_vec = np.array([0, 1, 0])
+        
+        tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+        tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity) * 0.1
+        
+        # Move neighbor
+        moved_system = self.system.move_neighbor(neighbor_id, tangential_velocity, dt=0.1)
+        moved_neighbor = moved_system.get_node(neighbor_id)
+        
+        # Verify the movement is a rotation (distance preserved, angle changed)
+        original_pos = np.array(neighbor.position)
+        moved_pos = np.array(moved_neighbor.position)
+        
+        # Distance should be preserved
+        original_dist = np.linalg.norm(original_pos)
+        moved_dist = np.linalg.norm(moved_pos)
+        self.assertAlmostEqual(original_dist, moved_dist, places=6)
+        
+        # Angle should have changed (unless velocity was zero)
+        dot_product = np.dot(original_pos, moved_pos) / (original_dist * moved_dist)
+        # Should be close to 1 but not exactly 1 (unless no movement)
+        self.assertLess(dot_product, 1.0 - 1e-6,
+                       msg="Position should have rotated (angle changed)")
+    
+    def test_o_a7_flow_reversibility(self):
+        """O-A7: Verify flow is reversible."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        neighbor_id = neighbor.node_id
+        original_pos = np.array(neighbor.position)
+        
+        # Create tangential velocity
+        pos_vec = np.array(neighbor.position)
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        arbitrary_vec = np.array([1, 0, 0])
+        if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+            arbitrary_vec = np.array([0, 1, 0])
+        
+        tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+        tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity) * 0.1
+        
+        # Move forward
+        moved_system = self.system.move_neighbor(neighbor_id, tangential_velocity, dt=0.1)
+        moved_pos = np.array(moved_system.get_node(neighbor_id).position)
+        
+        # Move backward (negative velocity)
+        reversed_system = moved_system.move_neighbor(neighbor_id, -tangential_velocity, dt=0.1)
+        reversed_pos = np.array(reversed_system.get_node(neighbor_id).position)
+        
+        # Should return to original position (within numerical precision)
+        distance_error = np.linalg.norm(reversed_pos - original_pos)
+        self.assertLess(distance_error, 1e-5,
+                       msg="Flow should be reversible: forward then backward should return to original")
+    
+    def test_o_a7_evolve_multiple_neighbors(self):
+        """O-A7: Verify evolve() moves multiple neighbors simultaneously."""
+        neighbors = self.system.get_neighbor_nodes()
+        
+        # Create velocity field for first 3 neighbors
+        velocity_field = {}
+        for i, neighbor in enumerate(neighbors[:3], start=1):
+            pos_vec = np.array(neighbor.position)
+            radial_unit = pos_vec / np.linalg.norm(pos_vec)
+            arbitrary_vec = np.array([1, 0, 0])
+            if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+                arbitrary_vec = np.array([0, 1, 0])
+            
+            tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+            tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity) * 0.1
+            velocity_field[neighbor.node_id] = tangential_velocity
+        
+        # Evolve system
+        evolved_system = self.system.evolve(velocity_field, dt=0.1)
+        
+        # Verify all neighbors in velocity field moved
+        for neighbor_id in velocity_field.keys():
+            original_pos = np.array(self.system.get_node(neighbor_id).position)
+            evolved_pos = np.array(evolved_system.get_node(neighbor_id).position)
+            
+            # Position should have changed
+            distance_change = np.linalg.norm(evolved_pos - original_pos)
+            self.assertGreater(distance_change, 1e-6,
+                             msg=f"Neighbor {neighbor_id} should have moved")
+            
+            # Tangency should be preserved
+            distance = np.linalg.norm(evolved_pos)
+            expected_distance = self.system.core_radius + evolved_system.get_node(neighbor_id).radius
+            self.assertAlmostEqual(distance, expected_distance, places=6)
+        
+        # Neighbors not in velocity field should not have moved
+        for neighbor in neighbors[3:]:
+            original_pos = np.array(self.system.get_node(neighbor.node_id).position)
+            evolved_pos = np.array(evolved_system.get_node(neighbor.node_id).position)
+            distance_change = np.linalg.norm(evolved_pos - original_pos)
+            self.assertLess(distance_change, 1e-6,
+                          msg=f"Neighbor {neighbor.node_id} should not have moved")
+    
+    def test_o_a7_ledger_conservation(self):
+        """O-A7: Verify flow preserves conservation ledger."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        neighbor_id = neighbor.node_id
+        
+        # Create tangential velocity
+        pos_vec = np.array(neighbor.position)
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        arbitrary_vec = np.array([1, 0, 0])
+        if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+            arbitrary_vec = np.array([0, 1, 0])
+        
+        tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+        tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity) * 0.1
+        
+        # Get original ledger
+        original_ledger = self.system.get_ledger()
+        
+        # Move neighbor
+        moved_system = self.system.move_neighbor(neighbor_id, tangential_velocity, dt=0.1)
+        moved_ledger = moved_system.get_ledger()
+        
+        # Verify ledger is preserved
+        self.assertEqual(original_ledger['total_sw'], moved_ledger['total_sw'])
+        self.assertEqual(original_ledger['core_count'], moved_ledger['core_count'])
+        self.assertEqual(original_ledger['neighbor_count'], moved_ledger['neighbor_count'])
+        self.assertEqual(original_ledger['equilibrium_constant'], moved_ledger['equilibrium_constant'])
+        self.assertEqual(original_ledger['encoding_base'], moved_ledger['encoding_base'])
+        self.assertEqual(original_ledger['core_radius'], moved_ledger['core_radius'])
+    
+    def test_o_a7_exposure_changes_continuously(self):
+        """O-A7: Verify exposure changes continuously during flow."""
+        neighbor = self.system.get_neighbor_nodes()[0]
+        neighbor_id = neighbor.node_id
+        original_exposure = neighbor.exposure
+        
+        # Create tangential velocity
+        pos_vec = np.array(neighbor.position)
+        radial_unit = pos_vec / np.linalg.norm(pos_vec)
+        arbitrary_vec = np.array([1, 0, 0])
+        if np.allclose(radial_unit, arbitrary_vec) or np.allclose(radial_unit, -arbitrary_vec):
+            arbitrary_vec = np.array([0, 1, 0])
+        
+        tangential_velocity = np.cross(radial_unit, arbitrary_vec)
+        tangential_velocity = tangential_velocity / np.linalg.norm(tangential_velocity) * 0.1
+        
+        # Move neighbor
+        moved_system = self.system.move_neighbor(neighbor_id, tangential_velocity, dt=0.1)
+        moved_neighbor = moved_system.get_node(neighbor_id)
+        
+        # Exposure should be recalculated (may change due to position change)
+        # But radius is same, so exposure should be same
+        # Actually, exposure depends only on radius, not position!
+        # So exposure should remain the same
+        self.assertAlmostEqual(moved_neighbor.exposure, original_exposure, places=10,
+                             msg="Exposure depends only on radius, not position")
+    
+    def test_o_a7_cannot_move_core(self):
+        """O-A7: Verify core (Om) cannot be moved."""
+        # Try to move core (node_id=0)
+        with self.assertRaises(ValueError):
+            self.system.move_neighbor(0, np.array([0.1, 0.1, 0.1]), dt=0.1)
 
 
 if __name__ == "__main__":

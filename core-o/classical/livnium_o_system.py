@@ -524,6 +524,118 @@ class LivniumOSystem:
         
         return new_system
     
+    def move_neighbor(self, neighbor_id: int, tangential_velocity: np.ndarray, dt: float = 0.01) -> 'LivniumOSystem':
+        """
+        Move a neighbor along the tangent plane (O-A7: The Flow Law).
+        
+        The neighbor moves only along the tangent plane, preserving tangency:
+        v_i(t) · (N_i - Om) = 0
+        
+        Args:
+            neighbor_id: ID of the neighbor to move (1-based)
+            tangential_velocity: 3D velocity vector (must be tangential)
+            dt: Time step
+            
+        Returns:
+            New system with moved neighbor
+        """
+        if neighbor_id < 1 or neighbor_id > self.n_neighbors:
+            raise ValueError(f"Neighbor ID must be in [1, {self.n_neighbors}], got {neighbor_id}")
+        
+        neighbor = self.nodes[neighbor_id]
+        if neighbor.is_om:
+            raise ValueError("Cannot move core (Om)")
+        
+        # Get current position relative to core
+        pos_vec = np.array(neighbor.position)
+        radial_vec = pos_vec  # Since Om is at origin
+        
+        # Verify tangential constraint: v · (N - Om) = 0
+        dot_product = np.dot(tangential_velocity, radial_vec)
+        if abs(dot_product) > 1e-10:
+            # Project velocity onto tangent plane
+            radial_unit = radial_vec / np.linalg.norm(radial_vec)
+            tangential_velocity = tangential_velocity - np.dot(tangential_velocity, radial_unit) * radial_unit
+        
+        # Current distance from core
+        current_distance = np.linalg.norm(radial_vec)
+        expected_distance = self.core_radius + neighbor.radius
+        
+        # Normalize position to ensure correct distance
+        if abs(current_distance - expected_distance) > 1e-10:
+            pos_vec = pos_vec * (expected_distance / current_distance)
+        
+        # Compute incremental rotation that moves along tangent plane
+        # The velocity defines a rotation axis perpendicular to both radial and velocity
+        velocity_norm = np.linalg.norm(tangential_velocity)
+        if velocity_norm < 1e-10:
+            # No movement
+            return self
+        
+        # Rotation axis is perpendicular to both radial and velocity
+        rotation_axis = np.cross(radial_vec, tangential_velocity)
+        rotation_axis_norm = np.linalg.norm(rotation_axis)
+        
+        if rotation_axis_norm < 1e-10:
+            # Velocity is parallel to radial (shouldn't happen after projection)
+            return self
+        
+        rotation_axis = rotation_axis / rotation_axis_norm
+        
+        # Rotation angle is proportional to velocity magnitude and time step
+        # The angle should move the neighbor by |v| * dt along the sphere surface
+        rotation_angle = (velocity_norm * dt) / expected_distance
+        
+        # Create incremental rotation matrix
+        rotation_matrix = self.rotation_group.rotation_matrix_axis_angle(rotation_axis, rotation_angle)
+        
+        # Apply rotation to position
+        new_pos = rotation_matrix @ pos_vec
+        
+        # Ensure distance is preserved
+        new_distance = np.linalg.norm(new_pos)
+        if abs(new_distance - expected_distance) > 1e-10:
+            new_pos = new_pos * (expected_distance / new_distance)
+        
+        # Create new system with updated position
+        neighbor_radii = [self.nodes[i].radius for i in range(1, self.n_neighbors + 1)]
+        positions = [self.nodes[i].position for i in range(1, self.n_neighbors + 1)]
+        positions[neighbor_id - 1] = tuple(new_pos)
+        
+        new_system = LivniumOSystem(
+            neighbor_radii=neighbor_radii,
+            core_radius=self.core_radius,
+            positions=positions
+        )
+        
+        # Verify ledger is preserved
+        new_system._verify_ledger()
+        
+        return new_system
+    
+    def evolve(self, velocity_field: Dict[int, np.ndarray], dt: float = 0.01) -> 'LivniumOSystem':
+        """
+        Evolve the system according to O-A7: The Flow Law.
+        
+        All neighbors move along their tangent planes simultaneously.
+        
+        Args:
+            velocity_field: Dictionary mapping neighbor_id -> tangential velocity vector
+            dt: Time step
+            
+        Returns:
+            New system after evolution
+        """
+        current_system = self
+        
+        # Move each neighbor in the velocity field
+        for neighbor_id, velocity in velocity_field.items():
+            if neighbor_id < 1 or neighbor_id > self.n_neighbors:
+                continue
+            current_system = current_system.move_neighbor(neighbor_id, velocity, dt)
+        
+        return current_system
+    
     def get_ledger(self) -> Dict:
         """
         Get the conservation ledger.
