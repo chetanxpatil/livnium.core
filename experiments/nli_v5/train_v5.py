@@ -157,6 +157,8 @@ def main():
                         help='Start with clean state (clear lexicon and basins)')
     parser.add_argument('--debug-golden', action='store_true',
                         help='DEBUG: Feed golden labels to decision layer to verify logic')
+    parser.add_argument('--invert-labels', action='store_true',
+                        help='REVERSE PHYSICS: Force wrong labels to discover invariant geometry (diagnostic only, no training)')
     parser.add_argument('--learn-patterns', action='store_true',
                         help='Learn patterns from golden labels (record geometric signals for analysis)')
     parser.add_argument('--pattern-file', type=str, default=None,
@@ -168,6 +170,14 @@ def main():
     print("LIVNIUM NLI v5: CLEAN & SIMPLIFIED ARCHITECTURE")
     print("=" * 70)
     print()
+    
+    if args.invert_labels:
+        print("⚠️  REVERSE PHYSICS MODE: Labels will be INVERTED (E↔C)")
+        print("   This is a diagnostic experiment to discover invariant geometry.")
+        print("   NO TRAINING will occur - geometry will be recorded but not learned.")
+        print("   Use this to find what signals refuse to flip when labels are wrong.")
+        print()
+    
     print("Architecture:")
     print("  • Layer 0: Resonance (raw geometric signal)")
     print("  • Layer 1: Curvature (cold density and distance)")
@@ -218,11 +228,20 @@ def main():
     # Initialize pattern learner if requested
     pattern_learner = None
     if args.learn_patterns:
-        pattern_learner = PatternLearner(debug_mode=args.debug_golden)
-        mode_str = "DEBUG MODE" if args.debug_golden else "NORMAL MODE"
-        print(f"✓ Pattern learner initialized ({mode_str} - will record geometric signals)")
-        if args.debug_golden:
+        pattern_learner = PatternLearner(debug_mode=args.debug_golden or args.invert_labels)
+        if args.invert_labels:
+            pattern_learner.invert_mode = True  # Mark as reverse physics mode
+            mode_str = "REVERSE PHYSICS MODE"
+            print(f"✓ Pattern learner initialized ({mode_str} - will record geometric signals)")
+            print("  ⚠️  Labels will be INVERTED (E↔C) to discover invariant geometry")
+            print("  ⚠️  NO TRAINING - diagnostic only to find what refuses to flip")
+        elif args.debug_golden:
+            mode_str = "DEBUG MODE"
+            print(f"✓ Pattern learner initialized ({mode_str} - will record geometric signals)")
             print("  ⚠️  In debug mode: Forces will be artificial, but geometric signals are real")
+        else:
+            mode_str = "NORMAL MODE"
+            print(f"✓ Pattern learner initialized ({mode_str} - will record geometric signals)")
         print()
     
     # Training loop
@@ -238,8 +257,19 @@ def main():
         # Encode
         pair = encoder.encode_pair(premise, hypothesis)
         
+        # REVERSE PHYSICS: Invert labels to discover invariant geometry
+        if args.invert_labels:
+            # Invert E↔C, keep N as-is (or also invert N - experiment with both)
+            label_inverter = {
+                'entailment': 'contradiction',
+                'contradiction': 'entailment',
+                'neutral': 'neutral'  # Keep neutral, or invert to E/C? Experiment!
+            }
+            inverted_label = label_inverter.get(gold_label, gold_label)
+            # Use inverted label in debug mode (forces will be wrong, but geometry is real)
+            classifier = LivniumV5Classifier(pair, debug_mode=True, golden_label_hint=inverted_label)
         # DEBUG MODE: Pass golden label to decision layer
-        if args.debug_golden:
+        elif args.debug_golden:
             classifier = LivniumV5Classifier(pair, debug_mode=True, golden_label_hint=gold_label)
         else:
             classifier = LivniumV5Classifier(pair)
@@ -250,15 +280,22 @@ def main():
         
         # Record patterns if learning patterns
         if pattern_learner is not None:
-            # Record geometric signals for this golden label
-            pattern_learner.record(gold_label, result.layer_states)
+            if args.invert_labels:
+                # Record with INVERTED label - this shows what geometry produces when forced to say wrong thing
+                pattern_learner.record(inverted_label, result.layer_states)
+            else:
+                # Record geometric signals for this golden label
+                pattern_learner.record(gold_label, result.layer_states)
         
-        # Check correctness
+        # Check correctness (against ORIGINAL gold label, not inverted)
         if predicted_label == gold_label:
             correct += 1
         
         # Apply learning feedback
-        classifier.apply_learning_feedback(gold_label, learning_strength=1.0)
+        # CRITICAL: Do NOT train with inverted labels - that would corrupt the system
+        if not args.invert_labels:
+            classifier.apply_learning_feedback(gold_label, learning_strength=1.0)
+        # In invert mode, we're just diagnosing - no learning!
         
         # Collect for confusion matrix
         y_true_train.append(gold_label)
@@ -308,13 +345,24 @@ def main():
         gold_label = example['gold_label']
         
         pair = encoder.encode_pair(premise, hypothesis)
+        
+        # REVERSE PHYSICS: Invert labels for diagnostic
+        if args.invert_labels:
+            label_inverter = {
+                'entailment': 'contradiction',
+                'contradiction': 'entailment',
+                'neutral': 'neutral'
+            }
+            inverted_label = label_inverter.get(gold_label, gold_label)
+            classifier = LivniumV5Classifier(pair, debug_mode=True, golden_label_hint=inverted_label)
         # Use debug mode if flag is set (for verification)
-        if args.debug_golden:
+        elif args.debug_golden:
             classifier = LivniumV5Classifier(pair, debug_mode=True, golden_label_hint=gold_label)
         else:
             classifier = LivniumV5Classifier(pair)
         result = classifier.classify()
         
+        # Check against ORIGINAL gold label (not inverted)
         if result.label == gold_label:
             test_correct += 1
         
@@ -343,13 +391,24 @@ def main():
         gold_label = example['gold_label']
         
         pair = encoder.encode_pair(premise, hypothesis)
+        
+        # REVERSE PHYSICS: Invert labels for diagnostic
+        if args.invert_labels:
+            label_inverter = {
+                'entailment': 'contradiction',
+                'contradiction': 'entailment',
+                'neutral': 'neutral'
+            }
+            inverted_label = label_inverter.get(gold_label, gold_label)
+            classifier = LivniumV5Classifier(pair, debug_mode=True, golden_label_hint=inverted_label)
         # Use debug mode if flag is set (for verification)
-        if args.debug_golden:
+        elif args.debug_golden:
             classifier = LivniumV5Classifier(pair, debug_mode=True, golden_label_hint=gold_label)
         else:
             classifier = LivniumV5Classifier(pair)
         result = classifier.classify()
         
+        # Check against ORIGINAL gold label (not inverted)
         if result.label == gold_label:
             dev_correct += 1
         

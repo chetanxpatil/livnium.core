@@ -109,11 +109,22 @@ class PatternLearner:
             self.analyze()
         
         print("\n" + "=" * 80)
-        mode_str = "DEBUG MODE" if self.debug_mode else "NORMAL MODE"
+        if hasattr(self, 'invert_mode') and self.invert_mode:
+            mode_str = "REVERSE PHYSICS MODE"
+        elif self.debug_mode:
+            mode_str = "DEBUG MODE"
+        else:
+            mode_str = "NORMAL MODE"
         print(f"GEOMETRIC PATTERN ANALYSIS (from Golden Labels) - {mode_str}")
         print("=" * 80)
         
-        if self.debug_mode:
+        if hasattr(self, 'invert_mode') and self.invert_mode:
+            print("\n⚠️  REVERSE PHYSICS MODE: Labels were INVERTED (E↔C).")
+            print("   Forces are set to match INVERTED labels (wrong).")
+            print("   Geometric signals (resonance, divergence) are REAL from layers 0-3.")
+            print("   This reveals what geometry refuses to change when labels are wrong.")
+            print("   Look for signals that stay stable - those are the TRUE invariants.\n")
+        elif self.debug_mode:
             print("\n⚠️  DEBUG MODE: Forces are artificially set to match golden labels.")
             print("   Geometric signals (resonance, divergence) are REAL from layers 0-3.")
             print("   This shows what geometry produces vs what forces are needed.\n")

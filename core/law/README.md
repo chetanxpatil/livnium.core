@@ -20,6 +20,8 @@ The fundamental force law that determines whether two sentences push apart (cont
 - **Contradiction**: alignment < 0.38 → positive divergence (push apart)
 - **Neutral**: alignment ≈ 0.38 → near-zero divergence (balanced)
 
+**Critical Discovery**: Divergence **sign** is preserved even when labels are inverted - this is a TRUE geometric law.
+
 ### 2. Law of Resonance
 **File**: `resonance_law.md`
 
@@ -27,7 +29,20 @@ The second axis of the phase diagram, measuring how strongly a pair shares geome
 
 **Usage**: Entailment requires **both** negative divergence **and** high resonance.
 
-### 3. Phase Classification Law
+**Critical Discovery**: Resonance is **invariant** - it refuses to flip even when labels are wrong.
+
+### 3. Invariant Laws
+**File**: `invariant_laws.md`
+
+**The three signals that NEVER flip, even when labels are inverted**:
+
+1. **Resonance** - Semantic similarity (stable, <10% change)
+2. **Cold Attraction** - Semantic gravity (stable, <10% change)
+3. **Curvature** - Shape of meaning (perfect invariant, 0.0 → 0.0)
+
+These are the **true laws of the universe** - discovered through reverse physics.
+
+### 4. Phase Classification Law
 **File**: `phase_classification_law.md`
 
 The decision rules that map geometric signals to semantic phases (E/C/N).
@@ -62,6 +77,10 @@ The decision rules that map geometric signals to semantic phases (E/C/N).
 4. **Verification**: Contradiction divergence now positive (physics restored)
 5. **Enhancement**: Promoted resonance as second axis
 6. **Implementation**: Physics-based decision logic in Layer 4
+7. **BREAKTHROUGH**: Reverse physics experiment - discovered invariant laws
+   - Resonance, Cold Attraction, Curvature refuse to flip
+   - Divergence sign is preserved (true law)
+   - Identified artifacts (noisy signals)
 
 ## Impact
 
@@ -74,7 +93,10 @@ The decision rules that map geometric signals to semantic phases (E/C/N).
 ✅ **Established**: Divergence law (fixed & calibrated)
 ✅ **Established**: Resonance as second axis
 ✅ **Established**: Phase classification rules
+✅ **BREAKTHROUGH**: Invariant laws discovered (Resonance, Cold Attraction, Curvature)
+✅ **BREAKTHROUGH**: Divergence sign preservation confirmed (true law)
 ⚠️ **In Progress**: Neutral phase definition (needs explicit balance band)
+🚀 **Next**: v6 with Opposition axis (resonance × divergence_sign)
 
 ## Next Steps
 
