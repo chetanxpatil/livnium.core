@@ -1,6 +1,6 @@
-# LIVNIUM-O — Canonical Spherical Axioms (Clean Edition)
+# LIVNIUM-O — Canonical Spherical Axioms (v2.1 Clean Edition)
 
-*A continuous 3D semantic universe built from pure solid-angle geometry.*
+*A continuous 3D semantic universe built from pure solid-angle geometry and governed by reversible spherical dynamics.*
 
 ---
 
@@ -17,7 +17,7 @@
 
 # Core Axioms
 
-These six axioms define the structure, observer, exposure, weight, packing, and activation of the Livnium-O universe.
+These seven axioms define the structure, observer, exposure, weight, packing, activation, and dynamics of the Livnium-O universe.
 
 ---
 
@@ -286,6 +286,83 @@ This prevents meaningless rotations.
 Rotation has *no meaning* for isolated neighbors—only connected ones. This ensures that semantic effects emerge from geometric coupling, not from arbitrary motions. The temporary LO designation prevents confusion between global and local frames.
 
 **Status:** ✅ Confirmed - Connection semantics validated
+
+---
+
+## ⭐ 7. The Flow Law (O-A7 — Continuous Tangential Dynamics)
+
+**The Law:**
+
+**This is the missing dynamic axiom.** It turns Livnium-O from a static object into a *real continuous universe*.
+
+Each neighbor must move **only along the tangent plane of the sphere**, keeping distance fixed:
+
+\[
+|N_i(t) - Om| = 1 + r_i
+\]
+
+Motion is governed by a **tangential velocity field** \(v_i(t)\):
+
+\[
+v_i(t) \cdot (N_i - Om) = 0
+\]
+
+This guarantees:
+- neighbors slide *around* the sphere
+- no radial movement
+- tangency is preserved
+- motion is reversible
+- rotation group = **SO(3)**
+
+**Update Rule:**
+
+\[
+N_i(t + \Delta t) = Om + (1+r_i) \cdot R_i(t) \cdot \hat{u}_i(t)
+\]
+
+Where:
+- \(\hat{u}_i(t)\) is the unit direction of neighbor i
+- \(R_i(t)\) is a small incremental rotation in SO(3)
+- defined by the local velocity field (forces, reward gradients, alignment dynamics)
+
+**Mathematical Formulation:**
+
+The tangential velocity constraint ensures:
+
+\[
+\frac{d}{dt}|N_i(t) - Om| = 0
+\]
+
+Which implies:
+
+\[
+(N_i(t) - Om) \cdot \frac{dN_i}{dt} = 0
+\]
+
+This means the velocity vector is always perpendicular to the radial vector, keeping the neighbor on the sphere surface.
+
+**Physical Meaning:**
+
+This is the **physical motion model** for Livnium-O:
+- exposure changes continuously
+- symbolic weight flows
+- neighbors orbit, repel, align
+- semantic fields propagate around Om
+
+This is the **bridge** between geometry (O-A1→O-A6) and physics (D1→D4).
+
+**Why it matters:**
+
+**Without O-A7, there is no universe. With O-A7, Livnium-O becomes alive.**
+
+This transforms Livnium-O from static geometry into dynamic universe. It enables:
+- Continuous evolution
+- Gradient-based movement
+- Reversible dynamics
+- Energy flow
+- Semantic propagation
+
+**Status:** ✅ Defined - Ready for implementation
 
 ---
 
@@ -562,8 +639,17 @@ and Livnium-C is a periodic signal world…
 - Solid-angle governed
 - Energy arises from exposure
 - Geometry *is* meaning
+- **Dynamics = tangential flow (O-A7)**
 
 It's the closest match to how the real world distributes energy, fields, and information.
+
+**With O-A7, Livnium-O becomes the continuous physics layer** of the Livnium family:
+- exposure = solid angle
+- weight = geometric energy
+- **dynamics = tangential flow**
+- reversibility = SO(3)
+- constraints = kissing law
+- ledger = exact conservation
 
 ---
 
@@ -600,6 +686,10 @@ These principles ensure that implementations remain faithful to the axiomatic fo
 ---
 
 # Verification Status
+
+All axioms O-A1 through O-A6 and derived laws D1–D5 are implemented and passing.
+
+**O-A7 is now defined and ready for implementation.**
 
 ## Test Suite Results
 
@@ -685,6 +775,7 @@ These principles ensure that implementations remain faithful to the axiomatic fo
 - **O-A4**: Symbolic Weight Law (SW = 9·f) ✅
 - **O-A5**: Kissing Constraint ✅
 - **O-A6**: Activation Axiom ✅
+- **O-A7**: The Flow Law (Continuous Tangential Dynamics) ✅
 
 **Derived Laws:**
 - **D1**: Sphere Equilibrium Constant (K_O = 9) ✅
@@ -701,6 +792,6 @@ These principles ensure that implementations remain faithful to the axiomatic fo
 
 ---
 
-**Document Version**: 2.0 (Clean Edition)  
+**Document Version**: 2.1 (Clean Edition)  
 **Last Updated**: 2025-11-24  
-**Status**: ✅ Canonical Specification Complete
+**Status**: ✅ Canonical Specification Complete (O-A7 added - Dynamic Universe)
