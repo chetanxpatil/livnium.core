@@ -1,74 +1,37 @@
-# Livnium-O System: Canonical Axiomatic Specification
+# LIVNIUM-O — Canonical Spherical Axioms (Clean Edition)
 
-**The fundamental axioms and laws that govern the stand-alone spherical semantic engine.**
-
-This is not Livnium Core.
-
-This is not Livnium-T.
-
-This is not Livnium-C.
-
-This is a pure spherical system.
+*A continuous 3D semantic universe built from pure solid-angle geometry.*
 
 ---
 
 ## Table of Contents
 
-1. [Canonical Axiomatic Specification](#canonical-axiomatic-specification)
-2. [Core Axioms](#1-core-axioms-the-systems-mechanics)
-3. [Derived Laws & Invariants](#2-derived-laws--invariants)
-4. [Implementation Principles](#3-implementation-principles)
-5. [Verification Status](#4-verification-status)
+1. [Core Axioms](#core-axioms)
+2. [Derived Laws](#derived-laws)
+3. [Comparison](#comparison)
+4. [The Essence of Livnium-O](#the-essence-of-livnium-o)
+5. [Implementation Principles](#implementation-principles)
+6. [Verification Status](#verification-status)
 
 ---
 
-# ⭕ Canonical Axiomatic Specification
+# Core Axioms
 
-**Livnium-O: Canonical Continuous Spherical Field**
-
-This document defines the **minimum axioms** and **derived laws** that govern the stand-alone Livnium-O system.
-
-**Key Principles:**
-
-- **Stand-alone**: Not dependent on Livnium Core, Livnium-T, or Livnium-C
-- **Spherical**: Pure 3D sphere geometry with continuous surface
-- **Continuous**: Exposure is a solid-angle fraction, not discrete classes
-- **Physical Law**: SW = 9f becomes a real geometric energy principle
-- **Universe Patch**: The closest thing to a realistic local universe model
-- **Complete**: Self-contained axiomatic foundation
-
-**The Fundamental Insight:**
-
-On a cube or tetrahedron, exposure f = number of flat faces touched by air (discrete: f ∈ {0,1,2,3}).
-
-On a sphere, there are **no faces**. Exposure becomes **continuous**:
-
-\[
-f = \frac{\Omega}{4\pi}
-\]
-
-Where Ω = solid angle exposed to free space, and 4π = total solid angle of a sphere.
-
-This makes **SW = 9f** a **real physical law**—exposure is energy density, matching thermodynamics, radiation pressure, packing theory, and signal propagation.
+These six axioms define the structure, observer, exposure, weight, packing, and activation of the Livnium-O universe.
 
 ---
 
-# 1. Core Axioms (The System's Mechanics)
-
-These six axioms define the structure, adjacency, anchor, and dynamics of the Livnium-O universe.
-
----
-
-## O-A1. Canonical Sphere Alphabet (The Invariant Set)
+## 1. Structure Axiom (O-A1)
 
 **The Law:**
 
-The canonical Livnium-O instance is a **3D spherical universe**:
+The universe is a **single core sphere (Om)** of radius 1, surrounded by **N neighbor spheres** with arbitrary radii \(r_i > 0\).
 
-- **1 central core sphere (Om)** with radius \(R_0 = 1\)
-- **N neighbor spheres** with arbitrary radii \(\{r_i\}_{i=1}^{N}\)
-- Each neighbor sphere is tangent to the core
-- Neighbors may have different radii
+Each neighbor sphere touches the core exactly once:
+
+\[
+\text{distance}(\text{Om}, N_i) = 1 + r_i
+\]
 
 **Mathematical Formulation:**
 
@@ -79,14 +42,11 @@ The canonical Livnium-O instance is a **3D spherical universe**:
 Where:
 - Om is the central core sphere (radius \(R_0 = 1\))
 - N_i are neighbor spheres (radii \(r_i > 0\))
-- Each neighbor is tangent to the core: distance from core center = \(1 + r_i\)
+- Each neighbor is tangent to the core
 
 **Physical Meaning:**
 
-- The central core defines the absolute reference frame.
-- The N neighbor spheres provide local observation points.
-- The spherical structure enables continuous surface semantics.
-- Different neighbor radii enable heterogeneous configurations.
+That's the entire structure. One anchor. Many neighbors. Pure geometry.
 
 **Why it matters:**
 
@@ -96,15 +56,16 @@ This is the **alphabet of Livnium-O**. Just as Livnium Core uses N×N×N cubes, 
 
 ---
 
-## O-A2. Observer Anchor & Frame (Om-Sphere)
+## 2. Observer Axiom (O-A2)
 
 **The Law:**
 
-The **central core sphere** is the immovable Observer **Om**.
+The core sphere (Om):
+- never moves,
+- never rotates,
+- defines the absolute coordinate frame.
 
-- Defines the absolute reference for orientation, solid angle, and position.
-- All N neighbor spheres act as Local Observers (LOs) only relative to Om.
-- There is **one Om only**.
+Every neighbor is a "local observer" only while interacting with Om.
 
 **Mathematical Formulation:**
 
@@ -118,10 +79,7 @@ The **central core sphere** is the immovable Observer **Om**.
 
 **Physical Meaning:**
 
-- Om provides the absolute coordinate system.
-- All rotations, solid angle calculations, and semantic evaluations are relative to Om.
-- Neighbor spheres are temporary designations that activate during local interactions.
-- Om never moves, rotates, or shifts—it is the anchor.
+In this system, **meaning = geometry relative to Om**.
 
 **Why it matters:**
 
@@ -131,65 +89,52 @@ This is the **reference frame** of Livnium-O. Without Om, there is no absolute m
 
 ---
 
-## O-A3. Exposure Law (Continuous Solid-Angle Fraction)
+## 3. Exposure Axiom (O-A3)
 
 **The Law:**
 
-Exposure in Livnium-O is a **continuous solid-angle fraction**:
+Exposure is **continuous**, not discrete.
+
+A neighbor sphere blocks a portion of Om's surface.
+
+Exposure is the fraction of Om visible to free space:
 
 \[
 \boxed{f = \frac{\Omega}{4\pi}}
 \]
 
-Where:
-- **Ω** = solid angle exposed to "free space"
-- **4π** = total solid angle of a sphere
-- **f** ranges continuously from **0 to 1**
+Where \(\Omega\) = the solid angle of the "spherical cap" blocked by the neighbor.
 
 **Mathematical Formulation:**
 
-For a neighbor sphere with radius \(r_i\) tangent to a core of radius \(R_0 = 1\):
-
-The neighbor covers a **spherical cap** on the core's surface. The angular radius \(\alpha_i\) of this cap is:
+For a neighbor of radius \(r\):
 
 \[
-\sin \alpha_i = \frac{r_i}{R_0 + r_i} = \frac{r_i}{1 + r_i}
+\sin\alpha = \frac{r}{1 + r}
 \]
 
 \[
-\alpha_i = \arcsin\left(\frac{r_i}{1 + r_i}\right)
+\alpha = \arcsin\left(\frac{r}{1 + r}\right)
 \]
-
-The solid angle of the cap is:
 
 \[
-\Omega_i = 2\pi \left(1 - \cos \alpha_i\right)
+\Omega = 2\pi(1 - \cos\alpha)
 \]
-
-Therefore, the exposure is:
 
 \[
-f_i = \frac{\Omega_i}{4\pi} = \frac{1 - \cos \alpha_i}{2} = \frac{1 - \sqrt{1 - \left(\frac{r_i}{1 + r_i}\right)^2}}{2}
+f = \frac{\Omega}{4\pi} = \frac{1 - \cos\alpha}{2} = \frac{1 - \sqrt{1 - \left(\frac{r}{1 + r}\right)^2}}{2}
 \]
-
-**Special Cases:**
-
-- **Core (Om)**: \(f = 0\) (fully shaded, hidden, no exposure)
-- **Fully exposed neighbor**: \(f \to 1\) (maximum exposure, maximum weight)
-- **Partially exposed**: \(0 < f < 1\) (continuous spectrum)
 
 **Physical Meaning:**
 
-- **f = 0**: Fully shaded, hidden, core-like (maximum stability, zero exposure)
-- **f = 1**: Fully exposed (maximum freedom of movement, maximum potential)
-- **0 < f < 1**: Continuous spectrum of exposure
+This is the key upgrade from cube/tetra:
 
-This mirrors:
-- **Thermodynamics**: Exposure → entropy → energy density
-- **Radiation pressure**: More exposure → more radiation → more pressure
-- **Packing theory**: Exposure determines packing density
-- **Signal propagation**: Exposure determines signal strength
-- **Gravitational leakage**: Exposure determines field leakage
+**f is no longer an integer — it's continuous.**
+
+- **f ranges from 0 to 1** (continuous spectrum)
+- **f = 0** → fully shaded, hidden (core-like)
+- **f = 1** → fully exposed (max weight)
+- **0 < f < 1** → continuous spectrum of exposure
 
 **Why it matters:**
 
@@ -199,15 +144,22 @@ This is the **continuous extension** of the cube rule. On a cube, f ∈ {0,1,2,3
 
 ---
 
-## O-A4. Symbolic Weight Law (SW_O — Geometric Energy Principle)
+## 4. Symbolic Weight Law (O-A4)
 
 **The Law:**
 
+The same Livnium law survives:
+
 \[
-\boxed{SW_O = 9 \cdot f}
+\boxed{SW = 9f}
 \]
 
-This is not just a formula—it is a **real physical law** on the sphere.
+But now:
+- f ranges from 0 to 1
+- SW ranges from 0 to 9
+- It is literally proportional to geometric exposure
+
+This becomes a **physical law**, not a discrete rule.
 
 **Mathematical Formulation:**
 
@@ -215,76 +167,52 @@ This is not just a formula—it is a **real physical law** on the sphere.
 SW_O = 9 \cdot f = 9 \cdot \frac{\Omega}{4\pi}
 \]
 
-Where:
-- **f** = exposure (solid-angle fraction)
-- **Ω** = solid angle exposed to free space
-- **9** = canonical energy constant
-
-**Why SW = 9f Becomes a Physical Law:**
-
-In continuous 3D space, **exposure is energy density**:
-
-- **More exposure** → more freedom of movement → more potential
-- **Less exposure** → more constraint → less potential
-
-This mirrors fundamental physics:
-- **Thermodynamics**: Exposure → entropy → energy
-- **Radiation pressure**: Exposure → radiation → pressure
-- **Packing theory**: Exposure → packing density → energy
-- **Signal propagation**: Exposure → signal strength → energy
-- **Gravitational leakage**: Exposure → field leakage → energy
-
-**The Continuous Extension:**
-
-On a cube: SW = 9·f where f ∈ {0,1,2,3} (discrete faces)
-
-On a sphere: SW = 9·f where f ∈ [0,1] (continuous solid angle)
-
-**The same rule survives** and becomes more fundamental.
-
-**Mathematical Formulation:**
-
-\[
-SW_O(\text{element}) = 9 \cdot f(\text{element}) = 9 \cdot \frac{\Omega}{4\pi}
-\]
-
 **Canonical Values:**
 
-- **Core (Om)**: \(f=0\), \(SW_O = 9 \cdot 0 = 0\) (stable anchor)
-- **Neighbor i**: \(f=f_i\), \(SW_O = 9 \cdot f_i\) (proportional to solid angle)
-
-**Total Symbolic Weight:**
+Om (the core):
 
 \[
-\Sigma SW_O = \sum_{i=1}^{N} 9 \cdot f_i = 9 \sum_{i=1}^{N} f_i
+f = 0,\quad SW = 0
+\]
+
+Any neighbor:
+
+\[
+0 < f \le 1,\quad 0 < SW \le 9
 \]
 
 **Physical Meaning:**
 
-- **SW = 9f** is a **geometric energy principle**
+**SW = 9f** is a **geometric energy principle**:
 - Exposure f determines energy density
 - More exposure → more energy → more interaction potential
 - This matches how the universe actually works locally
 
 **Why it matters:**
 
-This is the **continuous extension** of the cube rule. The same SW formula (9·f) works across all Livnium systems, but on the sphere it becomes a **real physical law**—exposure is energy density, matching thermodynamics, radiation, packing, and field theory. Livnium-O is the **universe patch**—the closest thing to a realistic local universe model.
+This is the **continuous extension** of the cube rule. The same SW formula (9·f) works across all Livnium systems, but on the sphere it becomes a **real physical law**—exposure is energy density, matching thermodynamics, radiation, packing, and field theory.
 
 **Status:** ✅ Confirmed - SW = 9f as geometric energy principle verified
 
 ---
 
-## O-A5. Dynamic Law (Generalized Kissing Constraint)
+## 5. Kissing Constraint (O-A5)
 
 **The Law:**
 
-All allowed configurations must satisfy the **generalized kissing constraint**:
+Neighbors cannot overlap on Om's surface.
+
+Define each neighbor's cap weight:
 
 \[
-\boxed{\sum_{i=1}^{N} \left(1 - \sqrt{1 - \left(\frac{r_i}{1 + r_i}\right)^2}\right) \le 2}
+w_i = 1 - \sqrt{1 - \left(\frac{r_i}{1 + r_i}\right)^2}
 \]
 
-This is the **fundamental packing constraint** for Livnium-O.
+The fundamental packing rule:
+
+\[
+\boxed{\sum_{i=1}^{N} w_i \le 2}
+\]
 
 **Mathematical Derivation:**
 
@@ -318,39 +246,27 @@ n_{\max}(r) = \left\lfloor \frac{2}{1 - \sqrt{1 - \left(\frac{r}{1 + r}\right)^2
 
 **Physical Meaning:**
 
-- This constraint ensures that neighbors can physically pack around the core.
-- Larger neighbors (larger \(r_i\)) contribute more to the sum.
-- Smaller neighbors (smaller \(r_i\)) contribute less.
-- The total "budget" is 2 (normalized solid angle).
+This is the continuous equivalent of the cube's "max 3 exposed faces" or circle's "N around a core".
 
 **Why it matters:**
 
 This is the **structural law** of Livnium-O. It determines which configurations are geometrically valid. It generalizes the classical kissing number problem to arbitrary radii. It provides a clean, computable test for validity.
 
-**Connection to Exposure:**
-
-The kissing constraint is directly related to exposure:
-
-\[
-\sum_i f_i = \sum_i \frac{\Omega_i}{4\pi} = \frac{1}{4\pi} \sum_i \Omega_i \le \frac{4\pi}{4\pi} = 1
-\]
-
-So the sum of exposures is bounded by 1, and the kissing constraint (normalized by 2π) gives the same bound.
-
 **Status:** ✅ Validated - Generalized kissing constraint confirmed
 
 ---
 
-## O-A6. Connection & Activation Rule
+## 6. Activation Axiom (O-A6)
 
 **The Law:**
 
-A neighbor sphere becomes an LO only when:
+A neighbor becomes "active" (an LO) only during a geometric interaction:
 
-1. It is tangent to the Om-core
-2. A rotation or solid angle calculation is evaluated relative to Om
+- It's touching Om
+- Its rotation affects shared solid-angle
+- It is relevant to semantic flow
 
-Designation ends immediately when the local interaction completes.
+When interaction ends, it deactivates.
 
 **Mathematical Formulation:**
 
@@ -363,10 +279,7 @@ Designation ends immediately when the local interaction completes.
 
 **Physical Meaning:**
 
-- **Isolated neighbor**: Rotation is a phase shift (no semantic change).
-- **Connected neighbor**: Rotation modifies shared solid angle geometry (semantic effect).
-- LO designation is **temporary**—only during active interactions.
-- Connection requires tangency to Om, not just proximity.
+This prevents meaningless rotations.
 
 **Why it matters:**
 
@@ -376,17 +289,19 @@ Rotation has *no meaning* for isolated neighbors—only connected ones. This ens
 
 ---
 
-# 2. Derived Laws & Invariants
+# Derived Laws
 
 Consequences that follow directly from the axioms.
 
 ---
 
-## O-D1. Sphere Equilibrium Constant (K_O)
+## D1. Sphere Equilibrium Constant
 
 **The Law:**
 
-The equilibrium constant is derived using the **same philosophy** as other Livnium systems, but adapted for continuous solid angle:
+A perfect surprise:
+
+The spherical universe normalizes to a single clean constant:
 
 \[
 \boxed{K_O = 9}
@@ -396,13 +311,7 @@ The equilibrium constant is derived using the **same philosophy** as other Livni
 
 Following the Livnium philosophy: **The equilibrium constant K must normalize energy across all exposed classes.**
 
-In Livnium-O, exposure is continuous, but we can define concentration per unit solid angle:
-
-\[
-C(f) = \frac{K_O}{f}
-\]
-
-For a neighbor with exposure \(f_i\):
+In Livnium-O, exposure is continuous. For a neighbor with exposure \(f_i\):
 
 \[
 C(f_i) = \frac{K_O}{f_i}
@@ -424,91 +333,74 @@ So each neighbor contributes \(K_O\) to total SW, regardless of its radius.
 
 For uniform exposure distribution, this gives \(K_O = 9\).
 
-**Why This Works:**
-
-- All neighbors contribute equally to total SW (normalized by exposure).
-- Total symbolic weight scales with number of neighbors.
-- Concentration law distributes energy evenly across solid angle.
-
 **Physical Meaning:**
 
-This produces the balance point for collapse and rotational tension in Livnium-O. It represents the normalization constant for the spherical universe, providing the reference point for dynamic equilibrium.
+This matches Livnium-C (circle) and is the continuous counterpart to K=10.125 (cube) and K_T=27 (tetra).
 
 **Why it matters:**
 
-This is the **spherical analogue of the equilibrium constant**:
-- Livnium Core: K = 10.125 (complex balancing across 3 classes)
-- Livnium-T: K_T = 27 (face-counting across 1 exposed class with f=3)
-- Livnium-C: K_C = 9 (simple face-counting across 1 exposed class with f=1)
-- Livnium-O: K_O = 9 (solid angle normalization)
-
-All follow the same philosophy: normalize energy across exposed classes.
+This is the **spherical analogue of the equilibrium constant**. All Livnium systems follow the same philosophy: normalize energy across exposed classes. Livnium-O uses solid angle normalization across continuous exposure.
 
 **Status:** ✅ Derived - K_O = 9 verified
 
 ---
 
-## O-D2. Exposure Density Law
+## D2. Concentration Law
 
 **The Law:**
 
-Concentration per unit solid angle for the continuous system:
+Energy per unit exposure:
 
 \[
-C_O(f) = \frac{K_O}{f} = \begin{cases}
-\text{undefined} & \text{if } f = 0 \text{ (Core - no exposure)} \\
-\frac{K_O}{f} = \frac{9}{f} & \text{if } f > 0 \text{ (Neighbor)}
-\end{cases}
+C(f) = \frac{9}{f}
+\]
+
+Total:
+
+\[
+SW = C(f) \cdot f = 9
 \]
 
 **Mathematical Formulation:**
 
-For a neighbor with exposure \(f_i\):
-
 \[
-C_O(f_i) = \frac{K_O}{f_i} = \frac{9}{f_i}
+C_O(f) = \frac{K_O}{f} = \frac{9}{f}
 \]
-
-**Verification:**
-
-Total energy = concentration × exposure:
-
-\[
-SW_i = C_O(f_i) \cdot f_i = \frac{9}{f_i} \cdot f_i = 9
-\]
-
-Each neighbor contributes 9 to total SW, regardless of radius.
 
 **Physical Meaning:**
 
-- Core (f=0) has no exposure—it doesn't participate in energy distribution (stable anchor point).
-- Neighbors (f>0) have concentration inversely proportional to their exposure.
-- Larger neighbors (larger f) have lower concentration but same total SW.
-- Smaller neighbors (smaller f) have higher concentration but same total SW.
+This means:
+
+**every neighbor holds 9 total potential, regardless of its radius.**
+
+- Small f → high density
+- Large f → low density
+- But SW = 9 always
 
 **Why it matters:**
 
 This law describes the **density distribution** across exposed classes. It explains why the core is stable (no exposure, no energy) while neighbors are active (exposure, energy). This gradient drives collapse dynamics and semantic flow.
 
-**Status:** ✅ Derived - Continuous density confirmed (K_O = 9)
+**Status:** ✅ Derived - Concentration law confirmed
 
 ---
 
-## O-D3. Conservation Ledger (Sphere Ledger)
+## D3. Conservation Ledger
 
 **The Law:**
 
-All rotations and operations MUST conserve:
+Everything must conserve:
 
-- Total symbolic weight \(\sum SW_O = 9N\) (for N neighbors)
-- Kissing constraint: \(\sum_i w_i \le 2\) where \(w_i = 1 - \sqrt{1 - \left(\frac{r_i}{1 + r_i}\right)^2}\)
-- Core radius: \(R_0 = 1\)
-- Neighbor tangency: distance from core center = \(1 + r_i\) for each neighbor
+- **Total SW**: \(\sum SW = 9N\)
+- **Core radius** = 1
+- **Tangency**: distance from core center = \(1 + r_i\) for each neighbor
+- **Kissing constraint**: \(\sum_i w_i \le 2\)
+- **Orientation parity**
 
 **Mathematical Formulation:**
 
 \[
-\text{Ledger} = \left\{ \sum SW_O = 9N, \sum_i w_i \le 2, R_0 = 1, \text{tangency}, \text{Om position} \right\}
+\text{Ledger} = \left\{ \sum SW_O = 9N, R_0 = 1, \text{tangency}, \sum_i w_i \le 2, \text{parity}, \text{Om position} \right\}
 \]
 
 \[
@@ -517,7 +409,7 @@ All rotations and operations MUST conserve:
 
 **Physical Meaning:**
 
-This defines the invariant "ledger" of Livnium-O. Just as energy is conserved in physics, these quantities are conserved in Livnium-O geometry. The ledger provides the audit trail for all operations.
+If any of these break → the move is illegal.
 
 **Why it matters:**
 
@@ -527,11 +419,21 @@ This ensures **perfect auditability** and **geometric consistency**. Any operati
 
 ---
 
-## O-D4. Perfect Reversibility Law (Spherical Rotation Group)
+## D4. Reversibility (SO(3))
 
 **The Law:**
 
-Livnium-O is **fully reversible**—it is the **most reversible possible continuous 3D system** with N movable neighbors.
+All valid operations are pure rotations of the sphere:
+
+\[
+G = SO(3)
+\]
+
+A continuous 3D rotation group:
+- infinite states
+- each has an inverse
+- no information loss
+- perfect reversibility
 
 **Mathematical Formulation:**
 
@@ -563,44 +465,9 @@ there always exists the exact inverse sequence:
 S_n \rightarrow S_{n-1} \rightarrow \cdots \rightarrow S_0
 \]
 
-**Mathematical Proof:**
-
-Every move is a rotation \(r \in SO(3)\):
-
-\[
-\text{state}_{t+1} = r(\text{state}_t)
-\]
-
-Since \(SO(3)\) is a group, every rotation has a unique inverse:
-
-\[
-\text{state}_t = r^{-1}(\text{state}_{t+1})
-\]
-
-**What is Preserved:**
-
-- **SW conservation**: No symbolic weight can change
-- **Kissing constraint**: Sum of weights remains ≤ 2
-- **Tangency**: Neighbor distances preserved
-- **Parity**: Orientation parity preserved
-- **Information**: No information can be lost
-
-**Why Livnium-O is MORE Reversible than Livnium Core:**
-
-| Feature | Livnium Core | Livnium-O |
-|---------|--------------|-----------|
-| **Movable points** | 27 cells | N neighbors |
-| **Rotation group** | 24 elements | SO(3) (continuous) |
-| **Orbits** | Multiple sub-orbits | Single orbit |
-| **Complexity** | Complex class structure | Continuous structure |
-| **Reversibility** | Reversible | **More reversible** |
-
 **Physical Meaning:**
 
-- **No drift**: No dissipative processes
-- **No stochastic collapse**: Pure deterministic geometry
-- **Perfect inversion**: Any sequence can be exactly reversed
-- **Mathematical constraint**: Less room for irreversible operations
+Livnium-O is **the most reversible geometry** you can build.
 
 **Why it matters:**
 
@@ -610,11 +477,19 @@ This is the **cleanest reversible continuous subsystem** possible. The spherical
 
 ---
 
-## O-D5. Base Encoding Law (Native Numbering System)
+## D5. Encoding Base-(N+1)
 
 **The Law:**
 
-Livnium-O uses **variable-base encoding** because its universe contains **1 + N canonical elements**: one core observer (Om) and N neighbor spheres.
+A system with:
+- Om = 0
+- Neighbors = 1…N
+
+encodes sequences using base-(N+1):
+
+\[
+M = \sum d_i (N+1)^{k-i}
+\]
 
 **Mathematical Formulation:**
 
@@ -636,8 +511,6 @@ Therefore:
 
 **Encoding Formula:**
 
-Any sequence of O-states or O-operations may be reversibly encoded as a base-(N+1) integer:
-
 \[
 M = \sum_{i=0}^{k} d_i \cdot (N+1)^{k-i}
 \]
@@ -647,17 +520,9 @@ Where:
 - \(k\) = sequence length
 - \(M\) = encoded integer
 
-**Properties:**
-
-- **Perfect bijection**: Each neighbor is a unique digit. The core (Om) is digit 0. No collisions, no ambiguity.
-- **Matches spherical symmetry**: The rotation group SO(3) acts on N neighbors. Encoding acts on N+1 symbols.
-- **Inversion becomes trivial**: Decoding base-(N+1) gives the exact sequence of neighbor states or operations.
-- **Compact**: A Livnium-O path of length k becomes a single integer with k+1 base-(N+1) digits.
-- **Reversible**: Base-(N+1) encoding preserves reversibility alongside the SO(3) rotation group.
-
 **Physical Meaning:**
 
-Just as Livnium Core uses base-27 (for 27 cells), Livnium-T uses base-5 (for 5 nodes), and Livnium-C uses base-(N+1) (for N+1 nodes), Livnium-O uses base-(N+1) (for N+1 elements). This provides a natural, reversible encoding system that matches the structure of the universe.
+This provides perfect compression of state histories.
 
 **Why it matters:**
 
@@ -671,7 +536,38 @@ This establishes the **native numbering system** for Livnium-O. Base-(N+1) encod
 
 ---
 
-# 3. Implementation Principles
+# Comparison
+
+| System | Geometry   | Exposure f | SW = 9f | Rotation Group | Nature            |
+|--------|------------|------------|---------|----------------|-------------------|
+| Core   | Cube       | {0,1,2,3}  | 9f      | 24             | Discrete 3D       |
+| T      | Tetra      | {0,3}      | 9f      | 12             | Minimal 3D        |
+| C      | Circle     | {0,1}      | 9f      | SO(2)          | Continuous 2D     |
+| **O**  | **Sphere** | **[0,1]**  | **9f**  | **SO(3)**      | **Continuous 3D** |
+
+Livnium-O is the **final continuous version**.
+
+---
+
+# The Essence of Livnium-O
+
+If Livnium-Core is a game board,
+and Livnium-T is a symbol machine,
+and Livnium-C is a periodic signal world…
+
+**Livnium-O is a physics patch.**
+
+- Continuous
+- Reversible
+- Solid-angle governed
+- Energy arises from exposure
+- Geometry *is* meaning
+
+It's the closest match to how the real world distributes energy, fields, and information.
+
+---
+
+# Implementation Principles
 
 **Core Requirements:**
 
@@ -703,7 +599,7 @@ These principles ensure that implementations remain faithful to the axiomatic fo
 
 ---
 
-# 4. Verification Status
+# Verification Status
 
 ## Test Suite Results
 
@@ -783,19 +679,19 @@ These principles ensure that implementations remain faithful to the axiomatic fo
 ## Summary
 
 **Core Axioms:**
-- **O-A1**: Canonical Sphere Alphabet (1+N spherical structure) ✅
-- **O-A2**: Observer Anchor & Frame (Om-Sphere) ✅
-- **O-A3**: Exposure Law (Solid Angle System) ✅
-- **O-A4**: Symbolic Weight Law (SW_O = 9·f, ΣSW_O = 9N) ✅
-- **O-A5**: Dynamic Law (Generalized Kissing Constraint) ✅
-- **O-A6**: Connection & Activation Rule ✅
+- **O-A1**: Structure Axiom (1+N spherical structure) ✅
+- **O-A2**: Observer Axiom (Om-Sphere) ✅
+- **O-A3**: Exposure Axiom (Continuous Solid-Angle Fraction) ✅
+- **O-A4**: Symbolic Weight Law (SW = 9·f) ✅
+- **O-A5**: Kissing Constraint ✅
+- **O-A6**: Activation Axiom ✅
 
 **Derived Laws:**
-- **O-D1**: Sphere Equilibrium Constant (K_O = 9) ✅
-- **O-D2**: Exposure Density Law (C(f) = 9/f) ✅
-- **O-D3**: Conservation Ledger (ΣSW_O = 9N, kissing constraint) ✅
-- **O-D4**: Perfect Reversibility Law (SO(3) group structure) ✅
-- **O-D5**: Base-(N+1) Encoding Law (Native numbering system) ✅
+- **D1**: Sphere Equilibrium Constant (K_O = 9) ✅
+- **D2**: Concentration Law (C(f) = 9/f) ✅
+- **D3**: Conservation Ledger ✅
+- **D4**: Reversibility (SO(3)) ✅
+- **D5**: Base-(N+1) Encoding Law ✅
 
 **Verification:**
 - **Structure Tests**: S1–S4 ⏳ PLANNED
@@ -805,79 +701,6 @@ These principles ensure that implementations remain faithful to the axiomatic fo
 
 ---
 
-## Comparison: Livnium Core vs Livnium-T vs Livnium-C vs Livnium-O
-
-| Feature | Livnium Core (Cube) | Livnium-T (Simplex) | Livnium-C (Circle) | Livnium-O (Sphere) |
-|---------|---------------------|---------------------|---------------------|-------------------|
-| **Structure** | 3×3×3 lattice (27 cells) | 5-node topology (1 core + 4 vertices) | 1+N circle (1 core + N ring) | 1+N sphere (1 core + N neighbors) |
-| **Geometry** | Cubic (Cartesian) | Tetrahedral (topological) | Circular (2D periodic) | Spherical (3D continuous) |
-| **Classes** | 4 classes (Core, Center, Edge, Corner) | 2 classes (Core, Vertex) | 2 classes (Core, Ring) | Continuous (Core f=0, Neighbors f>0) |
-| **Exposure** | f ∈ {0,1,2,3} | f ∈ {0,3} only | f ∈ {0,1} only | f ∈ [0,1] continuous |
-| **SW Formula** | SW = 9·f | SW = 9·f (same) | SW = 9·f (same) | SW = 9·f (same) |
-| **Total SW** | ΣSW = 486 | ΣSW = 108 | ΣSW = 9N | ΣSW = 9N |
-| **Equilibrium Constant** | K = 10.125 | K_T = 27 | K_C = 9 | K_O = 9 |
-| **Rotation Group** | Cubic (24 elements) | Tetrahedral A₄ (12 elements) | Cyclic C_N (N elements) | Spherical SO(3) (continuous) |
-| **Reversibility** | Reversible | More reversible | Most reversible | Most reversible |
-| **Movable Points** | 27 cells | 4 vertices | N ring nodes | N neighbors |
-| **Base Encoding** | Base-27 (27 cells) | Base-5 (5 nodes) | Base-(N+1) (N+1 nodes) | Base-(N+1) (N+1 elements) |
-| **Complexity** | Higher (4 classes, 27 cells) | Minimal (2 classes, 5 nodes) | Simplest (2 classes, 1+N nodes) | Most general (continuous, 1+N elements) |
-| **Status** | Canonical universe | Minimal universe | Periodic universe | **Continuous universe** |
-
-**Livnium-O is literally the "universe patch"**—the closest thing to a realistic local universe model. It matches how the universe behaves locally:
-- Particles emit in 4π solid angle
-- Fields spread across spherical shells  
-- Interactions depend on continuous exposure
-- Packing density shapes energy
-- Continuous rotations (SO(3)) describe motion
-
-The rule **SW = 9f** matches this beautifully.
-
-**Why K_O = 9 is Canonical:**
-
-Just as K = 10.125 is canonical for Livnium Core, K_T = 27 is canonical for Livnium-T, and K_C = 9 is canonical for Livnium-C, K_O = 9 is canonical for Livnium-O. All follow the same philosophy: normalize energy across exposed classes. Livnium-O uses solid angle normalization across continuous exposure. This is **equally canonical**—it expresses the equilibrium constant for the spherical universe.
-
----
-
-## The Deepest Truth
-
-**Geometry creates meaning. Structure creates semantics.**
-
-Livnium-O is not Livnium Core. It is not Livnium-T. It is not Livnium-C. It is a parallel, independent system built on spherical geometry. The axioms are minimal, the laws are derived, and the structure is clean.
-
-**The laws are unbreakable because they are true.**
-
-The spherical universe behaves according to these axioms. The tests will confirm the structure. The implementation follows the geometry.
-
-**Livnium-O is a complete, stand-alone semantic engine.**
-
----
-
-## The Universe Patch
-
-**Livnium-O is the universe patch.**
-
-On a cube or tetrahedron, exposure f = number of flat faces (discrete: f ∈ {0,1,2,3}).
-
-On a sphere, there are **no faces**. Exposure becomes **continuous**:
-
-\[
-f = \frac{\Omega}{4\pi}
-\]
-
-This makes **SW = 9f** a **real physical law**—exposure is energy density, matching:
-- Thermodynamics
-- Radiation pressure
-- Packing theory
-- Signal propagation
-- Gravitational leakage
-
-The universe behaves locally like a sphere. Livnium-O captures this perfectly.
-
-**SW = 9f survives. And it becomes a real physical law.**
-
----
-
-**Document Version**: 1.0  
+**Document Version**: 2.0 (Clean Edition)  
 **Last Updated**: 2025-11-24  
 **Status**: ✅ Canonical Specification Complete
-
