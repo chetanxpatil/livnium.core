@@ -12,13 +12,30 @@ Key improvements:
 - Comprehensive documentation
 """
 
-from .encoder import ChainEncoder, ChainEncodedPair
-from .classifier import LivniumV5Classifier, ClassificationResult
+# Re-export from core for backward compatibility
+from .core import (
+    ChainEncoder,
+    ChainEncodedPair,
+    LivniumV5Classifier,
+    ClassificationResult,
+    GeometryTeacher,
+    GeometryLabel,
+)
+
+# Also expose core modules for direct access
+from .core import encoder, classifier, layers, pattern_learner, physics_fingerprints
 
 __all__ = [
     'ChainEncoder',
     'ChainEncodedPair',
     'LivniumV5Classifier',
     'ClassificationResult',
+    'GeometryTeacher',
+    'GeometryLabel',
+    'encoder',
+    'classifier',
+    'layers',
+    'pattern_learner',
+    'physics_fingerprints',
 ]
 
