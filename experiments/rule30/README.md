@@ -9,6 +9,17 @@ Integration of Rule 30 cellular automaton with Livnium geometric engine.
 This invariant persists across sequence lengths, cube sizes, and recursive scales.
 See `PUBLIC_README.md` for public-facing documentation.
 
+## 🔬 Divergence V3: Algebra-Based Invariant Hunting
+
+**New systematic approach**: Use linear algebra to find invariants directly from Rule 30's update rule.
+
+- `rule30_algebra.py` - Core Rule 30 update rule
+- `divergence_v3.py` - Parameterized 3-bit pattern divergence
+- `invariant_solver_v3.py` - Linear system solver for invariants
+- `test_divergence_v3_invariant.py` - Test discovered invariants
+
+**Goal**: Find weights w_p such that D3(s) = Σ_p w_p · freq_p(s) is invariant under Rule 30.
+
 ## Overview
 
 This module embeds Rule 30 CA patterns into Livnium omcubes and computes geometric diagnostics to detect hidden structure or periodicity in the center column sequence.
