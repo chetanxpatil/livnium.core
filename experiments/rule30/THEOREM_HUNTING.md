@@ -119,6 +119,31 @@ for pattern, coeff in discovered_coefficients.items():
 print(f"Exact invariant: {exact_value}")
 ```
 
+## Step 0: Extract Symbolic Divergence Formula
+
+**Critical Step**: Before hunting invariants, we need the exact symbolic form of D(s).
+
+### Symbolic Divergence Extractor (`extract_symbolic_divergence.py`)
+
+Extracts the exact functional form by:
+1. Testing all possible small neighborhoods (4-bit, 5-bit, 7-bit windows)
+2. Building lookup table: pattern → divergence contribution
+3. Analyzing dependencies (bit positions, density, transitions)
+4. Expressing the exact functional form
+
+```bash
+python3 experiments/rule30/extract_symbolic_divergence.py \
+    --pattern-length 5 \
+    --verify 1000
+```
+
+**Goal**: Turn numerical divergence computation into exact symbolic expression:
+```
+D(s) = Σ_i F(s[i-k ... i+k])
+```
+
+Where F is the exact function mapping bit patterns to divergence contributions.
+
 ## V2: Non-Linear Invariant Hunter
 
 Since linear invariants didn't work, we need to search for **non-linear** forms.
