@@ -718,17 +718,29 @@ class LivniumCoreSystem:
         observer_norm = np.sqrt(obs_x*obs_x + obs_y*obs_y + obs_z*obs_z)
         motion_norm = np.sqrt(mot_x*mot_x + mot_y*mot_y + mot_z*mot_z)
         
+        # Helper function to clip scalar (inlined for numba compatibility)
+        def clip_val(value: float, min_val: float, max_val: float) -> float:
+            if value < min_val:
+                return min_val
+            elif value > max_val:
+                return max_val
+            else:
+                return value
+        
         # Special case: observer at origin
         if observer_norm < 1e-10:
             if motion_norm < 1e-10:
                 return 0.0
             # Use first non-zero component
             if abs(mot_x) > 1e-10:
-                return np.clip(mot_x / motion_norm, -1.0, 1.0)
+                val = mot_x / motion_norm
+                return clip_val(val, -1.0, 1.0)
             elif abs(mot_y) > 1e-10:
-                return np.clip(mot_y / motion_norm, -1.0, 1.0)
+                val = mot_y / motion_norm
+                return clip_val(val, -1.0, 1.0)
             else:
-                return np.clip(mot_z / motion_norm, -1.0, 1.0)
+                val = mot_z / motion_norm
+                return clip_val(val, -1.0, 1.0)
         
         if motion_norm < 1e-10:
             return 0.0
@@ -736,7 +748,7 @@ class LivniumCoreSystem:
         # Calculate dot product and cosine
         dot_product = obs_x*mot_x + obs_y*mot_y + obs_z*mot_z
         cos_theta = dot_product / (observer_norm * motion_norm)
-        return np.clip(cos_theta, -1.0, 1.0)
+        return clip_val(cos_theta, -1.0, 1.0)
     
     def calculate_polarity(self, motion_vector: Tuple[float, float, float],
                          observer_coords: Optional[Tuple[int, int, int]] = None,
