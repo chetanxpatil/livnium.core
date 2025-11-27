@@ -168,35 +168,20 @@ class RecursiveGeometryEngine:
         if child_size < 3 or child_size % 2 == 0:
             return None
         
-        # Create child geometry with same config (except size)
-        # CRITICAL: Copy parent's config so quantum settings pass down!
-        from ..config import LivniumCoreConfig
+        # Get parent cell
+        parent_cell = parent_geometry.lattice.get(coords)
+        if parent_cell is None:
+            return None
         
-        # Explicitly inherit ALL config from parent (quantum settings preserved)
-        child_config = LivniumCoreConfig(
-            lattice_size=child_size,
-            enable_face_exposure=parent_geometry.config.enable_face_exposure,
-            enable_symbolic_weight=parent_geometry.config.enable_symbolic_weight,
-            enable_class_structure=parent_geometry.config.enable_class_structure,
-            enable_90_degree_rotations=parent_geometry.config.enable_90_degree_rotations,
-            enable_global_observer=parent_geometry.config.enable_global_observer,
-            enable_semantic_polarity=parent_geometry.config.enable_semantic_polarity,
-            # CRITICAL FIX: Explicitly inherit quantum features
-            enable_quantum=parent_geometry.config.enable_quantum,
-            enable_superposition=parent_geometry.config.enable_superposition,
-            enable_quantum_gates=parent_geometry.config.enable_quantum_gates,
-            enable_entanglement=parent_geometry.config.enable_entanglement,
-            enable_measurement=parent_geometry.config.enable_measurement,
-            enable_geometry_quantum_coupling=parent_geometry.config.enable_geometry_quantum_coupling,
+        # Create child universe with inheritance law
+        # This gives the child real physics - inherits parent's SW as energy budget
+        child_geometry = fabricate_child_universe(
+            parent_cell=parent_cell,
+            parent_geometry=parent_geometry,
+            child_lattice_size=child_size,
+            rng=self.rng,
+            noise_scale=0.10  # 10% noise in SW distribution
         )
-        
-        # Create child geometry with inherited config
-        child_geometry = LivniumCoreSystem(child_config)
-        
-        # CRITICAL: If parent has quantum active, ensure child is ready for quantum state
-        # The child geometry now has quantum config enabled, but quantum state initialization
-        # happens when QuantumLattice is created (which happens in application code).
-        # This ensures the child geometry is "quantum-ready" from birth.
         
         return child_geometry
     
