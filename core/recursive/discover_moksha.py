@@ -66,20 +66,9 @@ def discover_moksha_laws():
     print(f"   Built hierarchy with {len(engine.levels)} levels")
     print()
     
-    # Enable Hamiltonian dynamics
-    print("2. Enabling Hamiltonian dynamics...")
-    try:
-        engine.enable_hamiltonian_dynamics(temp=0.1, friction=0.05, dt=0.01)
-        print("   ✅ Hamiltonian dynamics enabled")
-        use_hamiltonian = True
-    except (ImportError, RuntimeError) as e:
-        print(f"   ⚠️  Hamiltonian dynamics not available: {e}")
-        print("   Using rotation-based evolution instead")
-        use_hamiltonian = False
-    print()
-    
-    # 3. Evolve system and track convergence
-    print("3. Evolving system and tracking convergence...")
+    # 2. Evolve system and track convergence (pure recursive physics)
+    print("2. Evolving system and tracking convergence...")
+    print("   Using pure recursive physics (rotations, inheritance, conservation)")
     print()
     
     convergence_history = []
@@ -89,17 +78,14 @@ def discover_moksha_laws():
     num_steps = 200
     
     for step in range(num_steps):
-        # Evolve using Hamiltonian dynamics if available
-        if use_hamiltonian:
-            evolution_stats = engine.evolve_step()
-        else:
-            # Fallback: Apply some evolution (rotations, updates)
-            if step % 10 == 0:
-                # Rotate base geometry occasionally
-                from core.classical.livnium_core_system import RotationAxis
-                import random
-                axis = random.choice(list(RotationAxis))
-                base_geometry.rotate(axis, quarter_turns=1)
+        # Apply recursive evolution (rotations, updates)
+        # This uses pure recursive physics, not Hamiltonian planet physics
+        if step % 10 == 0:
+            # Rotate base geometry occasionally
+            from core.classical.livnium_core_system import RotationAxis
+            import random
+            axis = random.choice(list(RotationAxis))
+            base_geometry.rotate(axis, quarter_turns=1)
         
         # Check Moksha convergence
         convergence_state = engine.moksha.check_convergence()
