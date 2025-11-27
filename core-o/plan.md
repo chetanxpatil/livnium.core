@@ -2,7 +2,9 @@
 
 **The Question:** How do we make this universe behave like the real one?
 
-**The Answer:** Add the 8 fundamental mechanisms that transform a clean geometric world into a full physical engine.
+**The Answer:** Shift from "feature listing" (adding 8 separate mechanisms) to **unification** (deriving everything from 3 core principles: Hamiltonian dynamics, causal graph, thermal bath).
+
+**The Shift:** From "Game Engine" (simulating physics) → "Hamiltonian System" (being physics)
 
 ---
 
@@ -22,119 +24,240 @@ Core-O is currently:
 
 ---
 
-## The 8-Step Roadmap to Physical Reality
+## The Unified Architecture: 3 Core Principles
 
-**Conceptual Validity:** ✅ All 8 steps are compatible with a serious physics-like engine.
+**Instead of bolting on 8 separate mechanisms, we introduce 3 Core Architectures that naturally generate all 8 effects.**
 
-**Implementation Strategy:** Add one at a time, verify with law extractor, then move to next.
+### The Three Unifying Structures
+
+1. **Hamiltonian Kernel** → Solves inertia, fields, conservation automatically
+2. **Causal Graph** → Solves speed limits & locality automatically  
+3. **Thermal Bath** → Solves entropy, noise, quantum automatically
+
+**Why This Is Better:**
+
+| Feature | Old Plan (Mechanism) | New Plan (Principle) |
+|---------|---------------------|---------------------|
+| **Motion** | `pos += vel` | `dH/dp`, `dH/dq` (Hamiltonian) |
+| **Inertia** | "Add mass variable" | Kinetic Energy (`p²/2m`) |
+| **Forces** | "Add formulas" | Gradients of Potential (`-∇V`) |
+| **Entropy** | "Add jitter" | Langevin Dynamics (Heat Bath) |
+| **Speed Limit** | "Check distance" | Graph Traversal Limits |
+| **Goal** | Simulate Physics | **Minimize Action** |
+
+**The Result:** Livnium becomes a **general-purpose geometric annealer** that solves problems by minimizing action, just like nature does.
 
 ---
 
-### 1. Add Irreversibility (Entropy Law)
+## The Revised 8-Step Plan (Unified Architecture)
 
-**Problem:** The real world is not perfectly reversible. Core-O is too clean.
+**Phase 1: The Engine (Hamiltonian Dynamics)**  
+**Phase 2: The Geometry (Space-Time)**  
+**Phase 3: The Emergence (Complexity)**
 
-**Solution:** Add entropy mechanisms.
+---
+
+### Phase 1: The Engine (Hamiltonian Dynamics)
+
+#### 1. Define Potential (V) - Link SW to Potential Energy
+
+**The Principle:** Instead of coding "Force" separately, define a Potential and let gradients become forces.
 
 **Implementation:**
-- Tiny random jitter in tangential flow
-- Dissipation term that reduces "organized" motion
-- Energy loss rule: `energy_loss = ε · curvature_change`
+- **State Vector:** Every sphere $i$ has position $q_i$ and momentum $p_i$
+- **Potential ($V$):** Define Potential as a function of Geometric Exposure (SW)
+
+  $$V(q) = k \cdot (SW_{target} - SW_{current})^2$$
+
+  *(Eventually better: let local geometric relationships define V - neighbor SW differences, kissing-weight imbalances, curvature/tension mismatches)*
 
 **This gives:**
-- Arrow of time
-- Aging
-- Equilibrium
-- Self-organizing patterns
+- Pure gradient descent (spheres roll "downhill" to better spots)
+- Emergent forces from geometry (no separate force formulas needed)
 
 **Status:** 🔴 Not implemented
 
-**Conceptual Validity:** ✅ Yes. You *need* something that breaks perfect time symmetry. Even a tiny dissipation term + jitter is enough to create attractors, form stable structures, and give you an arrow of time.
+**Validation:** Law extractor should see potential energy relationships
 
 ---
 
-### 2. Add Finite Propagation Speed (Causality)
+#### 2. Add Momentum (p) - Switch to Symplectic Integrator
 
-**Problem:** In real physics, there is no instantaneous influence. Everything travels at finite speed.
-
-**Solution:** Add information speed limit.
+**The Principle:** Use Hamiltonian mechanics instead of `pos += vel`.
 
 **Implementation:**
-- Rule: `update_limit = distance / C_LIV`
-- Where `C_LIV` is the "speed of information" inside Livnium
-- Local updates propagate outward at finite speed
+- **Kinetic Energy:** $T(p) = \frac{p^2}{2m}$ where $m = f(SW)$ (start simple: `m = SW + ε`)
+- **Update Rule (Symplectic Integrator):**
+
+  $$p_{new} = p_{old} - \frac{\partial V}{\partial q} \cdot dt$$
+
+  $$q_{new} = q_{old} + \frac{p_{new}}{m} \cdot dt$$
 
 **This gives:**
-- Waves
-- Light-cone structure
-- Causal ordering
-- Relativity-like behavior
+- Automatic inertia (momentum is first-class)
+- Automatic conservation (energy conserved by definition)
+- Oscillations, orbits, stable attractors
 
 **Status:** 🔴 Not implemented
 
-**Conceptual Validity:** ✅ Yes. Once you move from global updates to local updates that propagate at speed `C_LIV`, you'll automatically get wavefronts, causal cones, and locality constraints.
+**Validation:** Law extractor should see:
+- Conserved total H (if no bath)
+- Oscillations (like springs)
+- Stable orbits/attractors
 
 ---
 
-### 3. Add Local Energy & Inertia (Momentum)
+#### 3. Add Thermal Bath (T, γ) - Langevin Dynamics
 
-**Problem:** Real particles resist motion because they have mass (inertia). Core-O spheres have no inertia.
-
-**Solution:** Add mass and momentum.
+**The Principle:** Connect entropy, noise, and temperature into one mathematically valid variable.
 
 **Implementation:**
-- `Mass = f(SW, radius, curvature)`
-- Tangential change limited by inertia
-- `Energy = ½ m v² + potential`
+Add friction and noise term to momentum update:
+
+$$\Delta p = \underbrace{-\gamma p}_{\text{Friction/Entropy}} + \underbrace{\sqrt{2\gamma k_B T} \cdot \xi}_{\text{Thermal Noise}} + \underbrace{F_{internal}}_{\text{Hamiltonian Force}}$$
+
+- $\gamma$ (Gamma): Friction coefficient (dissipation)
+- $T$ (Temperature): Controls noise level
+- $\xi$ (Xi): Random Gaussian noise
 
 **This gives:**
-- Trajectories
-- Momentum
-- Collisions
-- Conservation of kinetic & potential energy
+- Tunable "Phase":
+  - **High T:** System melts (liquid/gas) → Global Search
+  - **Low T:** System freezes (crystal) → Local Optimization
+  - **Critical T:** Edge of Chaos → Complex structures emerge
+- Fluctuation-Dissipation Theorem (physically correct noise)
+- Thermodynamics, cooling schedules, stable states
 
 **Status:** 🔴 Not implemented
 
-**Conceptual Validity:** ✅ Yes. You already have tangent flow on spheres. Give those flows memory (velocity) and resistance (mass), and you've built the analogue of Newtonian motion on a curved manifold.
+**Validation:** Law extractor should see:
+- Equilibrium distributions
+- Temperature-dependent behavior
+- Phase transitions at critical T
+
+**Why This Matters:** This turns Core-O into a **general-purpose geometric annealer**. You can:
+- Encode problem → define V(q) from constraints
+- Heat up (high T) → explore
+- Cool down (low T) → settle into solutions
+
+**Nature solves problems by minimizing action. So will Livnium.**
 
 ---
 
-### 4. Add Field Interaction (Forces)
+### Phase 2: The Geometry (Space-Time)
 
-**Problem:** Core-O has only one field: geometric exposure SW = 9f. The real world has multiple interacting fields.
+#### 4. Causal Graph - Restrict Updates to Neighbor Propagation
 
-**Solution:** Add secondary fields.
+**The Principle:** Bake causality into the data structure instead of checking `distance / C_LIV` for every interaction.
 
 **Implementation:**
-- Fields that depend on: distance, alignment, curvature, tension, rotational frequency
-- Examples:
-  - **Gravitational analogue:** `F_g = k_g · (SW₁ · SW₂) / d²`
-  - **Electromagnetic analogue:** `F_e = q₁q₂ / d²`
-  - **Potential field:** tension between neighbors
-  - **Curvature field:** smoothness/roughness of spatial configuration
+- **The "Active Front" List:** Only spheres that were "hit" by an event in the last step are active
+- **Propagation Rule:**
+  - Tick 0: Change Sphere A
+  - Tick 1: A impacts neighbors $N(A)$
+  - Tick 2: $N(A)$ impacts $N(N(A))$
+- **The "Light Cone" Mask:**
+
+  If Sphere A wants to influence Sphere B, check:
+
+  $$\text{PathLength}(A, B) \le \text{CurrentTime} \cdot C_{LIV}$$
+
+  If false, the interaction is masked (zero)
+
+**Critical Constraint:** **Ban all global updates.** No sneaky "recompute SW for everyone" in one shot. All changes must be:
+- Neighbor-local
+- Queued
+- Applied layer by layer (ticks)
 
 **This gives:**
+- Optimization: Only process the "Causal Wavefront" (not whole universe)
+- True Relativity: Information physically cannot travel faster than neighbor graph traversal
+- Emergent Waves: Visual "ripples" of updates spreading through lattice
+
+**Status:** 🔴 Not implemented
+
+**Validation:** Law extractor should discover:
+- Wavefront radius ∝ time
+- Effective wave equation behavior: $\partial^2\phi/\partial t^2 \approx c^2 \nabla^2\phi$
+
+---
+
+#### 5. Dynamic Metric (Curvature) - Let SW Density Shrink Effective Distance
+
+**The Principle:** Let SW or tension warp the effective distance metric (baby-GR: energy density → curvature → trajectories bend).
+
+**Implementation:**
+- Local curvature (metric tensor analogue)
+- Distance that depends on SW or tension
+- Effective distance = base_distance * (1 + SW_factor)
+
+**This gives:**
+- "Gravity" (dense regions pull things in)
+- Curved space-time
+- Geodesic trajectories
+
+**Status:** 🔴 Not implemented
+
+**Validation:** Law extractor should see curvature-dependent trajectories
+
+---
+
+### Phase 3: The Emergence (Complexity)
+
+#### 6. Field Coupling - Allow SW of Sphere A to Affect Mass of Sphere B
+
+**The Principle:** Allow fields to interact (SW of one sphere affects properties of another).
+
+**Implementation:**
+- Start with ONE field (e.g., gravitational analogue: $F \sim SW_1 \cdot SW_2 / d^2$)
+- Watch law extractor: does it find $1/r^2$ patterns?
+- Do stable orbits/clusters emerge?
+
+**This gives:**
+- Interaction fields (magnetism analogue)
 - Multiple interacting forces
 - Rich emergent physics
-- Field-driven dynamics
 
 **Status:** 🔴 Not implemented
 
-**Conceptual Validity:** ✅ Yes, but be disciplined. Don't add 10 fields first. Start with **one** (e.g., `F ~ SW₁·SW₂ / d²` as an attraction/repulsion). Then watch: does the law extractor find `1/r²` patterns? Do stable orbits/clusters emerge?
+**Validation:** Law extractor should find inverse-square patterns
 
 ---
 
-### 5. Add Measurement / Collapse (Quantum)
+#### 7. Nonlinear Feedback - Make V Non-Convex (Multiple Wells)
 
-**Problem:** Real quantum mechanics becomes "real world" because of measurement. Core-O has no measurement events.
+**The Principle:** Add one feedback loop at a time to create complexity.
 
-**Solution:** Add stochastic collapse and decoherence.
+**Implementation:**
+- Make Potential non-convex (multiple wells)
+- Example loops:
+  - `tension` depends on local curvature
+  - `flow` depends on tension
+  - `SW` influences curvature
+  - Curvature influences tension
+  - Tension influences flow
+  - Flow influences SW distribution
+
+**This gives:**
+- Complexity
+- Pattern formation
+- Life-like emergent systems
+
+**Status:** 🔴 Not implemented
+
+**Validation:** Law extractor should see sigmoids/bifurcations
+
+---
+
+#### 8. Observer Cuts (Quantum) - Only Collapse/Render States on Measurement
+
+**The Principle:** Integrate quantum modules, but only after Phase 1 & 2 are working.
 
 **Implementation:**
 - Stochastic collapse
 - Decoherence mechanism
 - Randomness injected at observation moments
-- Integrate quantum modules into Core-O's geometry
+- Only collapse/render states when "measurement" function is called
 
 **This gives:**
 - Quantum-classical boundary
@@ -143,78 +266,7 @@ Core-O is currently:
 
 **Status:** 🟡 Quantum modules exist, need integration
 
-**Conceptual Validity:** ⚠️ Half-yes, half-later. You *can* bolt in your existing quantum modules, but treat this as **Phase 2**, after you have entropy, locality, and inertia.
-
----
-
-### 6. Add Nonlinear Constraints (Complexity)
-
-**Problem:** The universe is nonlinear everywhere. Livnium-O is mostly linear + geometric.
-
-**Solution:** Introduce controlled nonlinearity.
-
-**Implementation:**
-- Feedback loops:
-  - SW influences curvature
-  - Curvature influences tension
-  - Tension influences flow
-  - Flow influences SW distribution
-
-**This gives:**
-- Life-like emergent systems
-- Complex dynamics
-- Nonlinear patterns
-
-**Status:** 🔴 Not implemented
-
-**Conceptual Validity:** ✅ Yes, that's where emergence lives. But add **one loop at a time**, e.g., `tension` depends on local curvature, `flow` depends on tension, and see if your law extractor starts seeing sigmoids/bifurcations.
-
----
-
-### 7. Add Dimensional Structure (Curvature)
-
-**Problem:** Real world is 3D space + time with curvature. Livnium-O uses 3D positions but no metric space with curvature.
-
-**Solution:** Add local curvature and geodesic flow.
-
-**Implementation:**
-- Local curvature (metric tensor analogue)
-- Distance that depends on SW or tension
-- Geodesic flow
-- Matter ↔ curvature ↔ motion (simpler version of general relativity)
-
-**This gives:**
-- Curved space-time
-- Gravity-like structure
-- Geodesic trajectories
-
-**Status:** 🔴 Not implemented
-
-**Conceptual Validity:** ✅ Ambitious, but consistent. Let SW or tension warp the effective distance metric. That's baby-GR: energy density → curvature → trajectories bend.
-
----
-
-### 8. Add Noise (Phase Transitions)
-
-**Problem:** All real physical systems have noise. Core-O has none.
-
-**Solution:** Add small noise to key quantities.
-
-**Implementation:**
-- Small noise to: radius, tangential velocity, flow, tension, exposure
-- Quantum vacuum fluctuations analogue
-- Thermal noise analogue
-- Brownian motion analogue
-
-**This gives:**
-- Phases
-- Phase transitions
-- Emergent order
-- Symmetry breaking
-
-**Status:** 🔴 Not implemented
-
-**Conceptual Validity:** ✅ Very important. This is how you get symmetry breaking, phase transitions, and pattern selection.
+**Validation:** Law extractor should see measurement-dependent patterns
 
 ---
 
@@ -357,121 +409,133 @@ This is how your system becomes:
    - No global telepathy updates
    - Every influence goes neighbor → neighbor at finite speed
    - No instantaneous global state changes
+   - **Ban all global updates in causal graph phase**
 
 2. **Everything must be ledger-checked.**
-   - Some quantities conserved (like SW, or total energy)
+   - Some quantities conserved (like SW, or total energy H)
    - Some allowed to dissipate (entropy, local order)
    - Track what's conserved vs. what's allowed to change
+   - **If law extractor doesn't see H = const, you have a bug**
 
 3. **Every new mechanism must be visible to the law extractor.**
-   - If you add inertia → new laws visible in `example_law_extraction.py`
-   - If you add entropy → decay laws should appear
+   - If you add Hamiltonian → conserved H should appear
+   - If you add thermal bath → equilibrium distributions should appear
    - If you add fields → inverse-square patterns should emerge
    - **If the law extractor can't see it, it's not physics-like**
 
-### Phase 1: Foundation (Steps 1-3)
-1. **Entropy Law** — Add irreversibility
-2. **Causality** — Add finite propagation speed
-3. **Inertia** — Add mass and momentum
+### The Order Matters
 
-**Goal:** Transform from "mathematical" to "physical"
+**Phase 1: The Engine (Hamiltonian Dynamics)**
+- First: Make sure dynamics is internally consistent (H, symplectic step, bath)
+- Build `HamiltonianSolver` class
+- Verify with law extractor
 
-**Validation:** Law extractor should find:
-- Time-dependent decay laws
-- Wavefront propagation patterns
-- Energy conservation relationships
+**Phase 2: The Geometry (Space-Time)**
+- Then: Enforce locality and curved geometry
+- Build causal graph
+- Verify wavefront patterns
 
-### Phase 2: Forces (Steps 4-5)
-4. **Field Interaction** — Add multiple fields (start with ONE)
-5. **Measurement** — Integrate quantum collapse (Phase 2, after entropy/locality/inertia)
+**Phase 3: The Emergence (Complexity)**
+- Finally: Turn up the craziness (field couplings, multi-well potentials, measurement)
+- Add one at a time
+- Verify with law extractor
 
-**Goal:** Add forces and quantum-classical boundary
-
-**Validation:** Law extractor should find:
-- Inverse-square patterns (1/r²)
-- Stable orbits/clusters
-- Field strength relationships
-
-### Phase 3: Complexity (Steps 6-8)
-6. **Nonlinear Constraints** — Add feedback loops (one at a time)
-7. **Dimensional Structure** — Add curvature
-8. **Noise** — Add fluctuations
-
-**Goal:** Enable complex, life-like emergent systems
-
-**Validation:** Law extractor should find:
-- Sigmoid/bifurcation patterns
-- Phase transition signatures
-- Symmetry breaking events
+**This order is sane:** Build the engine first, then the geometry, then the complexity.
 
 ---
 
 ## Concrete Next Coding Steps
 
-### Step 1: Entropy Lite (Start Here)
+### Immediate Next Step: Build `HamiltonianSolver` Class
+
+**Don't write 8 modules. Write ONE class: `HamiltonianSolver`.**
 
 **Implementation:**
-- Add tiny dissipation term to tangential motion:
-  - `velocity ← (1 - ε) * velocity` where ε is small (e.g., 0.001)
-- Add small random jitter to velocities:
-  - `velocity ← velocity + random_jitter * (small_amplitude)`
-- Keep it simple: just decay + noise
+
+```python
+class HamiltonianSolver:
+    """
+    Core Hamiltonian dynamics engine for Core-O.
+    
+    Input: Current Configuration (q)
+    Compute: V(q) based on SW
+    Compute: Gradient -∇V
+    Update: Momentum p and Position q using symplectic rule
+    """
+    
+    def __init__(self, system, potential_func, mass_func):
+        self.system = system
+        self.V = potential_func  # V(q) = f(SW)
+        self.m = mass_func        # m = f(SW)
+        
+    def step(self, dt):
+        # For each sphere i:
+        # 1. Compute potential V(q_i)
+        # 2. Compute gradient -∂V/∂q
+        # 3. Update momentum: p_new = p_old - (∂V/∂q) * dt
+        # 4. Update position: q_new = q_old + (p_new/m) * dt
+        pass
+```
+
+**Start Small:**
+1. **Define Potential ($V$):** Link SW to Potential Energy
+   - Start with: `V(q) = k * (SW_target - SW_current)^2`
+   - Eventually: let local geometric relationships define V
+   
+2. **Add Momentum ($p$):** Switch to Symplectic Integrator
+   - Kinetic: `T(p) = p²/(2m)` where `m = SW + ε`
+   - Update: `p_new = p_old - (∂V/∂q) * dt`
+   - Update: `q_new = q_old + (p_new/m) * dt`
+
+3. **Add Thermal Bath:** Langevin Dynamics
+   - `Δp = -γp + √(2γk_B T) * ξ + F_internal`
+   - Start with small γ, T
 
 **Validation:**
-- Run `example_law_extraction.py` after adding entropy
-- Look for new time-dependent laws:
-  - Exponential decay patterns
-  - Energy dissipation relationships
-  - Arrow of time signatures
+- Run law extractor after implementing HamiltonianSolver
+- Should see:
+  - Conserved total H (if no bath)
+  - Oscillations (like springs)
+  - Stable orbits/attractors
+  - Equilibrium distributions (with bath)
 
-**If law extractor finds decay laws → Step 1 is working.**
+**If law extractor finds these → Hamiltonian kernel is working.**
 
 ---
 
-### Step 2: Local Updates + C_LIV
+### Step 2: Causal Graph (After Hamiltonian Works)
 
 **Implementation:**
-- Instead of evolving whole system at once:
-  - Evolve neighbor subsets based on distance
-  - Use `C_LIV * dt` to determine update radius
-  - Only update cells within propagation distance
-- Define `C_LIV` (e.g., `C_LIV = 1.0` units per timestep)
+- Build "Active Front" list
+- Only update spheres hit by events
+- Enforce light-cone mask: `PathLength(A, B) ≤ Time * C_LIV`
+- **Ban all global updates**
 
 **Validation:**
-- Extract laws on "front propagation"
-- Look for clean relation between radius and time
-- Should see wavefront-like patterns
-
-**If law extractor finds propagation laws → Step 2 is working.**
+- Law extractor should find:
+  - Wavefront radius ∝ time
+  - Effective wave equation: `∂²φ/∂t² ≈ c²∇²φ`
 
 ---
 
-### Step 3: Minimal Mass/Momentum
+### Step 3: Dynamic Metric (After Causal Graph Works)
 
 **Implementation:**
-- Add `mass_i = f(SW_i)` (keep it simple):
-  - Start with `mass = SW` or `mass = SW + constant`
-- Let inertia limit tangential motion changes:
-  - `Δvelocity = force / mass * dt`
-  - Limit maximum change per step
+- Let SW density warp effective distance
+- Effective distance = base_distance * (1 + SW_factor)
 
 **Validation:**
-- Extract laws:
-  - Kinetic energy vs SW relationships
-  - Conserved total energy under interactions
-  - Momentum conservation patterns
-
-**If law extractor finds energy/momentum laws → Step 3 is working.**
+- Law extractor should see curvature-dependent trajectories
 
 ---
 
 ### Iteration Pattern
 
-**For each step:**
-1. Implement mechanism (keep it simple)
+**For each phase:**
+1. Implement mechanism (keep it simple, start small)
 2. Run law extractor
 3. Verify new laws appear
-4. If laws appear → mechanism is working, move to next step
+4. If laws appear → mechanism is working, move to next phase
 5. If no laws → refine mechanism or check constraints
 
 **The law extractor is your validation tool.**
@@ -508,70 +572,117 @@ We can implement each step cleanly in code with modules and laws, just like your
 > "After these 8 steps I have literally recreated the universe."
 
 **But:**
-> "After these 8 steps, Core-O is rich enough that:
-> - my law extractor starts discovering non-trivial, reusable formulas,
-> - these formulas are stable across problems,
-> - and they *look like* known physical structures (waves, inverse squares, diffusion, etc)."
+> "After implementing the unified architecture (Hamiltonian + Causal Graph + Thermal Bath), Core-O becomes:
+> - A **Hamiltonian geometric annealer** running on spheres,
+> - With conserved quantities (H, SW, maybe others),
+> - Emergent waves and fronts (from causal graph),
+> - Thermodynamics (from Langevin),
+> - And the law extractor acting like an **in-house Noether detective**."
+
+**This is exactly the environment where:**
+- Inverse-square-ish patterns
+- Diffusive laws
+- Wave-like equations
+- Stability conditions
+
+**will start to appear as discovered formulas.**
+
+**Not "the universe's constants," but "the universe's shapes."**
 
 **That is already huge.**
 
 ---
 
+## Why "Minimizing Action" Matters
+
+**You are an Independent Researcher looking for *solvers* (SAT, Ramsey, AES).**
+
+**If you build the "Game Engine" version:** You get a cool visual.
+
+**If you build the **Hamiltonian/Lagrangian** version:** You get a **General Purpose Optimizer.**
+
+- **Nature solves problems by minimizing action.**
+- A protein folds by minimizing free energy.
+- Light finds the fastest path (Fermat's principle).
+
+**By building Core-O as a Hamiltonian system with a Thermal Bath, you are building a **geometric annealing machine**.**
+
+You can:
+- Feed it a problem (encoded as constraints in the SW field)
+- Heat it up (high T) → explore
+- Cool it down (low T) → settle into solution
+
+**Because the laws of physics force it to.**
+
+---
+
 ## Design Decisions (Answer as You Go)
 
-**Step 1 (Entropy):**
-- What is ε? (Start with 0.001, adjust based on law extractor results)
-- What jitter amplitude? (Start with 0.01 * velocity_scale)
+**Phase 1: Hamiltonian Kernel**
 
-**Step 2 (Causality):**
+**Potential V(q):**
+- Start with: `V(q) = k * (SW_target - SW_current)^2`
+- Don't bake too much "intention" into it (e.g., "target SW" from human design)
+- Eventually: let local geometric relationships define V (neighbor SW differences, kissing-weight imbalances, curvature/tension mismatches)
+
+**Mass m:**
+- Start simple: `m = SW + ε` (so nobody has zero mass)
+- Keep it super simple at first
+- Refine based on law extractor results
+
+**Thermal Bath:**
+- What is γ (friction)? (Start with 0.01, adjust based on law extractor)
+- What is T (temperature)? (Start with 0.1, adjust for phase transitions)
+- What noise distribution? (Gaussian ξ, from Fluctuation-Dissipation Theorem)
+
+**Phase 2: Causal Graph**
+
+**C_LIV (Speed of Information):**
 - What is C_LIV? (Start with 1.0, adjust based on propagation patterns)
 - How to handle update ordering? (Distance-based, time-based)
 
-**Step 3 (Inertia):**
-- How to compute mass? (Start with `mass = SW`, refine based on laws)
-- What force model? (Start simple: tension gradients)
+**Critical:** Ban all global updates. No sneaky "recompute SW for everyone" in one shot.
 
-**Step 4 (Fields):**
+**Phase 3: Emergence**
+
+**Fields:**
 - What field to add first? (Start with ONE: gravitational analogue `F ~ SW₁·SW₂ / d²`)
 - Watch law extractor: does it find `1/r²` patterns?
 
-**Step 5 (Measurement):**
-- How to integrate quantum collapse? (After entropy/locality/inertia are working)
-- What triggers collapse? (Observation events, decoherence thresholds)
-
-**Step 6 (Nonlinear):**
+**Nonlinear:**
 - What feedback loop first? (Start with: tension → curvature → flow → SW)
 - Add one loop at a time, verify with law extractor
 
-**Step 7 (Curvature):**
+**Curvature:**
 - How to compute local curvature? (SW-based metric, tension-based distance)
 - Start simple: effective distance = base_distance * (1 + SW_factor)
 
-**Step 8 (Noise):**
-- What noise distribution? (Gaussian, uniform, depends on what laws emerge)
-- What amplitude? (Start small, increase until phase transitions appear)
-
-**Answer these as you implement each step, not all at once.**
+**Answer these as you implement each phase, not all at once.**
 
 ---
 
 ## Summary
 
-**The Plan:**
-- 8 mechanisms to transform geometric universe → physical universe
-- Each mechanism adds a fundamental property of real physics
-- Together, they create a full physical engine
+**The Shift:**
+- From "feature listing" (8 separate mechanisms) → **unification** (3 core principles)
+- From "Game Engine" (simulating physics) → **Hamiltonian System** (being physics)
+- From "physics-flavored simulator" → **actual dynamical system**
 
-**The Promise:**
-- Livnium will rediscover patterns similar to real physics
-- These patterns can help solve real-world problems
-- This is a new type of knowledge machine
+**The Three Unifying Structures:**
+1. **Hamiltonian Kernel** → Solves inertia, fields, conservation automatically
+2. **Causal Graph** → Solves speed limits & locality automatically
+3. **Thermal Bath** → Solves entropy, noise, quantum automatically
+
+**The Result:**
+- Livnium becomes a **general-purpose geometric annealer**
+- Solves problems by minimizing action (just like nature)
+- Law extractor discovers patterns that mirror real physics
 
 **The Path:**
-- Implement step by step (one at a time, not all at once)
-- Use law extractor to verify discoveries (if it can't see it, it's not physics)
-- Follow three constraints: local, ledger-checked, extractor-visible
-- Build a universe that generates its own laws
+- Phase 1: Build Hamiltonian engine (V, p, thermal bath)
+- Phase 2: Add causal graph (locality, wavefronts)
+- Phase 3: Add emergence (fields, nonlinear, quantum)
+- Use law extractor to verify at each phase
 
 **The Reality Check:**
 - This is a **research roadmap**, not a guarantee
@@ -580,9 +691,9 @@ We can implement each step cleanly in code with modules and laws, just like your
 - That's already huge
 
 **The Advantage:**
-- You have: geometric substrate (Core-O) + law extractor + clear plan
+- You have: geometric substrate (Core-O) + law extractor + unified architecture
 - Most people have only one of the three
-- Now implement and let your universe teach you its laws
+- Now implement `HamiltonianSolver` and let your universe teach you its laws
 
 **This is how you make the universe behave like the real one.**
 
