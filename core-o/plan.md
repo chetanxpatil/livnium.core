@@ -444,11 +444,145 @@ This is how your system becomes:
 
 ---
 
+## Critical Technical Gotchas (Must Fix Before Implementation)
+
+**These three issues will break the Hamiltonian implementation if not addressed first.**
+
+### 1. The "Smoothness" Problem (The Gradient Trap)
+
+**The Issue:**
+You plan to compute `forces = -gradient(Potential)`.
+
+Your Potential depends on `SW` (Geometric Exposure).
+
+Currently, `SW` is often calculated based on **discrete** states (kissing numbers, "is touching" binary checks, rigid geometry).
+
+**The Trap:**
+In a Hamiltonian system, **you cannot differentiate a step function.** If a sphere is "touching" (1) and then moves 0.00001 units and is "not touching" (0), the gradient is infinite (Dirac delta). This will cause your simulation to explode (velocities become `NaN` or infinite).
+
+**The Fix: "Soft" Potentials**
+
+You need to replace binary "kissing" checks with **continuous potentials**.
+
+- **Bad (Discrete):** `if distance < 2R: overlap = true`
+- **Good (Continuous):** `Potential = k * (2R - distance)^2` (Harmonic repulsion) or `Potential = (σ/r)^12` (Lennard-Jones)
+
+**Action:** You must define a **"Soft SW"** function that varies smoothly as spheres approach, so `dH/dq` is always finite.
+
+**Status:** 🔴 **URGENT - Must fix before HamiltonianSolver**
+
+---
+
+### 2. The Dynamic Topology Problem
+
+**The Issue:**
+Phase 2 introduces the **Causal Graph**.
+
+In a solid crystal, neighbors never change.
+
+In a liquid/gas (or an optimization problem being solved), **spheres move past each other.** Sphere A was a neighbor of B, but now it's a neighbor of C.
+
+**The Trap:**
+If your Causal Graph is static, sphere A will keep interacting with B even if it's miles away.
+
+If you rebuild the graph every single step ($O(N^2)$), you lose the speed benefit of the causal graph.
+
+**The Fix: Verlet Lists / Cell Linked Lists**
+
+You need a standard molecular dynamics trick:
+
+- **Skin Depth:** Keep a list of neighbors slightly *larger* than the interaction radius
+- **Lazy Updates:** Only rebuild the neighbor graph when a particle has moved more than `skin_depth / 2`
+
+**Action:** Add a `NeighborList` manager that handles topological changes efficiently.
+
+**Status:** 🔴 **Must fix before Phase 2 (Causal Graph)**
+
+---
+
+### 3. The "Goldilocks" Tuning (Non-Dimensionalization)
+
+**The Issue:**
+You have Mass, Temperature, Force constants, and Time Step ($dt$).
+
+If Mass = 1, Force = 1000, and dt = 1.0, your sphere will teleport to infinity in one frame.
+
+**The Trap:**
+Standard physics engines spend months tuning these constants so the system doesn't explode.
+
+Since Livnium is abstract geometry, you don't have "kilograms" or "meters" to guide you.
+
+**The Fix: Auto-Scaling or Adaptive dt**
+
+You are missing a **stability controller**.
+
+- **Option A:** Adaptive Time Step. If the fastest particle moves > 10% of its radius, cut `dt` in half
+- **Option B:** Energy Limiter. Clamp maximum velocity to a "speed of light" ($C_{LIV}$) explicitly to prevent numerical explosions
+
+**Action:** Add stability controller before running Hamiltonian dynamics.
+
+**Status:** 🔴 **Must fix before running simulations**
+
+---
+
+## Revised Architecture Diagram
+
+To fix these, we add a layer between the "World" and the "Math":
+
+```
+core-o/
+├── classical/
+│   ├── livnium_o_system.py    (Core geometric system)
+│   ├── hamiltonian_solver.py  (Hamiltonian + Thermal Bath)
+│   ├── soft_potentials.py     (The "Soft" Potentials - Fixes Gap #1)
+│   ├── topology.py             (Neighbor Lists/Verlet - Fixes Gap #2)
+│   └── stability.py            (Auto-scaling limits - Fixes Gap #3)
+```
+
+---
+
 ## Concrete Next Coding Steps
 
-### Immediate Next Step: Build `HamiltonianSolver` Class
+### Step 0: Fix Critical Gotchas (Do This First!)
 
-**Don't write 8 modules. Write ONE class: `HamiltonianSolver`.**
+**Priority 1: Soft Potentials (Gap #1) - MOST URGENT**
+
+**Implementation:**
+- Create `soft_potentials.py`
+- Replace binary kissing checks with continuous functions:
+  - Harmonic repulsion: `V(r) = k * (2R - r)^2` for `r < 2R`
+  - Lennard-Jones: `V(r) = 4ε[(σ/r)^12 - (σ/r)^6]`
+  - Soft SW: `SW_soft = SW_base * smooth_function(distance)`
+- Ensure all potentials are C² continuous (twice differentiable)
+
+**Validation:**
+- Check that `gradient(V)` is always finite
+- Verify no step functions remain
+- Test with spheres approaching/separating
+
+**Priority 2: Stability Controller (Gap #3)**
+
+**Implementation:**
+- Create `stability.py`
+- Add adaptive time step:
+  - Monitor maximum velocity: `v_max = max(|p_i| / m_i)`
+  - If `v_max * dt > 0.1 * radius`, reduce `dt`
+- Add energy limiter:
+  - Clamp velocities to `C_LIV`
+  - Prevent `NaN` or infinite values
+
+**Priority 3: Neighbor Lists (Gap #2) - Before Phase 2**
+
+**Implementation:**
+- Create `topology.py`
+- Implement Verlet list with skin depth
+- Lazy updates (only rebuild when needed)
+
+---
+
+### Step 1: Build `HamiltonianSolver` Class (After Gotchas Fixed)
+
+**After fixing the three gotchas, write ONE class: `HamiltonianSolver`.**
 
 **Implementation:**
 
@@ -458,38 +592,49 @@ class HamiltonianSolver:
     Core Hamiltonian dynamics engine for Core-O.
     
     Input: Current Configuration (q)
-    Compute: V(q) based on SW
-    Compute: Gradient -∇V
+    Compute: V(q) based on SW (using soft potentials)
+    Compute: Gradient -∇V (always finite)
     Update: Momentum p and Position q using symplectic rule
     """
     
-    def __init__(self, system, potential_func, mass_func):
+    def __init__(self, system, potential_func, mass_func, stability_controller):
         self.system = system
-        self.V = potential_func  # V(q) = f(SW)
+        self.V = potential_func  # V(q) = f(SW) - MUST be smooth
         self.m = mass_func        # m = f(SW)
+        self.stability = stability_controller  # Adaptive dt, energy limits
         
     def step(self, dt):
-        # For each sphere i:
-        # 1. Compute potential V(q_i)
-        # 2. Compute gradient -∂V/∂q
-        # 3. Update momentum: p_new = p_old - (∂V/∂q) * dt
-        # 4. Update position: q_new = q_old + (p_new/m) * dt
+        # 1. Get adaptive dt from stability controller
+        dt_adaptive = self.stability.get_dt(dt)
+        
+        # 2. For each sphere i:
+        #    - Compute potential V(q_i) using soft potentials
+        #    - Compute gradient -∂V/∂q (always finite)
+        #    - Update momentum: p_new = p_old - (∂V/∂q) * dt_adaptive
+        #    - Clamp velocities to C_LIV
+        #    - Update position: q_new = q_old + (p_new/m) * dt_adaptive
+        
+        # 3. Check stability, adjust dt if needed
+        self.stability.check_and_adjust()
         pass
 ```
 
-**Start Small:**
-1. **Define Potential ($V$):** Link SW to Potential Energy
-   - Start with: `V(q) = k * (SW_target - SW_current)^2`
+**Start Small (After Gotchas Fixed):**
+1. **Define Soft Potential ($V$):** Link SW to Potential Energy
+   - **CRITICAL:** Use soft potentials, not discrete checks
+   - Start with: `V(q) = k * (SW_target - SW_current)^2` where SW is computed from smooth functions
    - Eventually: let local geometric relationships define V
    
 2. **Add Momentum ($p$):** Switch to Symplectic Integrator
    - Kinetic: `T(p) = p²/(2m)` where `m = SW + ε`
-   - Update: `p_new = p_old - (∂V/∂q) * dt`
+   - Update: `p_new = p_old - (∂V/∂q) * dt` (gradient is always finite)
    - Update: `q_new = q_old + (p_new/m) * dt`
+   - **CRITICAL:** Use adaptive dt from stability controller
 
 3. **Add Thermal Bath:** Langevin Dynamics
    - `Δp = -γp + √(2γk_B T) * ξ + F_internal`
    - Start with small γ, T
+   - **CRITICAL:** Clamp velocities to prevent explosions
 
 **Validation:**
 - Run law extractor after implementing HamiltonianSolver
@@ -498,8 +643,13 @@ class HamiltonianSolver:
   - Oscillations (like springs)
   - Stable orbits/attractors
   - Equilibrium distributions (with bath)
+- **CRITICAL:** No `NaN` or infinite values
+- **CRITICAL:** Gradients always finite
+- **CRITICAL:** System remains stable over long runs
 
 **If law extractor finds these → Hamiltonian kernel is working.**
+
+**If system explodes → check gotchas #1 and #3 (smoothness and stability).**
 
 ---
 
@@ -510,11 +660,13 @@ class HamiltonianSolver:
 - Only update spheres hit by events
 - Enforce light-cone mask: `PathLength(A, B) ≤ Time * C_LIV`
 - **Ban all global updates**
+- **CRITICAL:** Use NeighborList (Verlet lists) from gotcha #2 for efficient topology updates
 
 **Validation:**
 - Law extractor should find:
   - Wavefront radius ∝ time
   - Effective wave equation: `∂²φ/∂t² ≈ c²∇²φ`
+- **CRITICAL:** Neighbor updates are efficient (not O(N²) every step)
 
 ---
 
@@ -618,12 +770,29 @@ You can:
 
 ## Design Decisions (Answer as You Go)
 
+**Step 0: Critical Gotchas (Do First!)**
+
+**Soft Potentials:**
+- Which potential form? (Harmonic: `k*(2R-r)^2`, Lennard-Jones: `4ε[(σ/r)^12 - (σ/r)^6]`, or custom?)
+- What interaction radius? (Start with 2R, adjust based on stability)
+- How to make SW smooth? (Smooth function of distance, not binary)
+
+**Stability Controller:**
+- Adaptive dt threshold? (Start with: if `v_max * dt > 0.1 * radius`, reduce dt)
+- Energy limiter? (Clamp velocities to `C_LIV`)
+- What is C_LIV? (Start with 1.0, adjust based on system behavior)
+
+**Neighbor Lists:**
+- Skin depth? (Start with 1.2 * interaction_radius)
+- Rebuild frequency? (When particle moves > skin_depth / 2)
+
 **Phase 1: Hamiltonian Kernel**
 
 **Potential V(q):**
-- Start with: `V(q) = k * (SW_target - SW_current)^2`
+- Start with: `V(q) = k * (SW_target - SW_current)^2` where SW uses **soft potentials**
 - Don't bake too much "intention" into it (e.g., "target SW" from human design)
 - Eventually: let local geometric relationships define V (neighbor SW differences, kissing-weight imbalances, curvature/tension mismatches)
+- **CRITICAL:** All potentials must be C² continuous (twice differentiable)
 
 **Mass m:**
 - Start simple: `m = SW + ε` (so nobody has zero mass)
@@ -679,10 +848,18 @@ You can:
 - Law extractor discovers patterns that mirror real physics
 
 **The Path:**
+- **Step 0:** Fix critical gotchas (soft potentials, stability, neighbor lists)
 - Phase 1: Build Hamiltonian engine (V, p, thermal bath)
 - Phase 2: Add causal graph (locality, wavefronts)
 - Phase 3: Add emergence (fields, nonlinear, quantum)
 - Use law extractor to verify at each phase
+
+**The Gotchas:**
+- Without smooth potentials → gradients explode
+- Without stability controller → system explodes
+- Without neighbor lists → Phase 2 is inefficient
+
+**Fix these first, then build the engine.**
 
 **The Reality Check:**
 - This is a **research roadmap**, not a guarantee
