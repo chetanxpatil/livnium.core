@@ -31,3 +31,10 @@ __all__ = [
     'fabricate_child_universe',
 ]
 
+# Optional: Recursive Hamiltonian (requires core-o)
+try:
+    from .recursive_hamiltonian import RecursiveHamiltonian
+    __all__.append('RecursiveHamiltonian')
+except ImportError:
+    pass
+

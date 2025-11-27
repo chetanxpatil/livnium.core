@@ -94,6 +94,10 @@ class RecursiveGeometryEngine:
         self.projection = RecursiveProjection(self)
         self.conservation = RecursiveConservation(self)
         self.moksha = MokshaEngine(self)  # Fixed-point convergence engine
+        
+        # Optional: Initialize Hamiltonian dynamics (lazy import)
+        self.hamiltonian = None
+        self._hamiltonian_enabled = False
     
     def _build_hierarchy(self):
         """Build recursive geometry hierarchy."""
@@ -285,6 +289,48 @@ class RecursiveGeometryEngine:
                 axis,
                 quarter_turns
             )
+    
+    def enable_hamiltonian_dynamics(
+        self,
+        temp: float = 0.1,
+        friction: float = 0.05,
+        dt: float = 0.01
+    ):
+        """
+        Enable Hamiltonian dynamics for recursive evolution.
+        
+        This integrates core-o Hamiltonian core into recursive geometry,
+        making the system evolve with momentum and forces.
+        
+        Args:
+            temp: Temperature for thermal bath
+            friction: Friction coefficient
+            dt: Time step
+        """
+        from .recursive_hamiltonian import RecursiveHamiltonian
+        
+        self.hamiltonian = RecursiveHamiltonian(
+            recursive_engine=self,
+            temp=temp,
+            friction=friction,
+            dt=dt,
+            enable_dynamics=True
+        )
+        self._hamiltonian_enabled = True
+    
+    def evolve_step(self) -> Dict[int, Dict[str, Any]]:
+        """
+        Evolve the recursive system one step using Hamiltonian dynamics.
+        
+        Returns:
+            Dictionary mapping level_id to evolution statistics
+        """
+        if not self._hamiltonian_enabled or self.hamiltonian is None:
+            raise RuntimeError(
+                "Hamiltonian dynamics not enabled. Call enable_hamiltonian_dynamics() first."
+            )
+        
+        return self.hamiltonian.evolve_all_levels()
     
     def get_recursive_observer(self, level_id: int) -> Optional[Tuple[int, int, int]]:
         """
