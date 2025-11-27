@@ -74,10 +74,9 @@ def discover_radial_structure():
         # Friction ramp: Liquid -> Solid lock
         sim.friction = 0.05 + 0.2 * prog
         
-        sim.step()
+        state = sim.step()
         
         if i % 500 == 0:
-            state = sim.step()
             print(f"  Step {i}: Temp={sim.temperature:.3f}, Friction={sim.friction:.3f}, "
                   f"Avg SW={state['avg_sw']:.2f}")
     
