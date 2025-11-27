@@ -20,7 +20,9 @@ import sys
 from pathlib import Path
 
 # Add project root to path
-project_root = Path(__file__).parent.parent.parent.parent
+# File is at: core/recursive/discover_moksha.py
+# Need to go up 2 levels to reach project root
+project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 import numpy as np
@@ -84,7 +86,10 @@ def discover_moksha_laws():
             base_geometry.rotate(axis, quarter_turns=1)
         
         # Check Moksha convergence
-        moksha_state = engine.moksha.check_convergence()
+        convergence_state = engine.moksha.check_convergence()
+        
+        # Get stability score separately
+        stability_score = engine.moksha.get_convergence_score()
         
         # Collect metrics
         level_0_sw = [cell.symbolic_weight for cell in base_geometry.lattice.values()]
@@ -92,19 +97,22 @@ def discover_moksha_laws():
         mean_sw = np.mean(level_0_sw)
         std_sw = np.std(level_0_sw)
         
+        converged = (convergence_state.value == 'moksha')
+        
         convergence_history.append({
             'step': step,
             'total_sw': total_sw,
             'mean_sw': mean_sw,
             'std_sw': std_sw,
-            'converged': moksha_state.converged,
-            'stability': moksha_state.stability_score
+            'converged': converged,
+            'convergence_state': convergence_state.value,
+            'stability': stability_score
         })
         
         sw_history.append(level_0_sw)
         
-        if moksha_state.converged:
-            moksha_states.append((step, moksha_state))
+        if converged:
+            moksha_states.append((step, convergence_state))
         
         if step % 50 == 0:
             print(f"   Step {step}: SW={total_sw:.2f}, std={std_sw:.2f}, "
@@ -181,7 +189,9 @@ def discover_moksha_laws():
         ax3.plot(steps, stabilities, 'purple', linewidth=2, label='Stability Score')
         if moksha_states:
             conv_steps = [s[0] for s in moksha_states]
-            conv_stabs = [s[1].stability_score for s in moksha_states]
+            # Get stability at convergence points
+            conv_stabs = [stabilities[step] if step < len(stabilities) else 1.0 
+                         for step in conv_steps]
             ax3.scatter(conv_steps, conv_stabs, c='red', s=100, marker='x', 
                        label='Convergence Events', zorder=5)
         ax3.set_xlabel('Time Step')
