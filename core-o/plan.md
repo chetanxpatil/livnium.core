@@ -24,6 +24,12 @@ Core-O is currently:
 
 ## The 8-Step Roadmap to Physical Reality
 
+**Conceptual Validity:** ✅ All 8 steps are compatible with a serious physics-like engine.
+
+**Implementation Strategy:** Add one at a time, verify with law extractor, then move to next.
+
+---
+
 ### 1. Add Irreversibility (Entropy Law)
 
 **Problem:** The real world is not perfectly reversible. Core-O is too clean.
@@ -42,6 +48,8 @@ Core-O is currently:
 - Self-organizing patterns
 
 **Status:** 🔴 Not implemented
+
+**Conceptual Validity:** ✅ Yes. You *need* something that breaks perfect time symmetry. Even a tiny dissipation term + jitter is enough to create attractors, form stable structures, and give you an arrow of time.
 
 ---
 
@@ -64,6 +72,8 @@ Core-O is currently:
 
 **Status:** 🔴 Not implemented
 
+**Conceptual Validity:** ✅ Yes. Once you move from global updates to local updates that propagate at speed `C_LIV`, you'll automatically get wavefronts, causal cones, and locality constraints.
+
 ---
 
 ### 3. Add Local Energy & Inertia (Momentum)
@@ -84,6 +94,8 @@ Core-O is currently:
 - Conservation of kinetic & potential energy
 
 **Status:** 🔴 Not implemented
+
+**Conceptual Validity:** ✅ Yes. You already have tangent flow on spheres. Give those flows memory (velocity) and resistance (mass), and you've built the analogue of Newtonian motion on a curved manifold.
 
 ---
 
@@ -108,6 +120,8 @@ Core-O is currently:
 
 **Status:** 🔴 Not implemented
 
+**Conceptual Validity:** ✅ Yes, but be disciplined. Don't add 10 fields first. Start with **one** (e.g., `F ~ SW₁·SW₂ / d²` as an attraction/repulsion). Then watch: does the law extractor find `1/r²` patterns? Do stable orbits/clusters emerge?
+
 ---
 
 ### 5. Add Measurement / Collapse (Quantum)
@@ -128,6 +142,8 @@ Core-O is currently:
 - Wavefunction collapse
 
 **Status:** 🟡 Quantum modules exist, need integration
+
+**Conceptual Validity:** ⚠️ Half-yes, half-later. You *can* bolt in your existing quantum modules, but treat this as **Phase 2**, after you have entropy, locality, and inertia.
 
 ---
 
@@ -151,6 +167,8 @@ Core-O is currently:
 
 **Status:** 🔴 Not implemented
 
+**Conceptual Validity:** ✅ Yes, that's where emergence lives. But add **one loop at a time**, e.g., `tension` depends on local curvature, `flow` depends on tension, and see if your law extractor starts seeing sigmoids/bifurcations.
+
 ---
 
 ### 7. Add Dimensional Structure (Curvature)
@@ -171,6 +189,8 @@ Core-O is currently:
 - Geodesic trajectories
 
 **Status:** 🔴 Not implemented
+
+**Conceptual Validity:** ✅ Ambitious, but consistent. Let SW or tension warp the effective distance metric. That's baby-GR: energy density → curvature → trajectories bend.
 
 ---
 
@@ -193,6 +213,8 @@ Core-O is currently:
 - Symmetry breaking
 
 **Status:** 🔴 Not implemented
+
+**Conceptual Validity:** ✅ Very important. This is how you get symmetry breaking, phase transitions, and pattern selection.
 
 ---
 
@@ -327,6 +349,26 @@ This is how your system becomes:
 
 ## Implementation Strategy
 
+### Critical Constraints (Must Follow)
+
+**To keep this a "physics engine" and not a "messy game engine":**
+
+1. **Everything must be local.**
+   - No global telepathy updates
+   - Every influence goes neighbor → neighbor at finite speed
+   - No instantaneous global state changes
+
+2. **Everything must be ledger-checked.**
+   - Some quantities conserved (like SW, or total energy)
+   - Some allowed to dissipate (entropy, local order)
+   - Track what's conserved vs. what's allowed to change
+
+3. **Every new mechanism must be visible to the law extractor.**
+   - If you add inertia → new laws visible in `example_law_extraction.py`
+   - If you add entropy → decay laws should appear
+   - If you add fields → inverse-square patterns should emerge
+   - **If the law extractor can't see it, it's not physics-like**
+
 ### Phase 1: Foundation (Steps 1-3)
 1. **Entropy Law** — Add irreversibility
 2. **Causality** — Add finite propagation speed
@@ -334,37 +376,106 @@ This is how your system becomes:
 
 **Goal:** Transform from "mathematical" to "physical"
 
+**Validation:** Law extractor should find:
+- Time-dependent decay laws
+- Wavefront propagation patterns
+- Energy conservation relationships
+
 ### Phase 2: Forces (Steps 4-5)
-4. **Field Interaction** — Add multiple fields
-5. **Measurement** — Integrate quantum collapse
+4. **Field Interaction** — Add multiple fields (start with ONE)
+5. **Measurement** — Integrate quantum collapse (Phase 2, after entropy/locality/inertia)
 
 **Goal:** Add forces and quantum-classical boundary
 
+**Validation:** Law extractor should find:
+- Inverse-square patterns (1/r²)
+- Stable orbits/clusters
+- Field strength relationships
+
 ### Phase 3: Complexity (Steps 6-8)
-6. **Nonlinear Constraints** — Add feedback loops
+6. **Nonlinear Constraints** — Add feedback loops (one at a time)
 7. **Dimensional Structure** — Add curvature
 8. **Noise** — Add fluctuations
 
 **Goal:** Enable complex, life-like emergent systems
 
+**Validation:** Law extractor should find:
+- Sigmoid/bifurcation patterns
+- Phase transition signatures
+- Symmetry breaking events
+
 ---
 
-## Next Steps
+## Concrete Next Coding Steps
 
-1. **Start with Step 1 (Entropy Law)**
-   - Implement energy dissipation
-   - Add random jitter
-   - Create arrow of time
+### Step 1: Entropy Lite (Start Here)
 
-2. **Use Law Extractor**
-   - Run system with entropy
-   - Extract discovered laws
-   - Verify patterns match expectations
+**Implementation:**
+- Add tiny dissipation term to tangential motion:
+  - `velocity ← (1 - ε) * velocity` where ε is small (e.g., 0.001)
+- Add small random jitter to velocities:
+  - `velocity ← velocity + random_jitter * (small_amplitude)`
+- Keep it simple: just decay + noise
 
-3. **Iterate**
-   - Add each mechanism one at a time
-   - Observe what laws emerge
-   - Refine based on discovered patterns
+**Validation:**
+- Run `example_law_extraction.py` after adding entropy
+- Look for new time-dependent laws:
+  - Exponential decay patterns
+  - Energy dissipation relationships
+  - Arrow of time signatures
+
+**If law extractor finds decay laws → Step 1 is working.**
+
+---
+
+### Step 2: Local Updates + C_LIV
+
+**Implementation:**
+- Instead of evolving whole system at once:
+  - Evolve neighbor subsets based on distance
+  - Use `C_LIV * dt` to determine update radius
+  - Only update cells within propagation distance
+- Define `C_LIV` (e.g., `C_LIV = 1.0` units per timestep)
+
+**Validation:**
+- Extract laws on "front propagation"
+- Look for clean relation between radius and time
+- Should see wavefront-like patterns
+
+**If law extractor finds propagation laws → Step 2 is working.**
+
+---
+
+### Step 3: Minimal Mass/Momentum
+
+**Implementation:**
+- Add `mass_i = f(SW_i)` (keep it simple):
+  - Start with `mass = SW` or `mass = SW + constant`
+- Let inertia limit tangential motion changes:
+  - `Δvelocity = force / mass * dt`
+  - Limit maximum change per step
+
+**Validation:**
+- Extract laws:
+  - Kinetic energy vs SW relationships
+  - Conserved total energy under interactions
+  - Momentum conservation patterns
+
+**If law extractor finds energy/momentum laws → Step 3 is working.**
+
+---
+
+### Iteration Pattern
+
+**For each step:**
+1. Implement mechanism (keep it simple)
+2. Run law extractor
+3. Verify new laws appear
+4. If laws appear → mechanism is working, move to next step
+5. If no laws → refine mechanism or check constraints
+
+**The law extractor is your validation tool.**
+**If it can't see the physics, the physics isn't there.**
 
 ---
 
@@ -391,18 +502,56 @@ We can implement each step cleanly in code with modules and laws, just like your
 
 ---
 
-## Questions to Answer
+## What "Works" Means
 
-1. **What is C_LIV?** (Speed of information in Livnium)
-2. **What is ε?** (Entropy coefficient)
-3. **How to compute mass from SW/radius/curvature?**
-4. **What fields to add first?** (Gravitational? Electromagnetic? Both?)
-5. **How to integrate quantum collapse?**
-6. **What nonlinear feedback loops are most important?**
-7. **How to compute local curvature?**
-8. **What noise distribution to use?**
+**Not:**
+> "After these 8 steps I have literally recreated the universe."
 
-**These are the design decisions that will shape your universe.**
+**But:**
+> "After these 8 steps, Core-O is rich enough that:
+> - my law extractor starts discovering non-trivial, reusable formulas,
+> - these formulas are stable across problems,
+> - and they *look like* known physical structures (waves, inverse squares, diffusion, etc)."
+
+**That is already huge.**
+
+---
+
+## Design Decisions (Answer as You Go)
+
+**Step 1 (Entropy):**
+- What is ε? (Start with 0.001, adjust based on law extractor results)
+- What jitter amplitude? (Start with 0.01 * velocity_scale)
+
+**Step 2 (Causality):**
+- What is C_LIV? (Start with 1.0, adjust based on propagation patterns)
+- How to handle update ordering? (Distance-based, time-based)
+
+**Step 3 (Inertia):**
+- How to compute mass? (Start with `mass = SW`, refine based on laws)
+- What force model? (Start simple: tension gradients)
+
+**Step 4 (Fields):**
+- What field to add first? (Start with ONE: gravitational analogue `F ~ SW₁·SW₂ / d²`)
+- Watch law extractor: does it find `1/r²` patterns?
+
+**Step 5 (Measurement):**
+- How to integrate quantum collapse? (After entropy/locality/inertia are working)
+- What triggers collapse? (Observation events, decoherence thresholds)
+
+**Step 6 (Nonlinear):**
+- What feedback loop first? (Start with: tension → curvature → flow → SW)
+- Add one loop at a time, verify with law extractor
+
+**Step 7 (Curvature):**
+- How to compute local curvature? (SW-based metric, tension-based distance)
+- Start simple: effective distance = base_distance * (1 + SW_factor)
+
+**Step 8 (Noise):**
+- What noise distribution? (Gaussian, uniform, depends on what laws emerge)
+- What amplitude? (Start small, increase until phase transitions appear)
+
+**Answer these as you implement each step, not all at once.**
 
 ---
 
@@ -419,9 +568,21 @@ We can implement each step cleanly in code with modules and laws, just like your
 - This is a new type of knowledge machine
 
 **The Path:**
-- Implement step by step
-- Use law extractor to verify discoveries
+- Implement step by step (one at a time, not all at once)
+- Use law extractor to verify discoveries (if it can't see it, it's not physics)
+- Follow three constraints: local, ledger-checked, extractor-visible
 - Build a universe that generates its own laws
+
+**The Reality Check:**
+- This is a **research roadmap**, not a guarantee
+- You won't recreate the universe exactly
+- But you *will* get structures that mirror real physics
+- That's already huge
+
+**The Advantage:**
+- You have: geometric substrate (Core-O) + law extractor + clear plan
+- Most people have only one of the three
+- Now implement and let your universe teach you its laws
 
 **This is how you make the universe behave like the real one.**
 
