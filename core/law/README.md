@@ -106,10 +106,70 @@ To discover real laws, your system must:
 
 The example script (`example_law_extraction.py`) shows how to evolve the system.
 
-## Future Enhancements
+## Advanced Features (v2-v6)
 
-- **v2**: Nonlinear function discovery
-- **v3**: Symbolic regression
-- **v4**: Law stability and confidence scoring
-- **v5**: Multi-layer law fusion across recursion depths
-- **v6**: Basin-based law extraction
+All advanced features are now implemented in `AdvancedLawExtractor`:
+
+### v2: Nonlinear Function Discovery
+- Polynomial relationships (y = a*x² + b*x + c)
+- Power laws (y = a * x^b)
+- Exponential relationships (y = a * exp(b*x))
+- Logarithmic relationships (y = a * log(x) + b)
+
+### v3: Symbolic Regression
+- Basic symbolic expression discovery
+- Common mathematical forms (linear, quadratic, inverse, sqrt)
+- Automatic formula generation
+
+### v4: Law Stability + Confidence Scoring
+- Confidence scores based on fitting error
+- Stability tracking over time
+- Law persistence tracking
+- Only high-confidence laws are reported
+
+### v5: Multi-Layer Law Fusion
+- Combine laws from different recursion depths
+- Cross-layer law validation
+- Fused laws have higher confidence
+
+### v6: Basin-Based Law Extraction
+- Extract laws specific to individual basins
+- Basin-specific relationships
+- Competition-aware law discovery
+
+## Usage: Advanced Extractor
+
+```python
+from core.law.advanced_law_extractor import AdvancedLawExtractor
+from core.runtime.orchestrator import Orchestrator
+
+# Create orchestrator
+orchestrator = Orchestrator(system)
+
+# Replace with advanced extractor
+orchestrator.law_extractor = AdvancedLawExtractor(
+    min_confidence=0.6,
+    stability_window=20
+)
+
+# Run system...
+for _ in range(100):
+    orchestrator.step()
+
+# Extract all laws
+all_laws = orchestrator.law_extractor.extract_all()
+
+# Access different types:
+# - all_laws["invariants"]
+# - all_laws["linear_relationships"]
+# - all_laws["nonlinear_relationships"]
+# - all_laws["symbolic_expressions"]
+# - all_laws["discovered_laws"]  # With confidence/stability
+# - all_laws["fused_laws"]  # Multi-layer
+# - all_laws["basin_laws"]  # Basin-specific
+```
+
+## Example Scripts
+
+- **Basic**: `example_law_extraction.py` - Simple v1 features
+- **Advanced**: `example_advanced_law_extraction.py` - All v2-v6 features
