@@ -16,7 +16,20 @@ This module enables Livnium to **discover its own physical laws** instead of hav
 3. **Detect Relationships**: Linear relationships between variables are discovered
 4. **Extract Laws**: The system outputs discovered laws in human-readable format
 
-## Usage
+## Quick Start
+
+### Run the Example Script
+
+```bash
+python3 core/law/example_law_extraction.py
+```
+
+This will:
+1. Create a Livnium system
+2. Run it for 50 timesteps
+3. Extract and display discovered laws
+
+### Use in Your Own Code
 
 ```python
 from core.runtime.orchestrator import Orchestrator
