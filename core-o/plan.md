@@ -923,3 +923,109 @@ You can:
 
 **This is how you make the universe behave like the real one.**
 
+---
+
+## Recommended Parameters for Law Discovery
+
+**You don't need "Big Data" — you need "Good Physics" (clean, representative signals).**
+
+### The Three Knobs
+
+1. **N = Number of Spheres**
+2. **T = Number of Timesteps per Run**
+3. **R = Number of Runs / Initial Conditions**
+
+### Recommended Configuration
+
+**Phase 1 Default (Safe but Powerful):**
+
+```python
+N = 48              # Spheres
+steps_per_run = 400 # Timesteps
+num_runs = 5        # Different initial conditions
+log_every = 5       # Sample every 5th step
+```
+
+**This gives:**
+- 5 runs × (400 / 5) ≈ 400 samples total
+- Enough for robust polyfits and pattern discovery
+- Absolutely safe for your laptop
+- Clean, representative signals for law extractor
+
+### Why These Numbers Work
+
+#### N = 48 (The "Bulk vs. Surface" Rule)
+
+- **N < 12:** Everyone is on the "surface." No bulk density laws visible.
+- **N = 48:** Distinct "core" (spheres surrounded by neighbors) and "crust" (spheres touching space).
+- **Result:** Law Extractor can find relationship between SW (density) and Potential Energy.
+
+**Good Ranges:**
+- Tiny sanity tests: N = 8–16
+- Serious law-hunting: N = 32–64
+- Fancy structure / crystals: N = 64–128
+- Above ~128: Gets heavy with O(N²), but still okay if T is small
+
+#### T = 400 (The "Relaxation" Rule)
+
+- **Steps 0–100:** The "Collapse." Most physics happens here. Kinetic energy spikes, Potential drops. Richest data.
+- **Steps 100–300:** The "Ring-down." System wobbles and finds comfortable shape.
+- **Steps 300+:** Mostly just vibrating thermal noise.
+
+**If you ran for 1,000,000 steps, you'd just be recording silence. 400 steps captures the "event."**
+
+**Rough Guide:**
+- Warmup: 50–100 steps (system "wakes up")
+- Sampling: 200–500 steps (collect data every k steps)
+- **T ≈ 300–600 per run is very good**
+
+#### R = 5 (The "Ergodicity" Rule)
+
+- **Run 1:** Starts as a long line → folds into a blob
+- **Run 2:** Starts as a flat sheet → crumples into a ball
+- **Run 3:** Starts as a random cloud → condenses
+
+**If the Law Extractor sees that E ∝ 1/SW holds true in all cases, it marks it as a Universal Law.**
+
+**Great Starting Point:**
+- R = 5–10 different initial conditions
+- Random initial positions / small random momenta
+- **Different temperatures** (Temperature Sweep):
+  - Runs 1–2: Cold (Low Energy) → Ground States
+  - Runs 3–4: Warm (Medium Energy) → Equation of State
+  - Run 5: Hot (High Energy) → Ideal Gas Laws
+
+### What the Law Extractor Needs
+
+**The law extractor is happiest when:**
+- The system is not static (no flat lines)
+- But also not exploding (no infinities / NaNs)
+- You have a few hundred distinct points in each curve
+
+**That's exactly what N ≈ 32–64, T ≈ 300–600, R ≈ 5–10 gives you.**
+
+### What You'll Discover
+
+With these parameters, you can discover:
+- ✅ Conservation of total energy
+- ✅ Relationships like E ≈ f(SW)
+- ✅ Emergent inverse-square-ish behavior
+- ✅ Wave equations
+- ✅ Stability curves
+- ✅ Phase transitions
+
+**You're not trying to simulate the whole cosmos.**
+**You're trying to make the laws shout loudly from a small but honest universe.**
+
+### Summary
+
+**Your config is not "lazy" — it is efficient.**
+
+You are building a **"Test Tube," not an "Ocean."**
+
+- **N=48:** Enough to have an inside and an outside
+- **T=400:** Enough to see the fall and the settlement
+- **R=5:** Enough to prove it wasn't a fluke
+
+**This is the exact setup you need. Proceed.**
+
