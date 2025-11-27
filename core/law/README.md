@@ -52,15 +52,32 @@ print(orchestrator.get_law_summary())
 
 ## Example Output
 
+### Static System (No Evolution)
+If you run a static system (no rotations, no basin updates), you'll see:
 ```
-=== Discovered Laws ===
-
 Invariants (Conserved Quantities):
   - SW_sum: 486.000000 (constant)
+  - alignment: 1.000000 (constant)
+  - All quantities constant
 
 Functional Relationships:
-  - divergence = -1.000000 * alignment + 0.380000
+  (Many spurious relationships from fitting lines to constant data)
 ```
+
+**This is correct!** A frozen system has perfect invariants but no evolving laws.
+
+### Evolving System (With Forces)
+When the system actually evolves (rotations, basin updates, dynamic forces):
+```
+Invariants (Conserved Quantities):
+  - SW_sum: 486.000000 (constant)  ← Fundamental conservation law!
+
+Functional Relationships:
+  - energy = 1.000000 * SW_sum      ← Real law: energy equals SW
+  - tension = -0.003252 * SW_sum + 3.080375  ← Relationship between tension and SW
+```
+
+**These are real physical laws** discovered from system behavior!
 
 ## Integration
 
@@ -69,10 +86,30 @@ The law extractor is automatically integrated into the `Orchestrator`:
 - Can extract laws at any time
 - Provides human-readable summaries
 
+## Important: System Must Evolve
+
+**The law extractor works correctly, but it needs an evolving system to discover laws.**
+
+### Static System = Only Invariants
+If your system doesn't change:
+- All quantities remain constant
+- Only invariants are detected
+- Relationships are spurious (fitting lines to constant data)
+
+### Evolving System = Real Laws
+To discover real laws, your system must:
+- Apply rotations (change geometry)
+- Update basins (change SW, curvature, tension)
+- Apply dynamic forces (change energy)
+- Run recursion (change structure)
+- Process information (change state)
+
+The example script (`example_law_extraction.py`) shows how to evolve the system.
+
 ## Future Enhancements
 
-- Nonlinear function discovery
-- Symbolic regression
-- Law stability and confidence scoring
-- Multi-layer law fusion across recursion depths
-- Basin-based law extraction
+- **v2**: Nonlinear function discovery
+- **v3**: Symbolic regression
+- **v4**: Law stability and confidence scoring
+- **v5**: Multi-layer law fusion across recursion depths
+- **v6**: Basin-based law extraction
