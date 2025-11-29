@@ -1,0 +1,18 @@
+{
+  "word_sequences": {
+    "neutral": [
+      "neutral"
+    ],
+    "contradiction": [
+      "contradiction"
+    ],
+    "entailment": [
+      "entailment"
+    ]
+  },
+  "vocabulary": [
+    "contradiction",
+    "entailment",
+    "neutral"
+  ]
+}

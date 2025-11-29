@@ -1,0 +1,27 @@
+# Livnium Dialogue Model Configuration (Non-Recursive)
+
+# Geometry Parameters
+geometry:
+  lattice_size: 5  # Must be odd: 3, 5, 7, 9, etc.
+  impulse_scale: 0.1  # Character impulse strength
+  collapse_steps: 12  # Number of collapse iterations
+
+# Clustering Parameters
+clustering:
+  num_clusters: 3000  # K-Means cluster count
+  normalize_signatures: true  # Normalize before clustering
+  n_init: 10  # K-Means initialization runs
+
+# Training Parameters
+training:
+  max_dialogues: 10000  # Maximum dialogues to process
+  batch_size: 100  # Dialogues per batch
+  verbose: false  # Print detailed progress
+
+# Model Paths
+paths:
+  model_dir: "nova/model"
+  patterns_file: "nova/model/learned_patterns.json"
+  clusters_file: "nova/model/geometric_clusters.json"
+  clusters_pkl: "nova/model/geometric_clusters.pkl"
+

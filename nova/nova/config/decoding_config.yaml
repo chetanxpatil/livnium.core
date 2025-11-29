@@ -1,0 +1,28 @@
+# Livnium Dialogue Decoding Configuration
+
+# Generation Parameters
+generation:
+  temperature: 0.7  # Sampling temperature (higher = more random)
+  repetition_penalty: 0.1  # Penalty for repeating words (0.0-1.0)
+  max_length: 50  # Maximum response length (words)
+  min_length: 3  # Minimum response length (words)
+
+# Context Blending
+context:
+  enabled: true  # Enable context awareness
+  alpha: 0.4  # Weight for current query
+  beta: 0.6  # Weight for conversation history
+  max_history: 10  # Maximum conversation turns to remember
+
+# Stop Conditions
+stopping:
+  stop_on_punctuation: true  # Stop at . ! ?
+  stop_on_repetition: true  # Stop if repeating same word 3+ times
+  stop_on_silence: false  # Stop if no valid next word found
+
+# Grammar
+grammar:
+  use_markov: true  # Use Markov chain for word ordering
+  min_transition_prob: 0.01  # Minimum probability for valid transitions
+  fallback_to_random: true  # If no grammar match, use random word from cluster
+

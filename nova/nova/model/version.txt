@@ -1,0 +1,3 @@
+Nova Livnium Dialogue Engine v1.0 (Non-Recursive)
+Clean geometric dialogue pipeline
+

@@ -3,6 +3,8 @@
 
 # Core Dependencies (Required)
 numpy>=1.19.0
+torch
+tqdm
 
 # Optional Dependencies
 # Uncomment to enable JIT compilation for better performance (used in core/classical/livnium_core_system.py)
