@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import List, Dict
 import torch
 import numpy as np
+import json
 from torch.utils.data import DataLoader
 
 # Add nova_v2 to path
@@ -35,6 +36,8 @@ def main():
                        help='Batch size')
     parser.add_argument('--max-len', type=int, default=128,
                        help='Maximum sequence length')
+    parser.add_argument('--errors-file', type=str, default=None,
+                       help='If set, write misclassified samples to this JSONL file')
     
     args = parser.parse_args()
     
@@ -91,6 +94,8 @@ def main():
     all_labels = []
     all_gold_labels = []
     
+    errors_fh = open(args.errors_file, "w", encoding="utf-8") if args.errors_file else None
+    
     label_names = ['entailment', 'contradiction', 'neutral']
     
     with torch.no_grad():
@@ -116,6 +121,25 @@ def main():
             all_predictions.extend(pred.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
             all_gold_labels.extend(gold_labels)
+            
+            # Write misclassifications to JSONL if requested
+            if errors_fh is not None:
+                probs = torch.softmax(logits, dim=-1)
+                for i in range(pred.size(0)):
+                    if pred[i].item() != labels[i].item():
+                        record = {
+                            "premise": batch['premise'][i],
+                            "hypothesis": batch['hypothesis'][i],
+                            "gold_label": gold_labels[i],
+                            "gold_index": int(labels[i].item()),
+                            "pred_label": label_names[pred[i].item()],
+                            "pred_index": int(pred[i].item()),
+                            "probabilities": probs[i].cpu().tolist()
+                        }
+                        errors_fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    
+    if errors_fh is not None:
+        errors_fh.close()
     
     accuracy = correct / total if total > 0 else 0.0
     

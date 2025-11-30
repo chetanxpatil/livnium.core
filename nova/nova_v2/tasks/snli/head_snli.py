@@ -18,9 +18,11 @@ class SNLIHead(nn.Module):
     - opposition between -premise and hypothesis
     - energy feature from alignment (scaled exposure)
     - distance and norms capturing radial geometry
+    - neutral alignment signals to give neutral its own basin
     
     Final features: [h_final, alignment, opposition, energy, expose_neg,
-                     dist_p_h, r_p, r_h, r_final] → logits (E, N, C)
+                     dist_p_h, r_p, r_h, r_final,
+                     align_neutral_p, align_neutral_h] → logits (E, N, C)
     """
     
     def __init__(self, dim: int):
@@ -31,8 +33,10 @@ class SNLIHead(nn.Module):
             dim: Dimension of input state vector
         """
         super().__init__()
-        # Linear layer: (dim + 8) → 3 (entailment, neutral, contradiction)
-        self.fc = nn.Linear(dim + 8, 3)
+        # Learned neutral anchor to give neutral its own geometric signal
+        self.neutral_dir = nn.Parameter(torch.randn(dim))
+        # Linear layer: (dim + 10) → 3 (entailment, neutral, contradiction)
+        self.fc = nn.Linear(dim + 10, 3)
     
     def forward(self, h_final: torch.Tensor, v_p: torch.Tensor, v_h: torch.Tensor) -> torch.Tensor:
         """
@@ -55,10 +59,14 @@ class SNLIHead(nn.Module):
         # Normalize OM/LO
         v_p_n = F.normalize(v_p, dim=-1)
         v_h_n = F.normalize(v_h, dim=-1)
+        neutral_dir_n = F.normalize(self.neutral_dir, dim=0)
         
         # Alignment and opposition signals
         align = (v_p_n * v_h_n).sum(dim=-1, keepdim=True)  # cos(OM, LO)
         opp = (-v_p_n * v_h_n).sum(dim=-1, keepdim=True)   # cos(-OM, LO)
+        # Neutral alignments: how close each vector is to the neutral anchor
+        align_neutral_p = (v_p_n * neutral_dir_n.unsqueeze(0)).sum(dim=-1, keepdim=True)
+        align_neutral_h = (v_h_n * neutral_dir_n.unsqueeze(0)).sum(dim=-1, keepdim=True)
         
         # Exposure/energy from alignment: map [-1,1] → [0,1], then scale
         energy = 9 * ((1 + align) / 2)
@@ -82,6 +90,8 @@ class SNLIHead(nn.Module):
             dist_p_h,
             r_p,
             r_h,
-            r_final
+            r_final,
+            align_neutral_p,
+            align_neutral_h
         ], dim=-1)
         return self.fc(features)

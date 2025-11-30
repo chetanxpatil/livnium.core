@@ -35,10 +35,9 @@ cd nova/nova_v2
 python3 training/train_snli_vector.py \
   --snli-train data/snli/snli_1.0_train.jsonl \
   --snli-dev data/snli/snli_1.0_dev.jsonl \
-  --max-samples 10000 \
   --dim 256 \
   --batch-size 32 \
-  --epochs 10 \
+  --epochs 5 \
   --output-dir model/snli_v1
 ```
 
@@ -48,8 +47,7 @@ python3 training/train_snli_vector.py \
 cd nova/nova_v2
 python3 chat/test_snli_vector.py \
   --model-dir model/snli_v1 \
-  --snli-test data/snli/snli_1.0_test.jsonl \
-  --max-samples 1000
+  --snli-test data/snli/snli_1.0_test.jsonl 
 ```
 
 ## What Changed from nova/

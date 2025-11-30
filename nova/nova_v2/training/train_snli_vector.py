@@ -69,6 +69,7 @@ class SNLIDataset(Dataset):
 def load_snli_data(jsonl_path: Path, max_samples: Optional[int] = None) -> List[Dict]:
     """Load SNLI data from JSONL file."""
     samples = []
+    label_by_pair = {}
     
     with open(jsonl_path, 'r', encoding='utf-8') as f:
         for _, line in enumerate(f):
@@ -84,6 +85,12 @@ def load_snli_data(jsonl_path: Path, max_samples: Optional[int] = None) -> List[
             
             if not premise or not hypothesis:
                 continue
+            
+            pair = (premise, hypothesis)
+            # Skip ambiguous pairs that appear with conflicting labels
+            if pair in label_by_pair and label_by_pair[pair] != gold_label:
+                continue
+            label_by_pair[pair] = gold_label
             
             samples.append({
                 'premise': premise,
