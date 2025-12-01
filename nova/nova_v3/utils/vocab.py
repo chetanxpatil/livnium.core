@@ -92,6 +92,10 @@ class Vocabulary:
         """Return vocabulary size."""
         return len(self.word2idx)
 
+    def id_to_token_list(self) -> List[str]:
+        """Return list mapping id -> token (index-aligned)."""
+        return [self.idx2word.get(i, "") for i in range(len(self))]
+
 
 def build_vocab_from_snli(samples: List[Dict], min_count: int = 2) -> Vocabulary:
     """
@@ -116,4 +120,3 @@ def build_vocab_from_snli(samples: List[Dict], min_count: int = 2) -> Vocabulary
     vocab.build_from_texts(texts, min_count=min_count)
     
     return vocab
-

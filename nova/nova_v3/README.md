@@ -43,6 +43,7 @@ python3 training/train_snli_vector.py \
   --strength-neutral 0.05 \
   --neutral-weight 1.2 \
   --label-smoothing 0.05 \
+  --encoder-type geom \
   --output-dir model/snli_v1
 ```
 
@@ -54,6 +55,16 @@ python3 chat/test_snli_vector.py \
   --model-dir model/snli_v1 \
   --snli-test data/snli/snli_1.0_test.jsonl 
 ```
+
+### Encoders
+
+- `geom` (default): deterministic geometric encoder (no embedding tables). Converts tokens → base-27 signatures → geometric features → projected vectors with fixed norm, optional transformer token interaction + attention pooling.
+- `legacy`: mean-pooled learned embeddings for backward compatibility.
+
+Geom knobs (all optional):
+- `--geom-disable-transformer` to turn off the token interaction layer
+- `--geom-disable-attn-pool` to use masked mean instead of attention pooling
+- `--geom-nhead`, `--geom-num-layers`, `--geom-ff-mult`, `--geom-dropout`, `--geom-token-norm-cap` for finer control
 
 ## What Changed from nova_v2
 

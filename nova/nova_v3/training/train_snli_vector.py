@@ -22,20 +22,31 @@ from torch.utils.data.sampler import WeightedRandomSampler
 
 # Add nova_v3 to path
 nova_v3_root = Path(__file__).parent.parent
+repo_root = nova_v3_root.parent  # adds /nova so we can import quantum_embed
 sys.path.insert(0, str(nova_v3_root))
+sys.path.insert(0, str(repo_root))
 
 from core import VectorCollapseEngine
-from tasks.snli import SNLIEncoder, SNLIHead
+from tasks.snli import SNLIEncoder, GeometricSNLIEncoder, SanskritSNLIEncoder, QuantumSNLIEncoder, SNLIHead
+from quantum_embed.text_encoder_quantum import QuantumTextEncoder
 from utils.vocab import build_vocab_from_snli
 
 
 class SNLIDataset(Dataset):
     """SNLI dataset."""
     
-    def __init__(self, samples: List[Dict], vocab, max_len: int = 128):
+    def __init__(self, samples: List[Dict], vocab=None, max_len: int = 128, encode_fn=None):
+        """
+        Args:
+            samples: SNLI examples
+            vocab: vocabulary object with .encode(...) (optional if encode_fn supplied)
+            max_len: max sequence length for padding/truncation
+            encode_fn: callable(text: str, max_len: int) -> List[int] (overrides vocab.encode)
+        """
         self.samples = samples
         self.vocab = vocab
         self.max_len = max_len
+        self.encode_fn = encode_fn
         
         # Label mapping
         self.label_map = {
@@ -43,6 +54,8 @@ class SNLIDataset(Dataset):
             'contradiction': 1,
             'neutral': 2
         }
+        if self.vocab is None and self.encode_fn is None:
+            raise ValueError("SNLIDataset needs either a vocab or encode_fn")
     
     def __len__(self):
         return len(self.samples)
@@ -51,8 +64,9 @@ class SNLIDataset(Dataset):
         sample = self.samples[idx]
         
         # Encode premise and hypothesis
-        prem_ids = self.vocab.encode(sample['premise'], max_len=self.max_len)
-        hyp_ids = self.vocab.encode(sample['hypothesis'], max_len=self.max_len)
+        encode = self.encode_fn if self.encode_fn is not None else self.vocab.encode
+        prem_ids = encode(sample['premise'], max_len=self.max_len)
+        hyp_ids = encode(sample['hypothesis'], max_len=self.max_len)
         
         # Label
         label = self.label_map.get(sample['gold_label'], 2)  # Default to neutral
@@ -117,12 +131,18 @@ def train_epoch(model, encoder, head, dataloader, optimizer, criterion, device):
     total = 0
     
     for batch in tqdm(dataloader, desc="Training"):
-        prem_ids = batch['prem_ids'].to(device)
-        hyp_ids = batch['hyp_ids'].to(device)
         labels = batch['label'].to(device)
-        
-        # Build initial state (returns h0, OM, LO)
-        h0, v_p, v_h = encoder.build_initial_state(prem_ids, hyp_ids)
+        if isinstance(encoder, GeometricSNLIEncoder):
+            # Geometric encoder consumes raw text
+            h0, v_p, v_h = encoder.build_initial_state(
+                batch['premise'],
+                batch['hypothesis'],
+                device=device
+            )
+        else:
+            prem_ids = batch['prem_ids'].to(device)
+            hyp_ids = batch['hyp_ids'].to(device)
+            h0, v_p, v_h = encoder.build_initial_state(prem_ids, hyp_ids)
         
         # Collapse
         h_final, trace = model.collapse(h0)
@@ -163,12 +183,17 @@ def evaluate(model, encoder, head, dataloader, device):
     
     with torch.no_grad():
         for batch in tqdm(dataloader, desc="Evaluating"):
-            prem_ids = batch['prem_ids'].to(device)
-            hyp_ids = batch['hyp_ids'].to(device)
             labels = batch['label'].to(device)
-            
-            # Build initial state (returns h0, OM, LO)
-            h0, v_p, v_h = encoder.build_initial_state(prem_ids, hyp_ids)
+            if isinstance(encoder, GeometricSNLIEncoder):
+                h0, v_p, v_h = encoder.build_initial_state(
+                    batch['premise'],
+                    batch['hypothesis'],
+                    device=device
+                )
+            else:
+                prem_ids = batch['prem_ids'].to(device)
+                hyp_ids = batch['hyp_ids'].to(device)
+                h0, v_p, v_h = encoder.build_initial_state(prem_ids, hyp_ids)
             
             # Collapse
             h_final, trace = model.collapse(h0)
@@ -227,6 +252,25 @@ def main():
                        help='Class weight multiplier for neutral to emphasize that class')
     parser.add_argument('--neutral-oversample', type=float, default=1.0,
                        help='>1.0 to oversample neutral examples (e.g., 1.5)')
+    parser.add_argument('--encoder-type', choices=['legacy', 'geom', 'sanskrit', 'quantum'], default='geom',
+                       help='Sentence encoder: geom (geometric), legacy (embedding mean-pool), sanskrit (phoneme geometry), quantum (pretrained quantum embeddings)')
+    parser.add_argument('--quantum-ckpt', type=str, default=None,
+                       help='Path to quantum_embeddings_final.pt (required if encoder-type=quantum)')
+    # Geometric encoder knobs
+    parser.add_argument('--geom-disable-transformer', action='store_true',
+                       help='Disable transformer interaction layer in geometric encoder')
+    parser.add_argument('--geom-disable-attn-pool', action='store_true',
+                       help='Disable attention pooling in geometric encoder (use masked mean)')
+    parser.add_argument('--geom-nhead', type=int, default=4,
+                       help='Attention heads for geometric encoder transformer')
+    parser.add_argument('--geom-num-layers', type=int, default=1,
+                       help='Transformer layers for geometric encoder')
+    parser.add_argument('--geom-ff-mult', type=int, default=2,
+                       help='Feedforward multiplier for geometric encoder transformer')
+    parser.add_argument('--geom-dropout', type=float, default=0.1,
+                       help='Dropout for geometric encoder projection/transformer')
+    parser.add_argument('--geom-token-norm-cap', type=float, default=3.0,
+                       help='Per-token norm cap after projection (set <=0 to disable)')
     
     args = parser.parse_args()
     
@@ -239,13 +283,37 @@ def main():
     train_samples = load_snli_data(Path(args.snli_train), max_samples=args.max_samples)
     print(f"Loaded {len(train_samples)} training samples")
     
-    # Build vocabulary
-    print("Building vocabulary...")
-    vocab = build_vocab_from_snli(train_samples, min_count=2)
-    print(f"Vocabulary size: {len(vocab)}")
+    quantum_encode_fn = None
+    vocab = None
+    vocab_id_to_token = None
+
+    if args.encoder_type == 'quantum':
+        if not args.quantum_ckpt:
+            raise ValueError("encoder-type=quantum requires --quantum-ckpt pointing to quantum_embeddings_final.pt")
+        print(f"Loading quantum encoder vocab from {args.quantum_ckpt} ...")
+        quantum_tokenizer = QuantumTextEncoder(args.quantum_ckpt)
+        if args.dim != quantum_tokenizer.dim:
+            print(f"Overriding dim {args.dim} -> {quantum_tokenizer.dim} to match quantum checkpoint")
+            args.dim = quantum_tokenizer.dim
+
+        def quantum_encode(text: str, max_len: int = args.max_len):
+            tokens = quantum_tokenizer.tokenize(text)
+            ids = [quantum_tokenizer.word2idx.get(t, quantum_tokenizer.unk_idx) for t in tokens]
+            ids = ids[:max_len]
+            if len(ids) < max_len:
+                ids.extend([quantum_tokenizer.pad_idx] * (max_len - len(ids)))
+            return ids
+
+        quantum_encode_fn = quantum_encode
+    else:
+        # Build vocabulary from SNLI
+        print("Building vocabulary...")
+        vocab = build_vocab_from_snli(train_samples, min_count=2)
+        print(f"Vocabulary size: {len(vocab)}")
+        vocab_id_to_token = vocab.id_to_token_list()
     
     # Create datasets
-    train_dataset = SNLIDataset(train_samples, vocab, max_len=args.max_len)
+    train_dataset = SNLIDataset(train_samples, vocab, max_len=args.max_len, encode_fn=quantum_encode_fn)
     # Optional oversampling of neutral class
     sampler = None
     if args.neutral_oversample > 1.0:
@@ -265,7 +333,7 @@ def main():
     dev_loader = None
     if args.snli_dev:
         dev_samples = load_snli_data(Path(args.snli_dev))
-        dev_dataset = SNLIDataset(dev_samples, vocab, max_len=args.max_len)
+        dev_dataset = SNLIDataset(dev_samples, vocab, max_len=args.max_len, encode_fn=quantum_encode_fn)
         dev_loader = DataLoader(dev_dataset, batch_size=args.batch_size, shuffle=False)
         print(f"Loaded {len(dev_samples)} dev samples")
     
@@ -278,7 +346,35 @@ def main():
         strength_contra=args.strength_contra,
         strength_neutral=args.strength_neutral
     ).to(device)
-    encoder = SNLIEncoder(vocab_size=len(vocab), dim=args.dim).to(device)
+    if args.encoder_type == 'geom':
+        encoder = GeometricSNLIEncoder(
+            dim=args.dim,
+            norm_target=None,
+            use_transformer=not args.geom_disable_transformer,
+            nhead=args.geom_nhead,
+            num_layers=args.geom_num_layers,
+            ff_mult=args.geom_ff_mult,
+            dropout=args.geom_dropout,
+            use_attention_pooling=not args.geom_disable_attn_pool,
+            token_norm_cap=args.geom_token_norm_cap if args.geom_token_norm_cap > 0 else None,
+        ).to(device)
+    elif args.encoder_type == 'sanskrit':
+        encoder = SanskritSNLIEncoder(
+            vocab_size=len(vocab),
+            dim=args.dim,
+            pad_idx=vocab.pad_idx,
+            id_to_token=vocab_id_to_token,
+        ).to(device)
+    elif args.encoder_type == 'quantum':
+        encoder = QuantumSNLIEncoder(
+            ckpt_path=args.quantum_ckpt,
+        ).to(device)
+    else:
+        encoder = SNLIEncoder(
+            vocab_size=len(vocab),
+            dim=args.dim,
+            pad_idx=vocab.pad_idx,
+        ).to(device)
     head = SNLIHead(dim=args.dim).to(device)
     
     # Optimizer

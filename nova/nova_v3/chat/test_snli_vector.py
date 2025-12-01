@@ -18,7 +18,7 @@ nova_v3_root = Path(__file__).parent.parent
 sys.path.insert(0, str(nova_v3_root))
 
 from core import VectorCollapseEngine
-from tasks.snli import SNLIEncoder, SNLIHead
+from tasks.snli import SNLIEncoder, GeometricSNLIEncoder, SanskritSNLIEncoder, SNLIHead
 from utils.vocab import Vocabulary
 from training.train_snli_vector import SNLIDataset, load_snli_data
 
@@ -64,10 +64,38 @@ def main():
         strength_contra=getattr(model_args, "strength_contra", 0.1),
         strength_neutral=getattr(model_args, "strength_neutral", 0.05)
     ).to(device)
-    encoder = SNLIEncoder(
-        vocab_size=len(vocab), 
-        dim=model_args.dim
-    ).to(device)
+    encoder_type = getattr(model_args, "encoder_type", "legacy")
+    vocab_id_to_token = vocab.id_to_token_list() if hasattr(vocab, "id_to_token_list") else None
+
+    if encoder_type == "geom":
+        encoder = GeometricSNLIEncoder(
+            dim=model_args.dim,
+            norm_target=None,
+            use_transformer=not getattr(model_args, "geom_disable_transformer", False),
+            nhead=getattr(model_args, "geom_nhead", 4),
+            num_layers=getattr(model_args, "geom_num_layers", 1),
+            ff_mult=getattr(model_args, "geom_ff_mult", 2),
+            dropout=getattr(model_args, "geom_dropout", 0.1),
+            use_attention_pooling=not getattr(model_args, "geom_disable_attn_pool", False),
+            token_norm_cap=(
+                getattr(model_args, "geom_token_norm_cap", 3.0)
+                if getattr(model_args, "geom_token_norm_cap", 3.0) > 0
+                else None
+            ),
+        ).to(device)
+    elif encoder_type == "sanskrit":
+        encoder = SanskritSNLIEncoder(
+            vocab_size=len(vocab),
+            dim=model_args.dim,
+            pad_idx=vocab.pad_idx,
+            id_to_token=vocab_id_to_token,
+        ).to(device)
+    else:
+        encoder = SNLIEncoder(
+            vocab_size=len(vocab), 
+            dim=model_args.dim,
+            pad_idx=vocab.pad_idx,
+        ).to(device)
     head = SNLIHead(dim=model_args.dim).to(device)
     
     # Load weights
@@ -107,8 +135,14 @@ def main():
             labels = batch['label'].to(device)
             gold_labels = batch['gold_label']
             
-            # Build initial state (returns h0, OM, LO)
-            h0, v_p, v_h = encoder.build_initial_state(prem_ids, hyp_ids)
+            if isinstance(encoder, GeometricSNLIEncoder):
+                h0, v_p, v_h = encoder.build_initial_state(
+                    batch['premise'],
+                    batch['hypothesis'],
+                    device=device
+                )
+            else:
+                h0, v_p, v_h = encoder.build_initial_state(prem_ids, hyp_ids)
             
             # Collapse
             h_final, trace = collapse_engine.collapse(h0)
