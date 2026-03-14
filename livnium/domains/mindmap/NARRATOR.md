@@ -38,7 +38,15 @@ Speed: **10-50ms per short prompt**
 - Free tier exists but limited
 - Risk: Rate limits, API dependency
 
-### 🥉 Google Gemini (Free)
+### 🥉 MiniMax API (Cloud, Fast, 204K Context)
+
+**MiniMax:**
+- Models: MiniMax-M2.5, MiniMax-M2.5-highspeed
+- Speed: Fast (OpenAI-compatible API)
+- 204K context window
+- Competitive pricing
+
+### Google Gemini (Free)
 
 - Can handle long context
 - Slower than Groq/local
@@ -155,7 +163,28 @@ export GROQ_API_KEY=your_key_here
 
 **Performance:** 50-200ms per basin (network latency)
 
+### 3. MiniMax API (Cloud, Fast, 204K Context)
+
+**Setup:**
+```bash
+pip install openai
+```
+
+**Get API Key:**
+- Sign up at https://platform.minimaxi.com/
+- Create an API key
+
+**Usage:**
+```bash
+export USE_LLM_NARRATOR=True
+export MINIMAX_API_KEY=your_key_here
+```
+
+**Performance:** 50-200ms per basin (network latency)
+
 ### Fallback Behavior
 
 If LLM is not available or fails, the narrator automatically falls back to the heuristic path. No errors, just graceful degradation.
+
+The narrator tries providers in this order: llama.cpp (local) → Groq → MiniMax → heuristic fallback.
 
