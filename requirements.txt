@@ -19,4 +19,8 @@ tqdm
 # For cloud (Groq API - very fast, free tier):
 # groq>=0.4.0
 # Get API key: https://console.groq.com/
+#
+# For cloud (MiniMax API - fast, 204K context, OpenAI-compatible):
+# openai>=1.0.0
+# Get API key: https://platform.minimaxi.com/
 

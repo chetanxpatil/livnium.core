@@ -53,6 +53,28 @@ This will:
    ./livnium/domains/mindmap/regenerate.sh
    ```
 
+## Option 4: Use MiniMax API (Fast, 204K Context)
+
+1. **Install openai:**
+   ```bash
+   pip install openai
+   ```
+
+2. **Get API key:**
+   - Sign up at https://platform.minimaxi.com/
+   - Create an API key
+
+3. **Set environment variables:**
+   ```bash
+   export USE_LLM_NARRATOR=True
+   export MINIMAX_API_KEY=your_key_here
+   ```
+
+4. **Regenerate:**
+   ```bash
+   ./livnium/domains/mindmap/regenerate.sh
+   ```
+
 ## Test Without LLM (Heuristic Only)
 
 Just run without setting `USE_LLM_NARRATOR`:
@@ -68,6 +90,7 @@ The narrator will use fast heuristics (works immediately, no setup needed).
 - **Heuristic only**: <10ms per basin
 - **Local LLM (Phi-3-mini)**: 10-50ms per basin
 - **Groq API**: 50-200ms per basin
+- **MiniMax API**: 50-200ms per basin
 
 All options work great - choose based on your preference!
 

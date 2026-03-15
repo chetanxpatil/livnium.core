@@ -113,8 +113,8 @@ def summarize_basin(
         avg_tension
     )
     
-    # Optional: polish with local LLM
-    if USE_LLM_NARRATOR and LLM_MODEL_PATH:
+    # Optional: polish with LLM (local or cloud)
+    if USE_LLM_NARRATOR and (LLM_MODEL_PATH or os.getenv("GROQ_API_KEY") or os.getenv("MINIMAX_API_KEY")):
         try:
             print(f"  → Polishing basin '{basin_id}' with LLM...")
             interpretation = _polish_with_llm(interpretation, core_idea, supporting_ideas)
@@ -227,11 +227,12 @@ def _polish_with_llm(
 ) -> str:
     """
     Optional: polish interpretation with LLM (10% language polish).
-    
+
     Supports:
     - llama.cpp (local, via llama-cpp-python)
     - Groq API (cloud, very fast, free tier)
-    
+    - MiniMax API (cloud, fast, 204K context, OpenAI-compatible)
+
     Falls back gracefully if LLM not available.
     """
     # Try llama.cpp first (local, fastest)
@@ -248,9 +249,18 @@ def _polish_with_llm(
         try:
             return _polish_with_groq(interpretation, core_idea, supporting_ideas)
         except Exception as e:
+            # Fall through to other options
+            pass
+
+    # Try MiniMax API (cloud, fast, OpenAI-compatible)
+    minimax_api_key = os.getenv("MINIMAX_API_KEY", "")
+    if minimax_api_key:
+        try:
+            return _polish_with_minimax(interpretation, core_idea, supporting_ideas)
+        except Exception as e:
             # Fall through to heuristic
             pass
-    
+
     # Fallback: return heuristic version
     return interpretation
 
@@ -372,6 +382,65 @@ One clear sentence. No numbers or technical terms."""
     if not polished or len(polished) < 15:
         return interpretation  # Fallback if output is bad
     
+    return polished
+
+
+def _polish_with_minimax(
+    interpretation: str,
+    core_idea: str,
+    supporting_ideas: List[str]
+) -> str:
+    """
+    Polish with MiniMax API (cloud, fast, OpenAI-compatible).
+
+    Requires: pip install openai
+    Set: export MINIMAX_API_KEY=your_key
+    Models: MiniMax-M2.5, MiniMax-M2.5-highspeed (204K context)
+    """
+    try:
+        from openai import OpenAI
+    except ImportError:
+        raise ImportError("openai not installed. Install with: pip install openai")
+
+    api_key = os.getenv("MINIMAX_API_KEY", "")
+    if not api_key:
+        raise ValueError("MINIMAX_API_KEY not set")
+
+    client = OpenAI(
+        api_key=api_key,
+        base_url="https://api.minimax.io/v1"
+    )
+
+    # Build prompt focused on intent, not geometry (≤120 tokens)
+    prompt = f"""Rewrite to explain intent, not statistics:
+
+"{interpretation}"
+
+Focus on: what problem this solves, what tension it addresses, why it exists separately.
+One clear sentence. No numbers or technical terms."""
+
+    # Call MiniMax API (OpenAI-compatible)
+    response = client.chat.completions.create(
+        model="MiniMax-M2.5",
+        messages=[
+            {"role": "system", "content": "You explain intent and purpose, not statistics. Focus on what problems clusters solve and what tensions they address."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=80,  # Short response
+        temperature=0.4  # Slightly higher for natural language
+    )
+
+    polished = response.choices[0].message.content.strip()
+
+    # Clean up - take first sentence only
+    polished = polished.split('.')[0].strip()
+    if polished and not polished.endswith('.'):
+        polished += '.'
+
+    # Validate output
+    if not polished or len(polished) < 15:
+        return interpretation  # Fallback if output is bad
+
     return polished
 
 
