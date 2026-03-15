@@ -1,3 +1,23 @@
+
+THIS IS OLD VERSION, THIS IS MY PURE THINKING MESS!
+
+TO GET SAFE CLEAN UNDERSTANDING WHAT I ACHIVED IS
+
+YOU WILL FIND IT HERE:
+
+https://github.com/chetanxpatil/livnium
+
+
+
+
+
+
+
+
+
+
+
+
 # LIVNIUM
 
 **Law-Governed Geometric Computing Platform**
