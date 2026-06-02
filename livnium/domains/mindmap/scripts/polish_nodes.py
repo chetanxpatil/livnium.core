@@ -108,7 +108,7 @@ def _polish_with_minimax(text: str) -> str:
 
     try:
         response = client.chat.completions.create(
-            model="MiniMax-M2.5",
+            model="MiniMax-M3",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=60,
             temperature=0.5

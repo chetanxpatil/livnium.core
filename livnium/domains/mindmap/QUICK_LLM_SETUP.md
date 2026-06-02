@@ -53,7 +53,7 @@ This will:
    ./livnium/domains/mindmap/regenerate.sh
    ```
 
-## Option 4: Use MiniMax API (Fast, 204K Context)
+## Option 4: Use MiniMax API (Fast, 512K Context)
 
 1. **Install openai:**
    ```bash

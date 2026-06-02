@@ -38,12 +38,12 @@ Speed: **10-50ms per short prompt**
 - Free tier exists but limited
 - Risk: Rate limits, API dependency
 
-### 🥉 MiniMax API (Cloud, Fast, 204K Context)
+### 🥉 MiniMax API (Cloud, Fast, 512K Context)
 
 **MiniMax:**
-- Models: MiniMax-M2.5, MiniMax-M2.5-highspeed
+- Models: MiniMax-M3 (default), MiniMax-M2.7, MiniMax-M2.7-highspeed
 - Speed: Fast (OpenAI-compatible API)
-- 204K context window
+- 512K context window, up to 128K output, image input supported
 - Competitive pricing
 
 ### Google Gemini (Free)
@@ -163,7 +163,7 @@ export GROQ_API_KEY=your_key_here
 
 **Performance:** 50-200ms per basin (network latency)
 
-### 3. MiniMax API (Cloud, Fast, 204K Context)
+### 3. MiniMax API (Cloud, Fast, 512K Context)
 
 **Setup:**
 ```bash
