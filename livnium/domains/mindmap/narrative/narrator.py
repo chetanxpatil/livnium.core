@@ -231,7 +231,7 @@ def _polish_with_llm(
     Supports:
     - llama.cpp (local, via llama-cpp-python)
     - Groq API (cloud, very fast, free tier)
-    - MiniMax API (cloud, fast, 204K context, OpenAI-compatible)
+    - MiniMax API (cloud, fast, 512K context, OpenAI-compatible)
 
     Falls back gracefully if LLM not available.
     """
@@ -395,7 +395,7 @@ def _polish_with_minimax(
 
     Requires: pip install openai
     Set: export MINIMAX_API_KEY=your_key
-    Models: MiniMax-M2.5, MiniMax-M2.5-highspeed (204K context)
+    Models: MiniMax-M3 (default), MiniMax-M2.7, MiniMax-M2.7-highspeed (512K context)
     """
     try:
         from openai import OpenAI
@@ -421,7 +421,7 @@ One clear sentence. No numbers or technical terms."""
 
     # Call MiniMax API (OpenAI-compatible)
     response = client.chat.completions.create(
-        model="MiniMax-M2.5",
+        model="MiniMax-M3",
         messages=[
             {"role": "system", "content": "You explain intent and purpose, not statistics. Focus on what problems clusters solve and what tensions they address."},
             {"role": "user", "content": prompt}
